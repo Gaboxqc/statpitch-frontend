@@ -5,17 +5,23 @@ function MatchDayCard() {
   return (
     <div className={'border border-emerald-500/20 bg-zinc-900/60 m-2 rounded-md mt-4'}>
       <div className={'bg-linear-to-br from-emerald-950/30 via-transparent to-blue-950/20 p-4'}>
-        <div className={'flex items-center gap-2 pb-2'}>
-          <div className={'h-1 w-1 bg-primary rounded-full animate-pulse'}></div>
-          <p className={'text-secondary-foreground text-xs'}>MATCH OF THE DAY</p>
-        </div>
-
-        <div className={'flex justify-between items-center py-4 text-secondary-foreground'}>
-          <div>
-            <p className={'text-xs'}>FIFA World Cup</p>
+        <div className={'grid grid-cols-1  md:grid-cols-2'}>
+          <div className={'flex items-center gap-2 pb-2'}>
+            <div className={'h-1 w-1 bg-primary rounded-full animate-pulse'}></div>
+            <p className={'text-secondary-foreground text-xs'}>MATCH OF THE DAY</p>
           </div>
-          <div>
-            <p className={'text-xs'}>Tonight, 21:00 CET</p>
+
+          <div
+            className={
+              'flex justify-between items-center py-4 text-secondary-foreground md:justify-end md:gap-4'
+            }
+          >
+            <div>
+              <p className={'text-xs'}>FIFA World Cup</p>
+            </div>
+            <div>
+              <p className={'text-xs'}>Tonight, 21:00 CET</p>
+            </div>
           </div>
         </div>
 

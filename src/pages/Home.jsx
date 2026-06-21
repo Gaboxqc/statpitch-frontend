@@ -1,13 +1,17 @@
 import SummaryBar from '../components/SummaryBar.jsx'
 import MatchDayCard from '../components/MatchDayCard.jsx'
 import PredictionsSection from '../components/PredictionsSection.jsx'
+import FiltersBar from '../components/FiltersBar.jsx'
 
 function Home() {
   return (
-    <main className={'container mx-auto bg-background min-h-screen'}>
+    <main className={'bg-background min-h-screen'}>
       <SummaryBar />
-      <MatchDayCard />
-      <PredictionsSection />
+      <FiltersBar />
+      <div className={'container mx-auto'}>
+        <MatchDayCard />
+        <PredictionsSection />
+      </div>
     </main>
   )
 }

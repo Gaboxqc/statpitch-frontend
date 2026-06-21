@@ -6,6 +6,7 @@
     --primary-foreground: #022c22;
     --secondary: #13161c;
     --secondary-foreground: #94a3b8;
+    --accent: oklch(37% 0.013 285.805);
 
     --chart-1: #10b981;
     --chart-2: #3b82f6;
@@ -22,6 +23,7 @@
     --color-primary-foreground: var(--primary-foreground);
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
+    --color-accent: var(--accent);
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
