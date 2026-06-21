@@ -1,0 +1,5 @@
+export { default as ThunderIcon } from './Thunder.svg?react'
+export { default as LogoIcon } from '../../../public/Logo.svg?react'
+export { default as MenuIcon } from './Menu.svg?react'
+export { default as BrainIcon } from './Brain.svg?react'
+export { default as ClockIcon } from './CLock.svg?react'
