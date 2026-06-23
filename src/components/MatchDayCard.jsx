@@ -9,9 +9,9 @@ function MatchDayCard() {
   // eslint-disable-next-line no-useless-assignment
   let winner = {}
   if (prediction.home_win_prob > prediction.away_win_prob) {
-    winner = { isHome: true, name: 'Home', prob: prediction.home_win_prob * 100 }
+    winner = { isHome: true, name: 'Home', prob: (prediction.home_win_prob * 100).toFixed(2) }
   } else {
-    winner = { isHome: false, name: 'Away', prob: prediction.away_win_prob * 100 }
+    winner = { isHome: false, name: 'Away', prob: (prediction.away_win_prob * 100).toFixed(2) }
   }
 
   return (
