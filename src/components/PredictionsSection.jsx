@@ -10,7 +10,9 @@ function PredictionsSection() {
 
   return (
     <div className={'m-4 flex flex-col gap-4'}>
-      <h3 className={'text-foreground'}>Predictions</h3>
+      <h3 className={'text-foreground'}>
+        Predictions <span className={'text-secondary-foreground'}>{predictions.length}</span>
+      </h3>
       {console.log(predictions)}
       {predictions.map((prediction) => {
         return (
@@ -23,6 +25,8 @@ function PredictionsSection() {
             home_win_prob={prediction.home_win_prob}
             away_win_prob={prediction.away_win_prob}
             draw_prob={prediction.draw_prob}
+            home_flag_url={prediction.home_flag_url}
+            away_flag_url={prediction.away_flag_url}
           />
         )
       })}

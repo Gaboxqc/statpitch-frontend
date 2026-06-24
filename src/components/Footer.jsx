@@ -7,7 +7,7 @@ function Footer() {
     >
       <div className={'flex flex-col gap-4'}>
         <p className={'text-xs text-secondary-foreground/60'}>
-          Model v2 · Gradient Boost + LSTM Ensemble · Updated 14 min ago
+          Model v4 · Gradient Boost + LSTM Ensemble · Updated 21 min ago
         </p>
         <p className={'text-xs text-secondary-foreground/60'}>For informational purposes only.</p>
       </div>
@@ -16,7 +16,7 @@ function Footer() {
           For informational purposes only. StatPitch does not facilitate, encourage, or endorse any
           form of gambling or wagering.{' '}
         </p>
-        <p className={'text-xs text-secondary-foreground/60'}>© 2026 Pitch</p>
+        <p className={'text-xs text-secondary-foreground/60'}>© 2026 StatPitch</p>
       </div>
     </footer>
   )

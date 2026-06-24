@@ -43,12 +43,12 @@ function MatchDayCard() {
 
         <div className={'flex justify-center gap-4 text-foreground mt-4'}>
           <div className={'flex flex-col items-center'}>
-            <div
-              className={
-                'bg-accent/40 border border-accent/80  flex justify-center items-center h-14 w-14 rounded-xl md:h-20 md:w-20'
-              }
-            >
-              <p className={''}>TEAM</p>
+            <div className={'w-20 h-20 md:w-40 md:h-40'}>
+              <img
+                src={prediction.home_flag_url}
+                alt='Home flag'
+                className={'w-full h-full object-contain rounded-sm'}
+              />
             </div>
             <p className={'text-sm mt-2'}>{prediction.home_team}</p>
             <p className={'text-2xl text-primary font-bold'}>
@@ -72,16 +72,18 @@ function MatchDayCard() {
               }
             >
               <p className={'text-xs text-secondary-foreground/60'}>DRAW</p>
-              <p className={'text-md'}>{(prediction.draw_prob * 100).toFixed(2)}%</p>
+              <p className={'text-md text-secondary-foreground'}>
+                {(prediction.draw_prob * 100).toFixed(2)}%
+              </p>
             </div>
           </div>
           <div className={'flex flex-col items-center'}>
-            <div
-              className={
-                'bg-accent/40 border border-accent/80 flex justify-center items-center h-14 w-14 rounded-xl md:h-20 md:w-20'
-              }
-            >
-              <p className={''}>TEAM</p>
+            <div className={'w-20 h-20 md:w-40 md:h-40'}>
+              <img
+                src={prediction.away_flag_url}
+                alt='Away flag'
+                className={'w-full h-full object-contain rounded-sm'}
+              />
             </div>
             <p className={'text-sm mt-2'}>{prediction.away_team}</p>
             <p className={'text-2xl font-bold text-chart-2'}>
