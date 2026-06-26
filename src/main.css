@@ -5,3 +5,10 @@
 @theme {
     --font-sans: 'JetBrains Mono', monospace;
 }
+
+@layer base {
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
