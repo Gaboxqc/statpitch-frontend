@@ -7,10 +7,10 @@ function PredictionsSection() {
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
   if (!predictions || predictions.length === 0)
-    return <p className={'m-4'}>No more predictions available.</p>
+    return <p className={'text-center mt-8'}>No more predictions available.</p>
 
   return (
-    <div className={'m-4 flex flex-col gap-4'}>
+    <div className={'m-4 flex flex-col gap-4 w-2/3 mx-auto'}>
       <h3 className={'text-foreground'}>
         Predictions <span className={'text-secondary-foreground'}>{predictions.length}</span>
       </h3>

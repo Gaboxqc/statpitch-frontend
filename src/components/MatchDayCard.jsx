@@ -33,7 +33,9 @@ function MatchDayCard() {
   }
 
   return (
-    <div className={'border border-emerald-500/20 bg-zinc-900/60 m-2 rounded-md mt-4'}>
+    <div
+      className={'border border-emerald-500/20 bg-zinc-900/60 m-2 rounded-md mt-4 w-2/3 mx-auto'}
+    >
       <div
         className={
           'flex flex-col bg-linear-to-br from-emerald-950/30 via-transparent to-blue-950/20 p-4'
