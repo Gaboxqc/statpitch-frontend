@@ -1,7 +1,7 @@
 export function buildMarkets(prediction) {
   return [
     {
-      key: 'home',
+      key: 'home_win',
       market: prediction.home_team + ' Win',
       ev: prediction.ev_home,
       odds: prediction.odds_home,
@@ -17,7 +17,7 @@ export function buildMarkets(prediction) {
       kelly: prediction.kelly_draw,
     },
     {
-      key: 'away',
+      key: 'away_win',
       market: prediction.away_team + ' Win',
       ev: prediction.ev_away,
       odds: prediction.odds_away,

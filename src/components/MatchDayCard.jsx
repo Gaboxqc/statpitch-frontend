@@ -1,40 +1,42 @@
 import DonutChart from './ui/DonutChart.jsx'
-import { BrainIcon, ChartIcon, ThunderIcon } from '../assets/icons/index.js'
+import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../assets/icons/index.js'
 import BarChart from './ui/BarChart.jsx'
 import useBestPrediction from '../hooks/useBestPrediction.js'
 import MarketBlock from './MarketBlock.jsx'
-import { buildMarkets } from '../utils/markets.js'
+import { buildMarkets } from '../utils/buildMarkets.js'
 import { useState } from 'react'
+import MatchCardContainer from './MatchCardContainer.jsx'
 
 function MatchDayCard() {
   const { prediction, loading, error } = useBestPrediction({ limit: 10, offset: 0 })
-  const bestBet = prediction.best_overall_bet
+  const [isOpened, setIsOpened] = useState(false)
   const markets = buildMarkets(prediction)
-  const [isOpen, setIsOpen] = useState(false)
+  const bestBet = prediction.best_overall_bet
+  const bestMarket = markets.find((market) => market.key === bestBet)
 
-  if (loading) return <div className={'h-120 w-90 mt-4 mx-auto bg-secondary animate-pulse'}></div>
+  const isHomeWin = prediction.home_win_prob > prediction.away_win_prob
+  const winner = isHomeWin
+    ? {
+        isHome: true,
+        name: prediction.home_team,
+        prob: (prediction.home_win_prob * 100).toFixed(2),
+      }
+    : {
+        isHome: false,
+        name: prediction.away_team,
+        prob: (prediction.away_win_prob * 100).toFixed(2),
+      }
+
+  if (loading)
+    return <div className={'h-120 w-90 mt-4 mx-auto bg-secondary animate-pulse rounded-md'}></div>
   if (error) return <p>Error: {error.message}</p>
   if (!prediction || prediction.length === 0) return <p>No prediction available.</p>
-  console.log(prediction)
-  // eslint-disable-next-line no-useless-assignment
-  let winner = {}
-  if (prediction.home_win_prob > prediction.away_win_prob) {
-    winner = {
-      isHome: true,
-      name: prediction.home_team,
-      prob: (prediction.home_win_prob * 100).toFixed(2),
-    }
-  } else {
-    winner = {
-      isHome: false,
-      name: prediction.away_team,
-      prob: (prediction.away_win_prob * 100).toFixed(2),
-    }
-  }
 
   return (
     <div
-      className={'border border-emerald-500/20 bg-zinc-900/60 m-2 rounded-md mt-4 w-2/3 mx-auto'}
+      className={
+        'border border-emerald-500/20 bg-zinc-900/60 m-2 rounded-md mt-4 lg:w-2/3 mx-2 lg:mx-auto'
+      }
     >
       <div
         className={
@@ -57,7 +59,14 @@ function MatchDayCard() {
                 <p className={'text-xs'}>FIFA World Cup</p>
               </div>
               <div>
-                <p className={'text-xs'}>Tonight, 21:00 CET</p>
+                <p className={'text-xs'}>
+                  Tonight,{' '}
+                  {new Date(prediction.commence_time).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}{' '}
+                  GMT-6
+                </p>
               </div>
             </div>
           </div>
@@ -82,7 +91,7 @@ function MatchDayCard() {
                 }
               >
                 <p className={'text-secondary-foreground/70'}>XG</p>
-                <p className={'text-primary font-bold'}>{prediction.home_xg}</p>
+                <p className={'text-primary font-bold'}>{prediction.home_xg.toFixed(2)}</p>
               </div>
             </div>
             <div className={'flex flex-col items-center justify-center gap-4 mx-4'}>
@@ -117,7 +126,7 @@ function MatchDayCard() {
                 }
               >
                 <p className={'text-secondary-foreground/70'}>XG</p>
-                <p className={'text-chart-2 font-bold'}>{prediction.away_xg}</p>
+                <p className={'text-chart-2 font-bold'}>{prediction.away_xg.toFixed(2)}</p>
               </div>
             </div>
           </div>
@@ -129,76 +138,65 @@ function MatchDayCard() {
           />
 
           <div
-            className={
-              'flex justify-between items-center text-xs gap-2 mt-4 border border-primary/20 rounded-md px-2 py-3 bg-primary/10'
-            }
+            className={`justify-between items-center text-xs gap-2 mt-4 border border-primary/20 rounded-md px-2 py-3 bg-primary/10 ${
+              prediction.best_overall_bet ? 'flex' : 'hidden'
+            }`}
           >
             <div className={'flex items-center gap-2'}>
               <ThunderIcon className={'h-4 w-4 text-primary'} />
               <div className={'flex flex-col gap-1'}>
                 <p className={'text-xs text-secondary-foreground/60'}>TOP PICK MODEL V3</p>
-                <p className={'text-sm'}>Under 3.5 Goals</p>
+                <p className={'text-sm'}>{bestMarket?.market}</p>
               </div>
             </div>
             <div className={'flex gap-4'}>
               <div className={'text-center'}>
                 <p className={'text-xs text-secondary-foreground/60 mb-1'}>EV</p>
-                <p className={'text-primary font-bold text-sm'}>+7.6%</p>
+                <p className={'text-primary font-bold text-sm'}>+{bestMarket?.ev.toFixed(2)}%</p>
               </div>
               <div className={'text-center'}>
                 <p className={'text-xs text-secondary-foreground/60 mb-1'}>Kelly Stake</p>
-                <p className={'text-sm'}>3.1%</p>
+                <p className={'text-sm'}>{bestMarket?.kelly.toFixed(2)}%</p>
               </div>
             </div>
           </div>
 
-          <div className={'mt-4 text-secondary-foreground/50 flex gap-4'}>
-            <DonutChart value={winner.prob} />
-            <div>
-              <p className={'text-xs'}>AI CONFIDENCE</p>
-              <div className={'flex items-center gap-2'}>
-                <BrainIcon className={`text-primary`} />
-                <p className={`text-sm text-foreground`}>
-                  Prediction:
-                  <span className={`font-bold text-primary`}> {winner.name} Win</span>
+          <div className={'grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4'}>
+            <div className={'mt-4 text-secondary-foreground/50 flex gap-4'}>
+              <DonutChart value={winner.prob} />
+              <div>
+                <p className={'text-xs'}>AI CONFIDENCE</p>
+                <div className={'flex items-center gap-2'}>
+                  <BrainIcon className={`text-primary`} />
+                  <p className={`text-sm text-foreground`}>
+                    Prediction:
+                    <span className={`font-bold text-primary`}> {winner.name} Win</span>
+                  </p>
+                </div>
+                <p className={'text-xs shrink-0'}>
+                  Model {prediction.model_version} - Gradient Boost - Neuronal Net Ensemble
                 </p>
               </div>
-              <p className={'text-xs shrink-0'}>
-                Model {prediction.model_version} - Gradient Boost - Neuronal Net Ensemble
-              </p>
             </div>
-          </div>
 
-          <button
-            className={
-              'mt-4 w-full bg-accent/40 border border-accent/80 text-foreground rounded-md py-2 flex items-center justify-center gap-2 text-sm'
-            }
-            onClick={() => setIsOpen((prev) => !prev)}
-          >
-            <ChartIcon className={'h-4 w-4 text-primary'} />
-            <p>Market Breakdown</p>
-          </button>
-        </div>
-        <div className={`flex-col mt-12 gap-4 w-full ${isOpen ? 'flex' : 'hidden'}`}>
-          <div className={'flex justify-between text-secondary-foreground/50 text-xs'}>
-            <div className={'flex items-center gap-2'}>
-              <BrainIcon className={'h-4 w-4 text-primary'} />
-              <p>MARKET ANALYSIS</p>
-            </div>
-            <p className={'hidden'}>EV = (model prob x book odds) - 1</p>
+            <button
+              className={
+                'mt-4 p-4 max-h-12 lg:justify-self-end bg-accent/40 border border-accent/80 text-foreground rounded-md py-2 flex items-center justify-center gap-2 text-sm'
+              }
+              onClick={() => setIsOpened((prev) => !prev)}
+            >
+              <ChartIcon className={'h-4 w-4 text-primary'} />
+              <p>Market Breakdown</p>
+              <ShortArrowIcon className={`h-4 w-4 ${isOpened ? 'rotate-180' : ''}`} />
+            </button>
           </div>
-          {markets.map(({ key, market, ev, odds, prob, kelly }) => (
-            <MarketBlock
-              key={key}
-              market={market}
-              ev={ev}
-              odds={odds}
-              prob={prob}
-              isBest={key === bestBet}
-              kelly={kelly}
-            />
-          ))}
         </div>
+        <MatchCardContainer
+          markets={markets}
+          prediction={prediction}
+          isOpened={isOpened}
+          bestBet={bestBet}
+        />
       </div>
     </div>
   )

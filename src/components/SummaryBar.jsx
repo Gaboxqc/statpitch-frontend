@@ -1,37 +1,14 @@
 import { ArrowIcon, ChartIcon, InfoIcon, TargetIcon, ThunderIcon } from '../assets/icons/index.js'
-
-const items = [
-  {
-    icon: <ChartIcon className={'text-accent'} />,
-    label: 'Predictions today',
-    value: '6',
-    color: 'text-foreground',
-  },
-  {
-    icon: <ArrowIcon className={'text-accent'} />,
-    label: 'High confidence',
-    value: '2',
-    color: 'text-foreground',
-  },
-  {
-    icon: <TargetIcon className={'text-accent'} />,
-    label: '30d model accuracy',
-    value: '71.4%',
-    color: 'text-primary',
-  },
-  {
-    icon: <ThunderIcon className={'text-accent'} />,
-    label: '30d ROI',
-    value: '+8.3%',
-    color: 'text-primary',
-  },
-]
+import useStats from '../hooks/useStats.js'
+import { buildStats } from '../utils/buildStats.jsx'
 
 function SummaryBar() {
+  const { stats, loading, error } = useStats()
+  const items = buildStats(stats)
   return (
     <div
       className={
-        'flex items-center py-2 px-2 bg-accent/20 border-y border-secondary-foreground/20 overflow-hidden'
+        'flex items-center py-2 px-2 bg-accent/20 border-y border-secondary-foreground/20 overflow-hidden mt-14'
       }
     >
       <div
@@ -39,7 +16,10 @@ function SummaryBar() {
       >
         <div className={'flex w-full overflow-hidden lg:hidden'}>
           {[0, 1].map((i) => (
-            <ul key={i} className={'flex shrink-0 animate-marquee gap-6 text-sm text-zinc-500'}>
+            <ul
+              key={i}
+              className={'flex shrink-0 animate-marquee gap-6 text-sm text-zinc-500 px-4'}
+            >
               {items.map(({ icon, label, value, color }) => (
                 <li key={label} className={'flex items-center gap-2 shrink-0'}>
                   {icon}

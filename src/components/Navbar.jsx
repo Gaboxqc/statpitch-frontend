@@ -1,8 +1,12 @@
 import { LogoIcon, MenuIcon } from '../assets/icons/index.js'
 
-function Header() {
+function Navbar() {
   return (
-    <header className={'container mx-auto bg-background py-2'}>
+    <header
+      className={
+        'container mx-auto bg-background h-13 py-1 fixed top-0 w-full z-50 left-1/2 -translate-x-1/2'
+      }
+    >
       <nav className={'flex text-foreground items-center justify-between mx-2 md:mx-0 text-lg'}>
         <div className={'flex items-center font-bold gap-2'}>
           <LogoIcon className={'h-6 w-6 text-primary'} />
@@ -41,4 +45,4 @@ function Header() {
   )
 }
 
-export { Header }
+export { Navbar }
