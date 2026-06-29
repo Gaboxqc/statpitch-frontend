@@ -1,7 +1,7 @@
 function confRingColor(c) {
   if (c >= 80) return '#10b981'
   if (c >= 70) return '#34d399'
-  return '#f59e0b'
+  return 'oklch(75% 0.183 55.934)'
 }
 
 function confTextClass(c) {
