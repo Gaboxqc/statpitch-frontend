@@ -1,4 +1,4 @@
-import BasicBarChart from './ui/BasicBarChart.jsx'
+import BasicBarChart from './BasicBarChart.jsx'
 
 function getEVColor(EV) {
   if (EV > 0) return 'text-primary'
@@ -72,7 +72,7 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }) {
                 Implied <span>{((1 / odds) * 100).toFixed(2)}%</span>
               </p>
               <p>
-                Model <span>{prob.toFixed(2)}%</span>
+                Model <span>{(prob * 100).toFixed(2)}%</span>
               </p>
             </div>
           </div>

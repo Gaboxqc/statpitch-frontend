@@ -1,4 +1,4 @@
-import MatchCard from './MatchCard.jsx'
+import MatchCard from './ui/MatchCard.jsx'
 import usePredictions from '../hooks/usePredictions.js'
 
 function PredictionsSection() {
@@ -16,7 +16,7 @@ function PredictionsSection() {
     return <p className={'text-center mt-8'}>No more predictions available.</p>
 
   return (
-    <div className={'mt-12 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
+    <div className={'mt-12 mb-100 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
       <h3 className={'text-foreground text-lg font-bold ml-2'}>
         <span className={'text-secondary-foreground'}>{predictions.length}</span> Predictions
       </h3>

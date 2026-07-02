@@ -1,11 +1,10 @@
-import DonutChart from './ui/DonutChart.jsx'
-import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../assets/icons/index.js'
-import BarChart from './ui/BarChart.jsx'
-import useBestPrediction from '../hooks/useBestPrediction.js'
-import MarketBlock from './MarketBlock.jsx'
-import { buildMarkets } from '../utils/buildMarkets.js'
+import DonutChart from './DonutChart.jsx'
+import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index.js'
+import BarChart from './BarChart.jsx'
+import useBestPrediction from '../../hooks/useBestPrediction.js'
+import { buildMarkets } from '../../utils/buildMarkets.js'
 import { useState } from 'react'
-import MatchCardContainer from './MatchCardContainer.jsx'
+import MatchCardContainer from '../MatchCardContainer.jsx'
 
 function MatchDayCard() {
   const { prediction, loading, error } = useBestPrediction({ limit: 10, offset: 0 })
@@ -76,7 +75,7 @@ function MatchDayCard() {
               <div className={'w-20 h-20 md:w-40 md:h-40'}>
                 <img
                   src={prediction.home_flag_url}
-                  alt='Home flag'
+                  alt='HomePage flag'
                   className={'w-full h-full object-contain rounded-sm'}
                 />
               </div>

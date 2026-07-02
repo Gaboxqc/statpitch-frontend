@@ -1,6 +1,12 @@
-import { ArrowIcon, ChartIcon, InfoIcon, TargetIcon, ThunderIcon } from '../assets/icons/index.js'
-import useStats from '../hooks/useStats.js'
-import { buildStats } from '../utils/buildStats.jsx'
+import {
+  ArrowIcon,
+  ChartIcon,
+  InfoIcon,
+  TargetIcon,
+  ThunderIcon,
+} from '../../assets/icons/index.js'
+import useStats from '../../hooks/useStats.js'
+import { buildStats } from '../../utils/buildStats.jsx'
 
 function SummaryBar() {
   const { stats, loading, error } = useStats()
@@ -31,7 +37,6 @@ function SummaryBar() {
           ))}
         </div>
 
-        {/* Desktop: static */}
         <ul className={'hidden lg:flex w-full text-zinc-500 gap-6 text-sm'}>
           {items.map(({ icon, label, value, color }) => (
             <li key={label} className={'flex items-center gap-2 shrink-0'}>

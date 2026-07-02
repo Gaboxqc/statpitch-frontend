@@ -1,8 +1,8 @@
-import DonutChart from './ui/DonutChart.jsx'
-import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../assets/icons/index.js'
+import DonutChart from './DonutChart.jsx'
+import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index.js'
 import { useState } from 'react'
-import { buildMarkets } from '../utils/buildMarkets.js'
-import MatchCardContainer from './MatchCardContainer.jsx'
+import { buildMarkets } from '../../utils/buildMarkets.js'
+import MatchCardContainer from '../MatchCardContainer.jsx'
 
 function MatchCard({ prediction }) {
   const [isOpened, setIsOpened] = useState(false)

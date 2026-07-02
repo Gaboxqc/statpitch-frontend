@@ -1,4 +1,4 @@
-import { FilterIcon } from '../assets/icons/index.js'
+import { FilterIcon } from '../../assets/icons/index.js'
 
 function FiltersBar() {
   return (
