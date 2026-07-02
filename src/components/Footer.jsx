@@ -9,10 +9,14 @@ function Footer() {
       }
     >
       <div className={'border-t border-secondary-foreground/10 pt-4 w-screen self-center'}>
-        <div className={'container mx-auto flex flex-col justify-between items-center lg:flex-row'}>
+        <div
+          className={
+            'container mx-auto flex flex-col justify-between items-center lg:flex-row pb-4'
+          }
+        >
           <p
             className={
-              'text-xs text-secondary-foreground/60 lg:shrink-0 text-start pb-4 px-4 lg:px-0 lg:max-w-10/12'
+              'text-xs text-secondary-foreground/60 lg:shrink-0 text-start px-4 lg:px-0 lg:max-w-10/12 mb-4 lg:mb-0'
             }
           >
             <span className={'text-secondary-foreground'}>For informational purposes only.</span>{' '}
