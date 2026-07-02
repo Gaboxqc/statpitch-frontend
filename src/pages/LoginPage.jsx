@@ -1,4 +1,4 @@
-import { BrainIcon, LogoIcon } from '../assets/icons/index.js'
+import { BrainIcon, GithubIcon, GoogleIcon, LogoIcon } from '../assets/icons/index.js'
 import { useState } from 'react'
 import { Link } from 'react-router'
 
@@ -68,7 +68,7 @@ function LoginPage() {
 
           <div className={'flex flex-col gap-4 border-t border-accent/50 pt-12'}>
             <p className={'text-sm text-foreground/40'}>
-              "PredictIX changed how I approach value betting. The ML edge indicators are genuinely
+              "StatPitch changed how I approach value betting. The ML edge indicators are genuinely
               different from anything else out there."
             </p>
             <div className={'flex items-center gap-2'}>
@@ -85,8 +85,8 @@ function LoginPage() {
       </div>
 
       <div className={'flex items-center justify-center w-full lg:w-4/6'}>
-        <div className={'w-90 flex flex-col justify-center gap-8 h-screen '}>
-          <div className={'flex items-center font-bold gap-2 self-center lg:hidden'}>
+        <div className={'w-90 flex flex-col justify-center gap-8 h-full '}>
+          <div className={'flex items-center font-bold gap-2 self-center mt-14 lg:hidden'}>
             <LogoIcon className={'h-10 w-8 text-primary'} />
             <p className={'text-2xl'}>
               Stat<span className={'text-primary'}>Pitch</span>
@@ -176,7 +176,7 @@ function LoginPage() {
                 'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30'
               }
             >
-              <img src={'/google.svg'} alt={'google'} className={'h-4 w-4'} />
+              <GoogleIcon className={'h-4 w-4'} />
               Google
             </button>
             <button
@@ -184,7 +184,7 @@ function LoginPage() {
                 'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30'
               }
             >
-              <img src={'/apple.svg'} alt={'apple'} className={'h-4 w-4'} />
+              <GithubIcon className={'h-4 w-4'} />
               Github
             </button>
           </div>

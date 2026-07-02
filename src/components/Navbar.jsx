@@ -4,6 +4,9 @@ import { Link, NavLink } from 'react-router'
 
 function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
+  const linkBase = 'py-1.5 px-2 rounded-sm text-sm'
+  const activeClass = 'bg-accent text-foreground'
+  const inactiveClass = 'text-secondary-foreground'
   return (
     <header
       className={'w-full bg-background h-fit py-1 fixed top-0 z-50 left-1/2 -translate-x-1/2'}
@@ -19,10 +22,17 @@ function Navbar() {
           </div>
 
           <div className={'hidden md:flex gap-4 items-center'}>
-            <NavLink to={'/statpitch'} className={'bg-accent py-1.5 px-2 rounded-sm text-sm'}>
+            <NavLink
+              to={'/statpitch'}
+              end
+              className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
+            >
               Home
             </NavLink>
-            <NavLink to={'pricing'} className={' p-1.5 rounded-sm text-sm'}>
+            <NavLink
+              to={'pricing'}
+              className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
+            >
               Pricing
             </NavLink>
           </div>
@@ -55,16 +65,19 @@ function Navbar() {
         >
           <NavLink
             to={'/statpitch'}
-            key={'/statpitch'}
-            className={'text-foreground bg-accent w-11/12 p-2 rounded-sm'}
+            end
+            className={({ isActive }) =>
+              `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
+            }
             onClick={() => setIsOpened(false)}
           >
             Home
           </NavLink>
           <NavLink
             to={'pricing'}
-            key={'pricing'}
-            className={'text-secondary-foreground w-11/12 p-2 rounded-sm'}
+            className={({ isActive }) =>
+              `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
+            }
             onClick={() => setIsOpened(false)}
           >
             Pricing

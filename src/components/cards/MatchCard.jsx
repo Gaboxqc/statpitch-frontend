@@ -1,4 +1,4 @@
-import DonutChart from './DonutChart.jsx'
+import DonutChart from '../ui/DonutChart.jsx'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index.js'
 import { useState } from 'react'
 import { buildMarkets } from '../../utils/buildMarkets.js'

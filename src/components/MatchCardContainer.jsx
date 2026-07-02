@@ -1,5 +1,5 @@
 import { BrainIcon } from '../assets/icons/index.js'
-import MarketBlock from './ui/MarketBlock.jsx'
+import MarketBlock from './MarketBlock.jsx'
 
 function MatchCardContainer({ markets, bestBet, isOpened }) {
   return (

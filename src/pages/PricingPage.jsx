@@ -1,7 +1,7 @@
 import { ArrowIcon, BrainIcon, ChartIcon, ThunderIcon } from '../assets/icons/index.js'
-import PricingCard from '../components/ui/PricingCard.jsx'
+import PricingCard from '../components/cards/PricingCard.jsx'
 import { pricingPlans } from '../utils/pricingPlans.js'
-import ExpandableCard from '../components/ui/ExpandableCard.jsx'
+import ExpandableCard from '../components/ExpandableCard.jsx'
 import { Link } from 'react-router'
 
 function PricingPage() {
@@ -103,7 +103,7 @@ function PricingPage() {
           Start free — no card needed. Upgrade when the edge speaks for itself.
         </p>
         <Link
-          to={''}
+          to={'/statpitch/login'}
           className={'p-3 bg-primary text-background rounded-md flex items-center gap-2 my-4'}
         >
           <BrainIcon className={'h-4 w-4 text-background'} />

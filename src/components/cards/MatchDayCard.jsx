@@ -1,6 +1,6 @@
-import DonutChart from './DonutChart.jsx'
+import DonutChart from '../ui/DonutChart.jsx'
 import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index.js'
-import BarChart from './BarChart.jsx'
+import BarChart from '../ui/BarChart.jsx'
 import useBestPrediction from '../../hooks/useBestPrediction.js'
 import { buildMarkets } from '../../utils/buildMarkets.js'
 import { useState } from 'react'
@@ -27,7 +27,9 @@ function MatchDayCard() {
       }
 
   if (loading)
-    return <div className={'h-120 w-90 mt-4 mx-auto bg-secondary animate-pulse rounded-md'}></div>
+    return (
+      <div className={'h-120 w-10/12 mt-4 mx-auto bg-secondary animate-pulse rounded-md'}></div>
+    )
   if (error) return <p>Error: {error.message}</p>
   if (!prediction || prediction.length === 0) return <p>No prediction available.</p>
 

@@ -14,7 +14,7 @@ function SummaryBar() {
   return (
     <div
       className={
-        'flex items-center py-2 px-2 bg-accent/20 border-y border-secondary-foreground/20 overflow-hidden mt-14'
+        'flex items-center py-2 px-2 bg-accent/20 border-y border-secondary-foreground/20 mt-14'
       }
     >
       <div
@@ -47,14 +47,27 @@ function SummaryBar() {
           ))}
         </ul>
 
-        <button
-          className={
-            'hidden lg:flex items-center gap-2 text-secondary-foreground/50 text-sm bg-accent/50 py-1 px-2 rounded-md shrink-0'
-          }
-        >
-          <InfoIcon className={'h-4 w-4'} />
-          DISCLAIMER
-        </button>
+        <div className={'relative flex items-center gap-2 group'}>
+          <button
+            className={
+              'hidden lg:flex items-center gap-2 text-secondary-foreground/50 text-sm bg-accent/50 py-1 px-2 rounded-md shrink-0 cursor-pointer'
+            }
+          >
+            <InfoIcon className={'h-4 w-4'} />
+            DISCLAIMER
+          </button>
+          <div
+            className={
+              'text-xs bg-secondary p-2 w-100 rounded-sm absolute top-8 right-0 border border-secondary-foreground/10 hidden group-hover:block'
+            }
+          >
+            <p>For informational purposes only.</p>
+            <p className={'text-xs text-foreground/50 mt-2'}>
+              PredictIX does not facilitate or endorse gambling. All outputs are statistical models
+              — not predictions of future results.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import BasicBarChart from './BasicBarChart.jsx'
+import BasicBarChart from './ui/BasicBarChart.jsx'
 
 function getEVColor(EV) {
   if (EV > 0) return 'text-primary'
