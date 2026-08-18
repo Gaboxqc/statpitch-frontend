@@ -3,12 +3,11 @@ import { getBestPrediction } from '../services/bestPrediction.js'
 
 const useBestPrediction = ({ offset = 0, limit = 10 } = {}) => {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['prediction', offset, limit],
+    queryKey: ['bestPrediction', offset, limit],
     queryFn: ({ signal }) => getBestPrediction({ offset, limit }, signal),
-    retry: 2,
   })
 
-  return { prediction: data ?? [], loading: isLoading, error: error?.message ?? null }
+  return { prediction: data ?? null, loading: isLoading, error }
 }
 
 export default useBestPrediction

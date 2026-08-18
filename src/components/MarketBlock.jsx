@@ -1,4 +1,5 @@
 import BasicBarChart from './ui/BasicBarChart.jsx'
+import { formatDecimal, formatFraction, formatPercent, toPercentValue } from '../utils/format.js'
 
 function getEVColor(EV) {
   if (EV > 0) return 'text-primary'
@@ -16,9 +17,7 @@ function getKellyRender(kelly) {
         }
       >
         CONSIDER{' '}
-        <span className={'text-primary font-bold'}>
-          Stake {kelly.toFixed(2) * 100}% of bankroll
-        </span>
+        <span className={'text-primary font-bold'}>Stake {formatFraction(kelly)} of bankroll</span>
       </p>
     )
 }
@@ -37,7 +36,7 @@ function getMarketNameRender(market, isBest) {
 }
 
 function MarketBlock({ market, prob, ev, odds, kelly, isBest }) {
-  if (!prob || !ev || !odds) {
+  if (prob == null || ev == null || odds == null) {
     return null
   }
 
@@ -49,7 +48,7 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }) {
         <div className={'flex flex-col gap-4 w-full'}>
           <div className={'flex justify-between items-center gap-2 text-sm'}>
             {getMarketNameRender(market, isBest)}
-            <p className={`${getEVColor(ev)} font-bold`}>{ev.toFixed(2)}% EV</p>
+            <p className={`${getEVColor(ev)} font-bold`}>{formatPercent(ev)} EV</p>
           </div>
           {getKellyRender(kelly)}
           <div className={'flex items-center gap-2 text-xs text-secondary-foreground/50'}>
@@ -57,22 +56,22 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }) {
               BOOK <span className={'text-foreground'}>{odds}</span> |{' '}
             </p>
             <p>
-              FAIR ODDS <span className={'text-foreground'}>{(1 / prob).toFixed(2)}</span> |{' '}
+              FAIR ODDS <span className={'text-foreground'}>{formatDecimal(1 / prob)}</span> |{' '}
             </p>
             <p>
-              MODEL <span className={'text-foreground'}>{(prob * 100).toFixed(2)}%</span>{' '}
+              MODEL <span className={'text-foreground'}>{formatFraction(prob)}</span>{' '}
             </p>
           </div>
           <div className={'flex flex-col gap-2'}>
-            <BasicBarChart prob={prob.toFixed(2) * 100} />
+            <BasicBarChart prob={toPercentValue(prob)} />
             <div
               className={'flex justify-between items-center text-xs text-secondary-foreground/50'}
             >
               <p>
-                Implied <span>{((1 / odds) * 100).toFixed(2)}%</span>
+                Implied <span>{formatFraction(1 / odds)}</span>
               </p>
               <p>
-                Model <span>{(prob * 100).toFixed(2)}%</span>
+                Model <span>{formatFraction(prob)}</span>
               </p>
             </div>
           </div>
