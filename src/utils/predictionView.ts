@@ -1,10 +1,10 @@
 import { buildMarkets } from './buildMarkets'
 import { toPercentValue } from './format'
-import type { Market, Prediction } from '../types/api'
+import type { Fixture, Market } from '../types/api'
 
 export interface PredictionView {
   markets: Market[]
-  bestBet: Prediction['best_overall_bet']
+  bestBet: Fixture['best_overall_bet']
   bestMarket: Market | undefined
   winner: { isHome: boolean; name: string; prob: number }
 }
@@ -14,7 +14,7 @@ export interface PredictionView {
  * A plain function rather than a hook, so callers can run it after their
  * loading/error guards without breaking the rules of hooks.
  */
-export function buildPredictionView(prediction: Prediction): PredictionView {
+export function buildPredictionView(prediction: Fixture): PredictionView {
   const markets = buildMarkets(prediction)
   const bestBet = prediction.best_overall_bet
   const bestMarket = markets.find((market) => market.key === bestBet)

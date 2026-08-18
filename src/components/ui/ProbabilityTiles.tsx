@@ -1,5 +1,5 @@
 import { formatFraction } from '../../utils/format'
-import type { Prediction } from '../../types/api'
+import type { Fixture } from '../../types/api'
 import type { PredictionView } from '../../utils/predictionView'
 
 const VARIANTS = {
@@ -14,7 +14,7 @@ const VARIANTS = {
 }
 
 interface ProbabilityTilesProps {
-  prediction: Prediction
+  prediction: Fixture
   winner: PredictionView['winner']
   variant?: keyof typeof VARIANTS
   className?: string

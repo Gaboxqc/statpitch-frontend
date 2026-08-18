@@ -1,10 +1,10 @@
 import MatchCard from './MatchCard'
-import { usePredictions } from '../../hooks/queries'
+import { useFixtures } from '../../hooks/queries'
 import QueryError from '../ui/QueryError'
 import { DISCLAIMER, MODEL } from '../../constants/content'
 
 function PredictionsSection() {
-  const { predictions, loading, error } = usePredictions()
+  const { fixtures: predictions, loading, error } = useFixtures({ day: 'today' })
 
   if (loading)
     return (
@@ -31,7 +31,7 @@ function PredictionsSection() {
         }
       >
         <p className={'text-xs text-secondary-foreground/60'}>
-          Model {MODEL.fallbackVersion} · {MODEL.ensemble}
+          Model {predictions[0]?.model_version ?? MODEL.fallbackVersion} · {MODEL.ensemble}
         </p>
         <p className={'text-xs text-secondary-foreground/60'}>{DISCLAIMER.short}</p>
       </div>

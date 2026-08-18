@@ -1,6 +1,11 @@
-import type { Market, Prediction } from '../types/api'
+import type { Fixture, Market } from '../types/api'
 
-export function buildMarkets(prediction: Prediction): Market[] {
+/**
+ * The API publishes only the `over_*` probabilities — the unders are their
+ * complement — but it does quote odds, EV and Kelly for both sides. So the
+ * under rows carry a derived probability against a real price.
+ */
+export function buildMarkets(prediction: Fixture): Market[] {
   return [
     {
       key: 'home_win',
@@ -71,7 +76,7 @@ export function buildMarkets(prediction: Prediction): Market[] {
       market: 'Under 1.5 Goals',
       ev: prediction.ev_under_1_5,
       odds: prediction.odds_under_1_5,
-      prob: prediction.under_1_5,
+      prob: 1 - prediction.over_1_5,
       kelly: prediction.kelly_under_1_5,
     },
     {
@@ -79,7 +84,7 @@ export function buildMarkets(prediction: Prediction): Market[] {
       market: 'Under 2.5 Goals',
       ev: prediction.ev_under_2_5,
       odds: prediction.odds_under_2_5,
-      prob: prediction.under_2_5,
+      prob: 1 - prediction.over_2_5,
       kelly: prediction.kelly_under_2_5,
     },
     {
@@ -87,7 +92,7 @@ export function buildMarkets(prediction: Prediction): Market[] {
       market: 'Under 3.5 Goals',
       ev: prediction.ev_under_3_5,
       odds: prediction.odds_under_3_5,
-      prob: prediction.under_3_5,
+      prob: 1 - prediction.over_3_5,
       kelly: prediction.kelly_under_3_5,
     },
   ]

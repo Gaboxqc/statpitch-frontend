@@ -1,6 +1,7 @@
 import {
   ArrowIcon,
   ChartIcon,
+  ClockIcon,
   InfoIcon,
   TargetIcon,
   ThunderIcon,
@@ -13,17 +14,18 @@ import type { StatItemData } from '../../utils/buildStats'
 import type { FunctionComponent, SVGProps } from 'react'
 
 const STAT_ICONS: Record<string, FunctionComponent<SVGProps<SVGSVGElement>>> = {
-  predictionsToday: ChartIcon,
+  fixturesToday: ChartIcon,
+  fixturesTomorrow: ClockIcon,
   highConfidence: ArrowIcon,
   valueBets: TrophyIcon,
-  accuracy30d: TargetIcon,
-  roi30d: ThunderIcon,
+  roi1x2: TargetIcon,
+  roiOverall: ThunderIcon,
 }
 
-function StatItem({ id, label, value, color }: StatItemData) {
-  const Icon = STAT_ICONS[id]
+function StatItem({ id, label, value, color, hint }: StatItemData) {
+  const Icon = STAT_ICONS[id] ?? ChartIcon
   return (
-    <li className={'flex items-center gap-2 shrink-0'}>
+    <li className={'flex items-center gap-2 shrink-0'} title={hint}>
       <Icon className={'text-accent'} />
       <p className={'text-xs'}>{label}</p>
       <p className={`text-md font-bold ${color}`}>{value}</p>

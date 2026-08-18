@@ -2,13 +2,15 @@ import ProbabilityBar from '../ui/ProbabilityBar'
 import type { Market } from '../../types/api'
 import { formatDecimal, formatFraction, formatPercent, toPercentValue } from '../../utils/format'
 
-function getEVColor(EV: number) {
-  if (EV > 0) return 'text-primary'
+function getEVColor(EV: number | null) {
+  if (EV !== null && EV > 0) return 'text-primary'
   return 'text-secondary-foreground/50'
 }
 
-function getKellyRender(kelly: number) {
-  if (kelly <= 0)
+// A null Kelly is not missing data: the API leaves it null when the edge failed
+// to clear the minimum, which is the same outcome as a non-positive one.
+function getKellyRender(kelly: number | null) {
+  if (kelly === null || kelly <= 0)
     return <p className={'text-xs text-secondary-foreground/30'}>→ Skip | No positive edge</p>
   if (kelly > 0)
     return (

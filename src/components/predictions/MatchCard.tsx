@@ -7,9 +7,9 @@ import { buildPredictionView } from '../../utils/predictionView'
 import { formatDecimal, formatPercent } from '../../utils/format'
 import { formatMatchTime, toISOString } from '../../utils/datetime'
 import { DEFAULT_COMPETITION } from '../../constants/content'
-import type { Prediction } from '../../types/api'
+import type { Fixture } from '../../types/api'
 
-function MatchCard({ prediction }: { prediction: Prediction }) {
+function MatchCard({ prediction }: { prediction: Fixture }) {
   const [isOpened, setIsOpened] = useState(false)
   const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
   const marketsId = useId()
@@ -51,8 +51,8 @@ function MatchCard({ prediction }: { prediction: Prediction }) {
           <div className={'flex flex-col gap-2 ml-4 w-full'}>
             <div className={'flex items-center gap-2'}>
               <img
-                src={prediction.home_flag_url}
-                alt={`${prediction.home_team} flag`}
+                src={prediction.home_crest_url ?? undefined}
+                alt={`${prediction.home_team} crest`}
                 className={'w-6 h-6 object-contain rounded-sm'}
               />
 
@@ -63,8 +63,8 @@ function MatchCard({ prediction }: { prediction: Prediction }) {
             </div>
             <div className={'flex items-center gap-2'}>
               <img
-                src={prediction.away_flag_url}
-                alt={`${prediction.away_team} flag`}
+                src={prediction.away_crest_url ?? undefined}
+                alt={`${prediction.away_team} crest`}
                 className={'w-6 h-6 object-contain rounded-sm'}
               />
 
