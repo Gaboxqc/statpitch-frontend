@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import MatchDayCard from './MatchDayCard'
 import { renderWithQuery } from '../../test/renderWithQuery'
-import { pickedFixtureFixture } from '../../test/fixtures'
+import { fixtureFixture, pickedFixtureFixture, unpricedFixtureFixture } from '../../test/fixtures'
 import * as service from '../../services/predictions'
 
 afterEach(() => vi.restoreAllMocks())
@@ -24,6 +24,31 @@ describe('MatchDayCard', () => {
     expect(screen.getAllByText('72.83%').length).toBeGreaterThan(0)
     // Kelly is a 0-1 fraction: scaled before rounding, not after.
     expect(screen.getByText('0.49%')).toBeInTheDocument()
+  })
+
+  // Regression: EV was formatted as though it were already a percentage, so a
+  // +3.20% edge rendered as "+0.03%".
+  it('scales EV from the fraction the API sends', async () => {
+    vi.spyOn(service, 'getBestToday').mockResolvedValue(pickedFixtureFixture)
+    renderWithQuery(<MatchDayCard />)
+
+    expect(await screen.findByText('+3.20%')).toBeInTheDocument()
+  })
+
+  it('explains a priced fixture that produced no selection', async () => {
+    vi.spyOn(service, 'getBestToday').mockResolvedValue(fixtureFixture)
+    renderWithQuery(<MatchDayCard />)
+
+    expect(await screen.findByText(/no selection cleared the minimum stake/i)).toBeInTheDocument()
+  })
+
+  it('distinguishes an unpriced fixture from one with no edge', async () => {
+    vi.spyOn(service, 'getBestToday').mockResolvedValue(unpricedFixtureFixture)
+    renderWithQuery(<MatchDayCard />)
+
+    expect(await screen.findByText(/no odds matched this fixture/i)).toBeInTheDocument()
+    // A matchday placeholder must never render as a specific kick-off time.
+    expect(screen.getByText(/time TBC/i)).toBeInTheDocument()
   })
 
   it('exposes the market breakdown as a keyboard-operable disclosure', async () => {
