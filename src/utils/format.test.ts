@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { formatCount, formatDecimal, formatFraction, formatPercent, toPercentValue } from './format'
+import {
+  formatCount,
+  formatDecimal,
+  formatFraction,
+  formatPercent,
+  formatSignedFraction,
+  formatSignedPercent,
+  toPercentValue,
+} from './format'
 
 describe('formatFraction', () => {
   // Regression: the old code did `kelly.toFixed(2) * 100`, rounding before scaling.
@@ -27,6 +35,35 @@ describe('formatPercent', () => {
 
   it('honours the decimals argument', () => {
     expect(formatPercent(69.24, 1)).toBe('69.2%')
+  })
+})
+
+describe('formatSignedFraction', () => {
+  // Regression: EV was rendered with formatPercent, so a +6.17% edge showed as "0.06%".
+  it('scales an EV fraction to a percentage', () => {
+    expect(formatSignedFraction(0.0617)).toBe('+6.17%')
+    expect(formatSignedFraction(-0.0562)).toBe('-5.62%')
+  })
+
+  it('marks a zero edge as non-negative rather than dropping the sign', () => {
+    expect(formatSignedFraction(0)).toBe('+0.00%')
+  })
+
+  it('renders a placeholder for an unquoted market', () => {
+    expect(formatSignedFraction(null)).toBe('—')
+  })
+})
+
+describe('formatSignedPercent', () => {
+  // roi_pct is the one rate the API sends already scaled.
+  it('treats the value as already scaled', () => {
+    expect(formatSignedPercent(45, 1)).toBe('+45.0%')
+    expect(formatSignedPercent(-11.25, 1)).toBe('-11.3%')
+  })
+
+  it('distinguishes an unmeasured window from a break-even one', () => {
+    expect(formatSignedPercent(null)).toBe('—')
+    expect(formatSignedPercent(0)).toBe('+0.00%')
   })
 })
 

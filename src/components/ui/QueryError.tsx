@@ -1,11 +1,24 @@
-function QueryError({ error, className = '' }: { error: Error | null; className?: string }) {
+import { describeError, isPricingUnavailable } from '../../services/api'
+
+/**
+ * The API distinguishes a dead upstream (502) from an exhausted odds quota
+ * (503), and the two are not equally bad — the second leaves predictions
+ * intact. Saying "we couldn't load this" to both throws that away.
+ */
+function QueryError({ error, className = '' }: { error: unknown; className?: string }) {
+  const degraded = isPricingUnavailable(error)
+
   return (
     <div
-      role='alert'
-      className={`flex flex-col gap-1 rounded-md border border-chart-5/30 bg-chart-5/10 px-4 py-3 text-center ${className}`}
+      role={'alert'}
+      className={`flex flex-col gap-1 rounded-md border px-4 py-3 text-center ${
+        degraded ? 'border-secondary-foreground/20 bg-accent/20' : 'border-chart-5/30 bg-chart-5/10'
+      } ${className}`}
     >
-      <p className={'text-sm text-foreground'}>We couldn&apos;t load this data.</p>
-      <p className={'text-xs text-secondary-foreground/60'}>{error?.message}</p>
+      <p className={'text-sm text-foreground'}>
+        {degraded ? 'Odds are unavailable right now.' : "We couldn't load this data."}
+      </p>
+      <p className={'text-xs text-secondary-foreground/60'}>{describeError(error)}</p>
     </div>
   )
 }

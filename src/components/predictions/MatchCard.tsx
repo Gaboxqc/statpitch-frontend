@@ -3,15 +3,17 @@ import DonutChart from '../ui/DonutChart'
 import ProbabilityTiles from '../ui/ProbabilityTiles'
 import MarketList from './MarketList'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
+import TeamCrest from '../ui/TeamCrest'
 import { buildPredictionView } from '../../utils/predictionView'
-import { formatDecimal, formatPercent } from '../../utils/format'
-import { formatMatchTime, toISOString } from '../../utils/datetime'
+import { formatDecimal, formatSignedFraction } from '../../utils/format'
+import { describeKickoff } from '../../utils/datetime'
 import { DEFAULT_COMPETITION } from '../../constants/content'
 import type { Fixture } from '../../types/api'
 
 function MatchCard({ prediction }: { prediction: Fixture }) {
   const [isOpened, setIsOpened] = useState(false)
   const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
+  const kickoff = describeKickoff(prediction)
   const marketsId = useId()
   const toggle = () => setIsOpened((prev) => !prev)
 
@@ -34,15 +36,25 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
             >
               <ThunderIcon className={'h-3 w-3 text-primary'} />
               <p>
-                {bestMarket?.market} {formatPercent(bestMarket?.ev)} EV
+                {bestMarket?.market} {formatSignedFraction(bestMarket?.ev)} EV
               </p>
             </div>
+            {/* No odds event matched, so there is a prediction but nothing to bet against. */}
+            {!prediction.odds_coverage && (
+              <p
+                className={
+                  'p-1 mr-1 shrink-0 rounded-sm text-xs text-secondary-foreground/60 border border-secondary-foreground/20'
+                }
+              >
+                Prediction only
+              </p>
+            )}
             <ClockIcon className={'h-4 w-4 text-secondary-foreground/60'} />
             <time
-              dateTime={toISOString(prediction.commence_time)}
-              className={'text-xs text-secondary-foreground/60'}
+              dateTime={kickoff.dateTime}
+              className={`text-xs ${kickoff.provisional ? 'text-secondary-foreground/40 italic' : 'text-secondary-foreground/60'}`}
             >
-              {formatMatchTime(prediction.commence_time)}
+              {kickoff.text}
             </time>
           </div>
         </div>
@@ -50,11 +62,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
         <div className={'flex items-center justify-between w-full'}>
           <div className={'flex flex-col gap-2 ml-4 w-full'}>
             <div className={'flex items-center gap-2'}>
-              <img
-                src={prediction.home_crest_url ?? undefined}
-                alt={`${prediction.home_team} crest`}
-                className={'w-6 h-6 object-contain rounded-sm'}
-              />
+              <TeamCrest name={prediction.home_team} url={prediction.home_crest_url} />
 
               <p className={'text-sm w-min'}>{prediction.home_team}</p>
               <p className='text-xs text-secondary-foreground shrink-0'>
@@ -62,11 +70,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
               </p>
             </div>
             <div className={'flex items-center gap-2'}>
-              <img
-                src={prediction.away_crest_url ?? undefined}
-                alt={`${prediction.away_team} crest`}
-                className={'w-6 h-6 object-contain rounded-sm'}
-              />
+              <TeamCrest name={prediction.away_team} url={prediction.away_crest_url} />
 
               <p className={'text-sm'}>{prediction.away_team}</p>
               <p className='text-xs text-secondary-foreground shrink-0'>
