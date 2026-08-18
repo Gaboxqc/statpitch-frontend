@@ -7,7 +7,7 @@ import TeamCrest from '../ui/TeamCrest'
 import { buildPredictionView } from '../../utils/predictionView'
 import { formatDecimal, formatSignedFraction } from '../../utils/format'
 import { describeKickoff } from '../../utils/datetime'
-import { DEFAULT_COMPETITION } from '../../constants/content'
+import { competitionName } from '../../constants/competitions'
 import type { Fixture } from '../../types/api'
 
 function MatchCard({ prediction }: { prediction: Fixture }) {
@@ -28,7 +28,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
     >
       <div className={'flex flex-col items-center justify-between w-full m-2 gap-2'}>
         <div className={'flex items-center px-2 self-end w-full justify-between lg:px-4'}>
-          <p>{DEFAULT_COMPETITION}</p>
+          <p>{competitionName(prediction.competition_id)}</p>
 
           <div className={'flex items-center gap-1'}>
             <div

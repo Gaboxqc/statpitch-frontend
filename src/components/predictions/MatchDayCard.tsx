@@ -10,7 +10,8 @@ import MarketList from './MarketList'
 import QueryError from '../ui/QueryError'
 import TeamCrest from '../ui/TeamCrest'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
-import { DEFAULT_COMPETITION, MODEL } from '../../constants/content'
+import { MODEL } from '../../constants/content'
+import { competitionName } from '../../constants/competitions'
 import { describeKickoffLong } from '../../utils/datetime'
 
 function MatchDayCard() {
@@ -62,7 +63,7 @@ function MatchDayCard() {
               }
             >
               <div>
-                <p className={'text-xs'}>{DEFAULT_COMPETITION}</p>
+                <p className={'text-xs'}>{competitionName(prediction.competition_id)}</p>
               </div>
               <div>
                 <time

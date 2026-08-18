@@ -24,6 +24,3 @@ export const MARKETING_STATS = {
   leagues: '38',
   predictionsPublished: '24,000+',
 }
-
-/** The API does not yet return a competition name per fixture. */
-export const DEFAULT_COMPETITION = 'FIFA World Cup'
