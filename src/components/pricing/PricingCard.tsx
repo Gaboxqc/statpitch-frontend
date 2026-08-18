@@ -1,0 +1,70 @@
+import { Link } from 'react-router'
+import { CheckIcon } from '../../assets/icons/index'
+import type { PricingPlan } from '../../utils/pricingPlans'
+
+function PricingCard({
+  name,
+  description,
+  price,
+  period,
+  availableFeatures,
+  notAvailableFeatures,
+  isPopular,
+  buttonText,
+  buttonLink,
+}: PricingPlan) {
+  return (
+    <div
+      className={`flex flex-col p-4 border rounded-lg gap-4 relative ${
+        isPopular ? 'border-primary bg-primary/10' : 'border-accent/50 bg-accent/20'
+      }`}
+    >
+      {isPopular && (
+        <span className='absolute -top-3 left-1/2 -translate-x-1/2 text-xs bg-primary font-bold text-primary-foreground px-3 py-1 rounded-full'>
+          Most Popular
+        </span>
+      )}
+
+      <div>
+        <p className={'text-sm text-foreground'}>{name}</p>
+        <p className={'text-xs text-secondary-foreground'}>{description}</p>
+      </div>
+
+      <p className={'text-3xl font-bold'}>
+        {price}
+        {period && <span className={'text-sm text-secondary-foreground'}>{period}</span>}
+      </p>
+
+      <Link
+        to={buttonLink}
+        className={`w-11/12 bg-accent/40 self-center p-2 rounded-md text-sm text-center font-bold my-2 ${isPopular ? 'text-background bg-primary' : 'text-foreground border border-accent/50'}`}
+      >
+        {buttonText}
+      </Link>
+
+      <ul className={'flex flex-col gap-2'}>
+        {availableFeatures.map((feature: string) => (
+          <li key={feature} className={'flex items-center gap-2'}>
+            <div
+              className={`h-4 w-4 bg-accent/40 rounded-sm border  flex items-center justify-center ${isPopular ? 'bg-primary/20 border-primary/50' : 'bg-accent/40 border-accent/50'}`}
+            >
+              <CheckIcon
+                className={`h-2.5 w-2.5 ${isPopular ? 'text-primary' : 'text-secondary-foreground'}`}
+              />
+            </div>
+            <p className={'text-xs text-foreground'}>{feature}</p>
+          </li>
+        ))}
+
+        {notAvailableFeatures.map((feature: string) => (
+          <li key={feature} className={'flex items-center gap-2'}>
+            <div className='h-4 w-4 bg-accent/10 rounded-sm border border-accent/20 flex items-center justify-center' />
+            <p className={'text-xs text-foreground/30'}>{feature}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+export default PricingCard
