@@ -1,13 +1,32 @@
 import MatchCard from './MatchCard'
-import { useFixtures } from '../../hooks/queries'
+import { useFixtures, useWindow } from '../../hooks/queries'
 import { useElapsed } from '../../hooks/useElapsed'
+import { useFixtureFilters } from '../../hooks/useFixtureFilters'
+import { filterFixtures } from '../../utils/filterFixtures'
 import QueryError from '../ui/QueryError'
 import { COLD_START_HINT_MS } from '../../services/api'
+import { competitionName } from '../../constants/competitions'
 import { DISCLAIMER, MODEL } from '../../constants/content'
+import { formatMatchDay } from '../../utils/datetime'
+
+const DAY_LABELS = { yesterday: 'yesterday', today: 'today', tomorrow: 'tomorrow' } as const
 
 function PredictionsSection() {
-  const { fixtures: predictions, loading, error } = useFixtures({ day: 'today' })
+  const { filters } = useFixtureFilters()
+  const { window } = useWindow()
+  // Only the competition goes to the API. Day, confidence and the value-bet
+  // filter are applied to the single window response, so switching them is free.
+  const { fixtures, loading, error } = useFixtures({
+    competition_id: filters.competitionId ?? undefined,
+  })
   const slow = useElapsed(COLD_START_HINT_MS)
+
+  const visible = filterFixtures(fixtures, {
+    day: filters.day,
+    window,
+    confidence: filters.confidence,
+    valueBetsOnly: filters.valueBetsOnly,
+  })
 
   if (loading)
     return (
@@ -22,24 +41,42 @@ function PredictionsSection() {
       </div>
     )
   if (error) return <QueryError error={error} className={'mx-2 mt-12 lg:w-2/3 lg:mx-auto'} />
-  if (!predictions || predictions.length === 0)
-    return <p className={'text-center mt-8'}>No more predictions available.</p>
+
+  // An empty day and an over-narrow filter are different problems, and only one
+  // of them is the user's to fix.
+  const narrowed = fixtures.length > 0 && visible.length === 0
 
   return (
     <div className={'mt-12 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
       <h2 className={'text-foreground text-lg font-bold ml-2'}>
-        <span className={'text-secondary-foreground'}>{predictions.length}</span> Predictions
+        <span className={'text-secondary-foreground'}>{visible.length}</span>{' '}
+        {filters.valueBetsOnly ? 'Value bets' : 'Predictions'}
+        <span className={'text-secondary-foreground/50 font-normal text-sm'}>
+          {' · '}
+          {window ? formatMatchDay(window[filters.day]) : DAY_LABELS[filters.day]}
+          {filters.competitionId ? ` · ${competitionName(filters.competitionId)}` : ''}
+        </span>
       </h2>
-      {predictions.map((prediction) => {
-        return <MatchCard key={prediction.id} prediction={prediction} />
-      })}
+
+      {visible.length === 0 && (
+        <p className={'text-center mt-8 text-secondary-foreground'}>
+          {narrowed
+            ? 'No fixtures match these filters. Try widening them.'
+            : `Nothing scheduled ${DAY_LABELS[filters.day]}.`}
+        </p>
+      )}
+
+      {visible.map((fixture) => (
+        <MatchCard key={fixture.id} prediction={fixture} />
+      ))}
+
       <div
         className={
           'flex flex-col gap-4 lg:flex-row lg:justify-between border-t border-secondary-foreground/10 pt-4 text-start mt-8'
         }
       >
         <p className={'text-xs text-secondary-foreground/60'}>
-          Model {predictions[0]?.model_version ?? MODEL.fallbackVersion} · {MODEL.ensemble}
+          Model {visible[0]?.model_version ?? MODEL.fallbackVersion} · {MODEL.ensemble}
         </p>
         <p className={'text-xs text-secondary-foreground/60'}>{DISCLAIMER.short}</p>
       </div>
