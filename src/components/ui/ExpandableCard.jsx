@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ShortArrowIcon } from '../assets/icons/index.js'
+import { ShortArrowIcon } from '../../assets/icons/index.js'
 
 function ExpandableCard({ title, description }) {
   const [isOpened, setIsOpened] = useState(false)

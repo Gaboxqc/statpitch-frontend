@@ -1,8 +1,9 @@
 import { ArrowIcon, BrainIcon, ChartIcon, ThunderIcon } from '../assets/icons/index.js'
-import PricingCard from '../components/cards/PricingCard.jsx'
+import PricingCard from '../components/pricing/PricingCard.jsx'
 import { pricingPlans } from '../utils/pricingPlans.js'
-import ExpandableCard from '../components/ExpandableCard.jsx'
+import ExpandableCard from '../components/ui/ExpandableCard.jsx'
 import { Link } from 'react-router'
+import { MARKETING_STATS } from '../constants/content.js'
 
 function PricingPage() {
   return (
@@ -40,22 +41,24 @@ function PricingPage() {
       >
         <div className={'flex flex-col items-center gap-2'}>
           <ChartIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>24000+</p>
+          <p className={'text-2xl font-bold text-primary'}>
+            {MARKETING_STATS.predictionsPublished}
+          </p>
           <p className={'text-secondary-foreground/50 text-xs'}>Predictions published</p>
         </div>
         <div className={'flex flex-col items-center gap-2'}>
           <BrainIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>71.4%</p>
+          <p className={'text-2xl font-bold text-primary'}>{MARKETING_STATS.accuracy}</p>
           <p className={'text-secondary-foreground/50 text-xs'}>Model accuracy (90d)</p>
         </div>
         <div className={'flex flex-col items-center gap-2'}>
           <ArrowIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>+8.3%</p>
+          <p className={'text-2xl font-bold text-primary'}>{MARKETING_STATS.roi}</p>
           <p className={'text-secondary-foreground/50 text-xs'}>Avg. tracked ROI</p>
         </div>
         <div className={'flex flex-col items-center gap-2'}>
           <ThunderIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>38</p>
+          <p className={'text-2xl font-bold text-primary'}>{MARKETING_STATS.leagues}</p>
           <p className={'text-secondary-foreground/50 text-xs'}>Leagues monitored</p>
         </div>
       </div>
@@ -63,9 +66,7 @@ function PricingPage() {
         <h3>Frequently asked questions</h3>
         <ExpandableCard
           title={'How accurate is the model?'}
-          description={
-            'Over the past 90 days, our ensemble model achieved a 71.4% accuracy rate on 1X2 predictions with a confidence threshold above 70%. ROI on tracked selections sits at +8.3% for the rolling 30-day window. Past performance does not guarantee future results.'
-          }
+          description={`Over the past 90 days, our ensemble model achieved a ${MARKETING_STATS.accuracy} accuracy rate on 1X2 predictions with a confidence threshold above 70%. ROI on tracked selections sits at ${MARKETING_STATS.roi} for the rolling 30-day window. Past performance does not guarantee future results.`}
         />
         <ExpandableCard
           title={'What models powers the prediction?'}
@@ -103,7 +104,7 @@ function PricingPage() {
           Start free — no card needed. Upgrade when the edge speaks for itself.
         </p>
         <Link
-          to={'/statpitch/login'}
+          to={'/login'}
           className={'p-3 bg-primary text-background rounded-md flex items-center gap-2 my-4'}
         >
           <BrainIcon className={'h-4 w-4 text-background'} />

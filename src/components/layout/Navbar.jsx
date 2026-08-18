@@ -1,4 +1,4 @@
-import { LogoIcon, MenuIcon } from '../assets/icons/index.js'
+import { LogoIcon, MenuIcon } from '../../assets/icons/index.js'
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router'
 
@@ -23,14 +23,14 @@ function Navbar() {
 
           <div className={'hidden md:flex gap-4 items-center'}>
             <NavLink
-              to={'/statpitch'}
+              to={'/'}
               end
               className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
             >
               Home
             </NavLink>
             <NavLink
-              to={'pricing'}
+              to={'/pricing'}
               className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
             >
               Pricing
@@ -38,7 +38,7 @@ function Navbar() {
           </div>
 
           <div className={'flex gap-4 items-center'}>
-            <Link to={'login'} className={'text-md text-sm text-secondary-foreground'}>
+            <Link to={'/login'} className={'text-md text-sm text-secondary-foreground'}>
               Sign in
             </Link>
             <button
@@ -50,7 +50,7 @@ function Navbar() {
               <MenuIcon className={'h-6 w-6 text-secondary-foreground'} />
             </button>
             <Link
-              to={'login'}
+              to={'/login'}
               className={
                 'bg-primary text-secondary font-bold text-sm rounded-sm py-1.5 px-2 m-2 md:block hidden'
               }
@@ -64,7 +64,7 @@ function Navbar() {
           className={`flex flex-col items-center gap-2 mt-4 text-sm ${isOpened ? 'block' : 'hidden'}`}
         >
           <NavLink
-            to={'/statpitch'}
+            to={'/'}
             end
             className={({ isActive }) =>
               `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
@@ -74,7 +74,7 @@ function Navbar() {
             Home
           </NavLink>
           <NavLink
-            to={'pricing'}
+            to={'/pricing'}
             className={({ isActive }) =>
               `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
             }
@@ -83,7 +83,7 @@ function Navbar() {
             Pricing
           </NavLink>
           <Link
-            to={'login'}
+            to={'/login'}
             key={'login'}
             className={'bg-primary w-11/12 p-2 rounded-sm text-background text-center font-bold'}
             onClick={() => setIsOpened(false)}

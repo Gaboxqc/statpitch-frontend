@@ -6,7 +6,7 @@ export const pricingPlans = [
     period: null,
     isPopular: false,
     buttonText: 'Start free',
-    buttonLink: '/statpitch/login',
+    buttonLink: '/login',
     availableFeatures: [
       '3 predictions per day',
       'Top 5 leagues only',
@@ -28,7 +28,7 @@ export const pricingPlans = [
     period: '/mo',
     isPopular: true,
     buttonText: 'Start 14-day trial',
-    buttonLink: '/statpitch/login',
+    buttonLink: '/login',
     availableFeatures: [
       'Unlimited predictions',
       '38 leagues & competitions',
@@ -48,7 +48,7 @@ export const pricingPlans = [
     period: '/mo',
     isPopular: false,
     buttonText: 'Contact us',
-    buttonLink: '/statpitch/login',
+    buttonLink: '/login',
     availableFeatures: [
       'Unlimited predictions',
       '38 leagues & competitions',

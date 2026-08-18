@@ -1,6 +1,7 @@
-import MatchCard from './cards/MatchCard.jsx'
-import usePredictions from '../hooks/usePredictions.js'
-import QueryError from './ui/QueryError.jsx'
+import MatchCard from './MatchCard.jsx'
+import { usePredictions } from '../../hooks/queries.js'
+import QueryError from '../ui/QueryError.jsx'
+import { DISCLAIMER, MODEL } from '../../constants/content.js'
 
 function PredictionsSection() {
   const { predictions, loading, error } = usePredictions()
@@ -30,9 +31,9 @@ function PredictionsSection() {
         }
       >
         <p className={'text-xs text-secondary-foreground/60'}>
-          Model v4 · Gradient Boost + LSTM Ensemble · Updated 21 min ago
+          Model {MODEL.fallbackVersion} · {MODEL.ensemble}
         </p>
-        <p className={'text-xs text-secondary-foreground/60'}>For informational purposes only.</p>
+        <p className={'text-xs text-secondary-foreground/60'}>{DISCLAIMER.short}</p>
       </div>
     </div>
   )
