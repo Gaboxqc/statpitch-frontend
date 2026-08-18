@@ -1,4 +1,22 @@
-import type { Fixture, Market } from '../types/api'
+import type { Fixture, Market, MarketKey } from '../types/api'
+
+/**
+ * Team-independent market names, for places that name a selection without a
+ * fixture to hand — the ledger, and a settled pick verdict.
+ */
+export const MARKET_LABELS: Record<MarketKey, string> = {
+  home_win: 'Home Win',
+  draw: 'Draw',
+  away_win: 'Away Win',
+  btts_yes: 'Both Teams to Score (Yes)',
+  btts_no: 'Both Teams to Score (No)',
+  over_1_5: 'Over 1.5 Goals',
+  over_2_5: 'Over 2.5 Goals',
+  over_3_5: 'Over 3.5 Goals',
+  under_1_5: 'Under 1.5 Goals',
+  under_2_5: 'Under 2.5 Goals',
+  under_3_5: 'Under 3.5 Goals',
+}
 
 /**
  * The API publishes only the `over_*` probabilities — the unders are their
