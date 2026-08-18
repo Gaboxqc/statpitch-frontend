@@ -7,6 +7,7 @@ function HomePage() {
   return (
     <>
       <div>
+        <h1 className={'sr-only'}>Today's football predictions</h1>
         <SummaryBar />
         <FiltersBar />
         <div className={'container mx-auto'}>

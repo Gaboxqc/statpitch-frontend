@@ -1,9 +1,9 @@
 import { BrainIcon } from '../../assets/icons/index.js'
 import MarketBlock from './MarketBlock.jsx'
 
-function MarketList({ markets, bestBet, isOpened }) {
+function MarketList({ markets, bestBet, isOpened, id }) {
   return (
-    <div className={`flex-col mt-12 gap-4 w-full ${isOpened ? 'flex' : 'hidden'}`}>
+    <div id={id} className={`flex-col mt-12 gap-4 w-full ${isOpened ? 'flex' : 'hidden'}`}>
       <div className={'flex justify-between text-secondary-foreground/50 text-xs'}>
         <div className={'flex items-center gap-2'}>
           <BrainIcon className={'h-4 w-4 text-primary'} />

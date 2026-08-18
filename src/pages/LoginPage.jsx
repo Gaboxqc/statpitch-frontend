@@ -89,16 +89,22 @@ function LoginPage() {
           </div>
 
           <div
+            role='group'
+            aria-label='Authentication mode'
             className={'flex gap-4 mt-4 bg-accent/40 h-12 justify-between rounded-sm items-center'}
           >
             <button
-              className={`w-60 h-10 ml-1 rounded-sm text-sm ${isNewAccount ? 'text-foreground/50' : 'bg-accent/50 text-foreground'}`}
+              type='button'
+              aria-pressed={!isNewAccount}
+              className={`w-60 h-10 ml-1 rounded-sm text-sm cursor-pointer ${isNewAccount ? 'text-foreground/50' : 'bg-accent/50 text-foreground'}`}
               onClick={() => setIsNewAccount(false)}
             >
               Sign in
             </button>
             <button
-              className={`w-60 h-10  mr-1 rounded-sm text-sm ${isNewAccount ? 'bg-accent/50 text-foreground' : 'text-foreground/50'}`}
+              type='button'
+              aria-pressed={isNewAccount}
+              className={`w-60 h-10 mr-1 rounded-sm text-sm cursor-pointer ${isNewAccount ? 'bg-accent/50 text-foreground' : 'text-foreground/50'}`}
               onClick={() => setIsNewAccount(true)}
             >
               Create account
@@ -106,59 +112,78 @@ function LoginPage() {
           </div>
 
           <div>
-            <p className={`text-xl ${isNewAccount ? 'hidden' : 'block'}`}>Welcome back</p>
-            <p
-              className={`text-sm text-secondary-foreground/50 ${isNewAccount ? 'hidden' : 'block'}`}
-            >
-              Sign in to access your predictions dashboard
-            </p>
-            <p className={`text-xl ${isNewAccount ? 'block' : 'hidden'}`}>Get started free</p>
-            <p
-              className={`text-sm text-secondary-foreground/50 ${isNewAccount ? 'block' : 'hidden'}`}
-            >
-              14-day free trial. No credit card required.
+            <h1 className={'text-xl'}>{isNewAccount ? 'Get started free' : 'Welcome back'}</h1>
+            <p className={'text-sm text-secondary-foreground/50'}>
+              {isNewAccount
+                ? '14-day free trial. No credit card required.'
+                : 'Sign in to access your predictions dashboard'}
             </p>
           </div>
 
-          <div className={'flex flex-col gap-4'}>
-            <div className={`flex flex-col gap-1 ${isNewAccount ? 'block' : 'hidden'}`}>
-              <p className={'text-sm text-foreground/40'}>FULL NAME</p>
-              <input
-                type='text'
-                className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
-                placeholder={'Gabriel Mayorga'}
-              />
+          {/* Authentication is not wired up yet; the submit handler only stops the page reloading. */}
+          <form className={'flex flex-col gap-8'} onSubmit={(event) => event.preventDefault()}>
+            <div className={'flex flex-col gap-4'}>
+              {isNewAccount && (
+                <div className={'flex flex-col gap-1'}>
+                  <label htmlFor='name' className={'text-sm text-foreground/40'}>
+                    FULL NAME
+                  </label>
+                  <input
+                    id='name'
+                    name='name'
+                    type='text'
+                    autoComplete='name'
+                    required
+                    className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
+                    placeholder={'Your name'}
+                  />
+                </div>
+              )}
+              <div className={'flex flex-col gap-1'}>
+                <label htmlFor='email' className={'text-sm text-foreground/40'}>
+                  EMAIL
+                </label>
+                <input
+                  id='email'
+                  name='email'
+                  type='email'
+                  autoComplete='email'
+                  required
+                  className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
+                  placeholder={'you@example.com'}
+                />
+              </div>
+              <div className={'flex flex-col gap-1'}>
+                <label htmlFor='password' className={'text-sm text-foreground/40'}>
+                  PASSWORD
+                </label>
+                <input
+                  id='password'
+                  name='password'
+                  type='password'
+                  autoComplete={isNewAccount ? 'new-password' : 'current-password'}
+                  required
+                  className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
+                  placeholder={'•••••••••'}
+                />
+              </div>
+              {!isNewAccount && (
+                <a href='#reset' className={'text-xs self-end text-foreground/40'}>
+                  Forgot password?
+                </a>
+              )}
             </div>
-            <div className={'flex flex-col gap-1'}>
-              <p className={'text-sm text-foreground/40'}>EMAIL</p>
-              <input
-                type='text'
-                className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
-                placeholder={'you@example.com'}
-              />
-            </div>
-            <div className={'flex flex-col gap-1'}>
-              <p className={'text-sm text-foreground/40'}>PASSWORD</p>
-              <input
-                type='password'
-                className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
-                placeholder={'*********'}
-              />
-            </div>
-            <p
-              className={`text-xs self-end text-foreground/40 cursor-pointer ${isNewAccount ? 'hidden' : 'block'}`}
+
+            <button
+              type='submit'
+              className={
+                'flex items-center justify-center gap-2 bg-primary text-background p-3 rounded-md font-bold text-sm cursor-pointer'
+              }
             >
-              Forgot password?
-            </p>
-          </div>
-          <button
-            className={
-              'flex items-center justify-center gap-2 bg-primary text-background p-3 rounded-md font-bold text-sm '
-            }
-          >
-            <BrainIcon className={'h-4 w-4'} />
-            Sign in
-          </button>
+              <BrainIcon className={'h-4 w-4'} />
+              {isNewAccount ? 'Create account' : 'Sign in'}
+            </button>
+          </form>
 
           <div className={'flex items-center gap-2'}>
             <div className={'h-0.5 w-full bg-accent/50'}></div>
@@ -167,32 +192,34 @@ function LoginPage() {
           </div>
           <div className={'flex gap-2'}>
             <button
+              type='button'
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30'
+                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30 cursor-pointer'
               }
             >
               <GoogleIcon className={'h-4 w-4'} />
               Google
             </button>
             <button
+              type='button'
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30'
+                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30 cursor-pointer'
               }
             >
               <GithubIcon className={'h-4 w-4'} />
               Github
             </button>
           </div>
-          <div className={'flex items-center gap-2 self-center'}>
-            <p className={`text-sm text-foreground/40 ${isNewAccount ? 'hidden' : 'block'}`}>
-              Dont have an account?
-            </p>
-            <p className={`text-primary ${isNewAccount ? 'hidden' : 'block'}`}>Sign up free</p>
-            <p className={`text-sm text-foreground/40 ${isNewAccount ? 'block' : 'hidden'}`}>
-              Already have an account?
-            </p>
-            <p className={`text-primary ${isNewAccount ? 'block' : 'hidden'}`}>Sign in</p>
-          </div>
+          <p className={'flex items-center gap-2 self-center text-sm text-foreground/40'}>
+            {isNewAccount ? 'Already have an account?' : "Don't have an account?"}
+            <button
+              type='button'
+              className={'text-primary cursor-pointer'}
+              onClick={() => setIsNewAccount((prev) => !prev)}
+            >
+              {isNewAccount ? 'Sign in' : 'Sign up free'}
+            </button>
+          </p>
           <p className={'text-xs text-foreground/30'}>
             By continuing you agree to our Terms of Service & Privacy Policy.
           </p>

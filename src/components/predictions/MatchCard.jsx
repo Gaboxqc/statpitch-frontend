@@ -1,22 +1,27 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import DonutChart from '../ui/DonutChart.jsx'
 import ProbabilityTiles from '../ui/ProbabilityTiles.jsx'
 import MarketList from './MarketList.jsx'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index.js'
 import { buildPredictionView } from '../../utils/predictionView.js'
 import { formatDecimal, formatPercent } from '../../utils/format.js'
+import { formatMatchTime, toISOString } from '../../utils/datetime.js'
 import { DEFAULT_COMPETITION } from '../../constants/content.js'
 
 function MatchCard({ prediction }) {
   const [isOpened, setIsOpened] = useState(false)
   const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
+  const marketsId = useId()
+  const toggle = () => setIsOpened((prev) => !prev)
 
   return (
+    // Clicking anywhere on the card is a mouse convenience; the chevron below is
+    // the real control and carries the keyboard and screen-reader semantics.
     <div
       className={
         'py-2 lg:py-2 flex flex-col items-center justify-center bg-secondary/40 text-foreground text-xs rounded-md border border-secondary-foreground/20'
       }
-      onClick={() => setIsOpened((prev) => !prev)}
+      onClick={toggle}
     >
       <div className={'flex flex-col items-center justify-between w-full m-2 gap-2'}>
         <div className={'flex items-center px-2 self-end w-full justify-between lg:px-4'}>
@@ -32,12 +37,12 @@ function MatchCard({ prediction }) {
               </p>
             </div>
             <ClockIcon className={'h-4 w-4 text-secondary-foreground/60'} />
-            <p className={'text-xs text-secondary-foreground/60'}>
-              {new Date(prediction.commence_time).toLocaleTimeString('es-ES', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}{' '}
-            </p>
+            <time
+              dateTime={toISOString(prediction.commence_time)}
+              className={'text-xs text-secondary-foreground/60'}
+            >
+              {formatMatchTime(prediction.commence_time)}
+            </time>
           </div>
         </div>
 
@@ -73,9 +78,21 @@ function MatchCard({ prediction }) {
             <ProbabilityTiles prediction={prediction} winner={winner} variant={'compact'} />
             <div className={'flex items-center gap-2 justify-end'}>
               <DonutChart value={winner.prob} size={50} />
-              <ShortArrowIcon
-                className={`h-4 w-4 text-secondary-foreground/60 ${isOpened ? 'rotate-180' : ''}`}
-              />
+              <button
+                type='button'
+                aria-expanded={isOpened}
+                aria-controls={marketsId}
+                aria-label={`Market analysis for ${prediction.home_team} versus ${prediction.away_team}`}
+                className={'p-1 cursor-pointer'}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  toggle()
+                }}
+              >
+                <ShortArrowIcon
+                  className={`h-4 w-4 text-secondary-foreground/60 ${isOpened ? 'rotate-180' : ''}`}
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -89,7 +106,7 @@ function MatchCard({ prediction }) {
       />
 
       <div className={'w-full px-4'}>
-        <MarketList markets={markets} isOpened={isOpened} bestBet={bestBet} />
+        <MarketList id={marketsId} markets={markets} isOpened={isOpened} bestBet={bestBet} />
       </div>
     </div>
   )

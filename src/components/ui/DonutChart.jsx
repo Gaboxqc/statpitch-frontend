@@ -16,7 +16,14 @@ function DonutChart({ value, size = 56 }) {
   const offset = circ - (value / 100) * circ
   return (
     <div className='relative shrink-0' style={{ width: size, height: size }}>
-      <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+      {/* The value is rendered as text below, so the ring itself is decorative. */}
+      <svg
+        width={size}
+        height={size}
+        aria-hidden='true'
+        focusable='false'
+        style={{ transform: 'rotate(-90deg)' }}
+      >
         <circle
           cx={size / 2}
           cy={size / 2}
