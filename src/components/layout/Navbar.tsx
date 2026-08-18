@@ -31,6 +31,12 @@ function Navbar() {
               Home
             </NavLink>
             <NavLink
+              to={'/track-record'}
+              className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
+            >
+              Track record
+            </NavLink>
+            <NavLink
               to={'/pricing'}
               className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
             >
@@ -78,6 +84,15 @@ function Navbar() {
             onClick={() => setIsOpened(false)}
           >
             Home
+          </NavLink>
+          <NavLink
+            to={'/track-record'}
+            className={({ isActive }) =>
+              `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
+            }
+            onClick={() => setIsOpened(false)}
+          >
+            Track record
           </NavLink>
           <NavLink
             to={'/pricing'}

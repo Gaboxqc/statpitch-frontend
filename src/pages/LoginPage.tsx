@@ -2,7 +2,7 @@ import { BrainIcon, GithubIcon, GoogleIcon, LogoIcon } from '../assets/icons/ind
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
-import { MARKETING_STATS } from '../constants/content'
+import LiveRoi from '../components/track-record/LiveRoi'
 
 function LoginPage() {
   const [isNewAccount, setIsNewAccount] = useState(false)
@@ -26,53 +26,16 @@ function LoginPage() {
             <p className={'text-2xl'}>ML-powered predictions.</p>
             <p className={'text-2xl text-primary'}>Edge that compounds.</p>
             <p className={'text-sm text-foreground/40 mt-4'}>
-              Our ensemble model processes 200+ features per match — form, xG, squad depth, referee
-              bias — updated every 15 minutes.
+              Probabilities come from a fitted goal model rated on club Elo, recent venue form and
+              rest days. Fixtures are re-synced once a day.
             </p>
-            <div className={'grid grid-cols-2 gap-4 mt-6'}>
-              <div
-                className={
-                  'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
-                }
-              >
-                <p className={'text-xl text-primary'}>{MARKETING_STATS.accuracy}</p>
-                <p className={'text-sm '}>Model accuracy</p>
-                <p className={'text-xs text-foreground/40'}>30-day rolling</p>
-              </div>
-              <div
-                className={
-                  'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
-                }
-              >
-                <p className={'text-xl text-primary'}>{MARKETING_STATS.roi}</p>
-                <p className={'text-sm '}>ROI tracked</p>
-                <p className={'text-xs text-foreground/40'}>This month</p>
-              </div>
-              <div
-                className={
-                  'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
-                }
-              >
-                <p className={'text-xl text-primary'}>{MARKETING_STATS.marketsCovered}</p>
-                <p className={'text-sm '}>Markets covered</p>
-                <p className={'text-xs text-foreground/40'}>Daily</p>
-              </div>
-              <div
-                className={
-                  'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
-                }
-              >
-                <p className={'text-xl text-primary'}>{MARKETING_STATS.leagues}</p>
-                <p className={'text-sm '}>Leagues</p>
-                <p className={'text-xs text-foreground/40'}>Top competitions</p>
-              </div>
-            </div>
+            <LiveRoi className={'mt-6'} />
           </div>
 
           <div className={'flex flex-col gap-4 border-t border-accent/50 pt-12'}>
             <p className={'text-sm text-foreground/40'}>
-              Every published probability is logged and scored against the final result, so the
-              accuracy and ROI figures above are reproducible rather than promotional.
+              Every selection is logged with the price it was taken at and settled against the final
+              result, so the ROI above is measured rather than promotional.
             </p>
             <p className={'text-xs text-foreground/30'}>
               For informational purposes only. StatPitch does not facilitate or endorse gambling.

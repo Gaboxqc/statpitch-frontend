@@ -13,6 +13,13 @@
   --chart-3: #f59e0b;
   --chart-4: #8b5cf6;
   --chart-5: #ef4444;
+
+  /* Series colours for the track record, named after the strategy they carry so
+     a filter can never repaint the survivors. Validated against the card
+     surface for the OKLCH lightness band, chroma floor, CVD separation and
+     contrast; do not substitute by eye. */
+  --series-1x2: #059669;
+  --series-overall: #3b82f6;
 }
 
 @theme inline {
@@ -29,4 +36,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-series-1x2: var(--series-1x2);
+  --color-series-overall: var(--series-overall);
 }

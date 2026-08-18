@@ -1,10 +1,11 @@
-import { ArrowIcon, BrainIcon, ChartIcon, ThunderIcon } from '../assets/icons/index'
+import { BrainIcon } from '../assets/icons/index'
 import PricingCard from '../components/pricing/PricingCard'
 import { pricingPlans } from '../utils/pricingPlans'
 import ExpandableCard from '../components/ui/ExpandableCard'
 import { Link } from 'react-router'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
-import { MARKETING_STATS } from '../constants/content'
+import LiveRoi from '../components/track-record/LiveRoi'
+import { COMPETITIONS } from '../constants/competitions'
 
 function PricingPage() {
   useDocumentTitle('Pricing')
@@ -39,44 +40,26 @@ function PricingPage() {
           ))}
         </div>
       </div>
-      <div
-        className={
-          'grid grid-cols-2 gap-4 mt-24 bg-accent/10 p-4 rounded-lg border border-accent/20'
-        }
-      >
-        <div className={'flex flex-col items-center gap-2'}>
-          <ChartIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>
-            {MARKETING_STATS.predictionsPublished}
-          </p>
-          <p className={'text-secondary-foreground/50 text-xs'}>Predictions published</p>
-        </div>
-        <div className={'flex flex-col items-center gap-2'}>
-          <BrainIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>{MARKETING_STATS.accuracy}</p>
-          <p className={'text-secondary-foreground/50 text-xs'}>Model accuracy (90d)</p>
-        </div>
-        <div className={'flex flex-col items-center gap-2'}>
-          <ArrowIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>{MARKETING_STATS.roi}</p>
-          <p className={'text-secondary-foreground/50 text-xs'}>Avg. tracked ROI</p>
-        </div>
-        <div className={'flex flex-col items-center gap-2'}>
-          <ThunderIcon className={'h-4 w-4 text-accent'} />
-          <p className={'text-2xl font-bold text-primary'}>{MARKETING_STATS.leagues}</p>
-          <p className={'text-secondary-foreground/50 text-xs'}>Leagues monitored</p>
-        </div>
+      <div className={'mt-24 bg-accent/10 p-4 rounded-lg border border-accent/20'}>
+        <LiveRoi />
+        <p className={'text-secondary-foreground/50 text-xs mt-4'}>
+          {COMPETITIONS.length} competitions covered,{' '}
+          {COMPETITIONS.filter((entry) => entry.priced).length} of them priced against a bookmaker
+          market. Only priced competitions can produce a selection.
+        </p>
       </div>
       <div className={'mt-24 flex flex-col items-center gap-4 text-center'}>
         <h2 className={'text-xl font-bold'}>Frequently asked questions</h2>
         <ExpandableCard
-          title={'How accurate is the model?'}
-          description={`Over the past 90 days, our ensemble model achieved a ${MARKETING_STATS.accuracy} accuracy rate on 1X2 predictions with a confidence threshold above 70%. ROI on tracked selections sits at ${MARKETING_STATS.roi} for the rolling 30-day window. Past performance does not guarantee future results.`}
+          title={'How is performance measured?'}
+          description={
+            'Every selection is published before kick-off, staked at one unit, and settled against the closing result at the price actually available. The rolling 7- and 30-day ROI on the track record page is computed from that ledger, which is append-only. Two figures are always shown — 1X2 alone and all markets — because they are different strategies and averaging them would answer neither. Past performance does not guarantee future results.'
+          }
         />
         <ExpandableCard
-          title={'What models powers the prediction?'}
+          title={'What model powers the predictions?'}
           description={
-            'StatPitch uses a stacked ensemble: a Gradient Boosting classifier (XGBoost), a Recurrent Neural Network for form sequences, and a Poisson regression layer for scoreline distributions. Outputs are calibrated with Platt Scaling before being published.'
+            'A fitted goal model producing scoreline distributions, rated primarily on club Elo alongside recent venue form, rest days and head-to-head history. Each fixture reports which model version produced it, and flags when it fell back to the weaker Elo-Poisson estimate or to a prior rating for an unrated club.'
           }
         />
         <ExpandableCard
