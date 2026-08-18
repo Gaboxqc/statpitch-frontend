@@ -1,7 +1,7 @@
 import DonutChart from '../ui/DonutChart'
 import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import OutcomeBar from '../ui/OutcomeBar'
-import { useBestPrediction } from '../../hooks/queries'
+import { useBestToday } from '../../hooks/queries'
 import { buildPredictionView } from '../../utils/predictionView'
 import { useId, useState } from 'react'
 import MarketList from './MarketList'
@@ -11,7 +11,9 @@ import { DEFAULT_COMPETITION, MODEL } from '../../constants/content'
 import { formatMatchDateTime, toISOString } from '../../utils/datetime'
 
 function MatchDayCard() {
-  const { prediction, loading, error } = useBestPrediction({ limit: 10, offset: 0 })
+  // Highest win probability today, which is not the same as the best bet —
+  // this fixture can be unpriced and carry no selection at all.
+  const { fixture: prediction, loading, error } = useBestToday()
   const [isOpened, setIsOpened] = useState(false)
   const marketsId = useId()
 
@@ -62,8 +64,8 @@ function MatchDayCard() {
             <div className={'flex flex-col items-center'}>
               <div className={'w-20 h-20 md:w-40 md:h-40'}>
                 <img
-                  src={prediction.home_flag_url}
-                  alt={`${prediction.home_team} flag`}
+                  src={prediction.home_crest_url ?? undefined}
+                  alt={`${prediction.home_team} crest`}
                   className={'w-full h-full object-contain rounded-sm'}
                 />
               </div>
@@ -97,8 +99,8 @@ function MatchDayCard() {
             <div className={'flex flex-col items-center'}>
               <div className={'w-20 h-20 md:w-40 md:h-40'}>
                 <img
-                  src={prediction.away_flag_url}
-                  alt={`${prediction.away_team} flag`}
+                  src={prediction.away_crest_url ?? undefined}
+                  alt={`${prediction.away_team} crest`}
                   className={'w-full h-full object-contain rounded-sm'}
                 />
               </div>
@@ -133,7 +135,7 @@ function MatchDayCard() {
               <ThunderIcon className={'h-4 w-4 text-primary'} />
               <div className={'flex flex-col gap-1'}>
                 <p className={'text-xs text-secondary-foreground/60'}>
-                  TOP PICK · MODEL {prediction.model_version ?? MODEL.fallbackVersion}
+                  TOP PICK · MODEL {prediction.model_version}
                 </p>
                 <p className={'text-sm'}>{bestMarket?.market}</p>
               </div>
@@ -163,7 +165,7 @@ function MatchDayCard() {
                   </p>
                 </div>
                 <p className={'text-xs shrink-0'}>
-                  Model {prediction.model_version ?? MODEL.fallbackVersion} · {MODEL.ensemble}
+                  Model {prediction.model_version} · {MODEL.ensemble}
                 </p>
               </div>
             </div>

@@ -24,6 +24,27 @@ export function toPercentValue(value: unknown): number {
   return parsed === null ? 0 : Math.round(parsed * 10000) / 100
 }
 
+/**
+ * Formats a number already on a 0–100 scale, always signed. Used for ROI, where
+ * the sign is the whole point and a bare "45.0%" reads as a hit rate.
+ */
+export function formatSignedPercent(value: unknown, decimals = 2): string {
+  const parsed = toNumber(value)
+  if (parsed === null) return FALLBACK
+  return `${parsed >= 0 ? '+' : ''}${parsed.toFixed(decimals)}%`
+}
+
+/**
+ * Formats a 0–1 fraction as a signed percentage. EV arrives from the API as a
+ * fraction (0.0617 is a +6.17% edge), so it must be multiplied, not suffixed.
+ */
+export function formatSignedFraction(value: unknown, decimals = 2): string {
+  const parsed = toNumber(value)
+  if (parsed === null) return FALLBACK
+  const scaled = parsed * 100
+  return `${scaled >= 0 ? '+' : ''}${scaled.toFixed(decimals)}%`
+}
+
 export function formatCount(value: unknown): string {
   const parsed = toNumber(value)
   return parsed === null ? FALLBACK : String(parsed)
