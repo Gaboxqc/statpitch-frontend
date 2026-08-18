@@ -3,6 +3,7 @@ import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index
 import { useState } from 'react'
 import { buildMarkets } from '../../utils/buildMarkets.js'
 import MatchCardContainer from '../MatchCardContainer.jsx'
+import { formatDecimal, formatFraction, formatPercent, toPercentValue } from '../../utils/format.js'
 
 function MatchCard({ prediction }) {
   const [isOpened, setIsOpened] = useState(false)
@@ -12,8 +13,8 @@ function MatchCard({ prediction }) {
 
   const isHomeWin = prediction.home_win_prob > prediction.away_win_prob
   const winner = isHomeWin
-    ? { isHome: true, name: 'Home', prob: (prediction.home_win_prob * 100).toFixed(2) }
-    : { isHome: false, name: 'Away', prob: (prediction.away_win_prob * 100).toFixed(2) }
+    ? { isHome: true, name: 'Home', prob: toPercentValue(prediction.home_win_prob) }
+    : { isHome: false, name: 'Away', prob: toPercentValue(prediction.away_win_prob) }
 
   return (
     <div
@@ -32,7 +33,7 @@ function MatchCard({ prediction }) {
             >
               <ThunderIcon className={'h-3 w-3 text-primary'} />
               <p>
-                {bestMarket?.market} {bestMarket?.ev?.toFixed(2)}% EV
+                {bestMarket?.market} {formatPercent(bestMarket?.ev)} EV
               </p>
             </div>
             <ClockIcon className={'h-4 w-4 text-secondary-foreground/60'} />
@@ -56,7 +57,7 @@ function MatchCard({ prediction }) {
 
               <p className={'text-sm w-min'}>{prediction.home_team}</p>
               <p className='text-xs text-secondary-foreground shrink-0'>
-                xG {prediction.home_xg.toFixed(2)}
+                xG {formatDecimal(prediction.home_xg)}
               </p>
             </div>
             <div className={'flex items-center gap-2'}>
@@ -68,7 +69,7 @@ function MatchCard({ prediction }) {
 
               <p className={'text-sm'}>{prediction.away_team}</p>
               <p className='text-xs text-secondary-foreground shrink-0'>
-                xG {prediction.away_xg.toFixed(2)}
+                xG {formatDecimal(prediction.away_xg)}
               </p>
             </div>
           </div>
@@ -82,7 +83,7 @@ function MatchCard({ prediction }) {
                 <p
                   className={`font-bold ${winner.isHome ? 'text-primary ' : 'text-secondary-foreground'}`}
                 >
-                  {(prediction.home_win_prob * 100).toFixed(2)}%
+                  {formatFraction(prediction.home_win_prob)}
                 </p>
               </div>
               <div
@@ -92,7 +93,7 @@ function MatchCard({ prediction }) {
               >
                 <p className={'text-secondary-foreground/60'}>Draw</p>
                 <p className={'font-bold text-secondary-foreground'}>
-                  {(prediction.draw_prob * 100).toFixed(2)}
+                  {formatFraction(prediction.draw_prob)}
                 </p>
               </div>
               <div
@@ -102,7 +103,7 @@ function MatchCard({ prediction }) {
                 <p
                   className={`font-bold ${winner.isHome ? 'text-secondary-foreground' : 'text-primary '}`}
                 >
-                  {(prediction.away_win_prob * 100).toFixed(2)}%
+                  {formatFraction(prediction.away_win_prob)}
                 </p>
               </div>
             </div>
@@ -124,7 +125,7 @@ function MatchCard({ prediction }) {
           <p
             className={`font-bold ${winner.isHome ? 'text-primary ' : 'text-secondary-foreground'}`}
           >
-            {(prediction.home_win_prob * 100).toFixed(2)}%
+            {formatFraction(prediction.home_win_prob)}
           </p>
         </div>
         <div
@@ -132,7 +133,7 @@ function MatchCard({ prediction }) {
         >
           <p className={'text-secondary-foreground/60 '}>Draw</p>
           <p className={'font-bold text-secondary-foreground'}>
-            {(prediction.draw_prob * 100).toFixed(2)}%
+            {formatFraction(prediction.draw_prob)}
           </p>
         </div>
         <div
@@ -142,7 +143,7 @@ function MatchCard({ prediction }) {
           <p
             className={`font-bold ${winner.isHome ? 'text-secondary-foreground' : 'text-primary '}`}
           >
-            {(prediction.away_win_prob * 100).toFixed(2)}%
+            {formatFraction(prediction.away_win_prob)}
           </p>
         </div>
       </div>

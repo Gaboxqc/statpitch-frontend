@@ -1,5 +1,6 @@
 import MatchCard from './cards/MatchCard.jsx'
 import usePredictions from '../hooks/usePredictions.js'
+import QueryError from './ui/QueryError.jsx'
 
 function PredictionsSection() {
   const { predictions, loading, error } = usePredictions()
@@ -11,7 +12,7 @@ function PredictionsSection() {
         <div className={'h-30 w-11/12 lg:w-8/12 bg-accent mx-auto animate-pulse rounded-sm'}></div>
       </div>
     )
-  if (error) return <p>Error: {error.message}</p>
+  if (error) return <QueryError error={error} className={'mx-2 mt-12 lg:w-2/3 lg:mx-auto'} />
   if (!predictions || predictions.length === 0)
     return <p className={'text-center mt-8'}>No more predictions available.</p>
 

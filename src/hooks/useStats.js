@@ -5,10 +5,9 @@ const useStats = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['stats'],
     queryFn: ({ signal }) => getStats(signal),
-    retry: 2,
   })
 
-  return { stats: data ?? [], loading: isLoading, error: error?.message ?? null }
+  return { stats: data ?? {}, loading: isLoading, error }
 }
 
 export default useStats

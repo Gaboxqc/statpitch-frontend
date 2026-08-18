@@ -5,10 +5,20 @@ import useBestPrediction from '../../hooks/useBestPrediction.js'
 import { buildMarkets } from '../../utils/buildMarkets.js'
 import { useState } from 'react'
 import MatchCardContainer from '../MatchCardContainer.jsx'
+import QueryError from '../ui/QueryError.jsx'
+import { formatDecimal, formatFraction, formatPercent, toPercentValue } from '../../utils/format.js'
 
 function MatchDayCard() {
   const { prediction, loading, error } = useBestPrediction({ limit: 10, offset: 0 })
   const [isOpened, setIsOpened] = useState(false)
+
+  if (loading)
+    return (
+      <div className={'h-120 w-10/12 mt-4 mx-auto bg-secondary animate-pulse rounded-md'}></div>
+    )
+  if (error) return <QueryError error={error} className={'m-2 mt-4 lg:w-2/3 lg:mx-auto'} />
+  if (!prediction) return <p className={'text-center mt-8'}>No prediction available.</p>
+
   const markets = buildMarkets(prediction)
   const bestBet = prediction.best_overall_bet
   const bestMarket = markets.find((market) => market.key === bestBet)
@@ -18,20 +28,13 @@ function MatchDayCard() {
     ? {
         isHome: true,
         name: prediction.home_team,
-        prob: (prediction.home_win_prob * 100).toFixed(2),
+        prob: toPercentValue(prediction.home_win_prob),
       }
     : {
         isHome: false,
         name: prediction.away_team,
-        prob: (prediction.away_win_prob * 100).toFixed(2),
+        prob: toPercentValue(prediction.away_win_prob),
       }
-
-  if (loading)
-    return (
-      <div className={'h-120 w-10/12 mt-4 mx-auto bg-secondary animate-pulse rounded-md'}></div>
-    )
-  if (error) return <p>Error: {error.message}</p>
-  if (!prediction || prediction.length === 0) return <p>No prediction available.</p>
 
   return (
     <div
@@ -83,7 +86,7 @@ function MatchDayCard() {
               </div>
               <p className={'text-sm mt-2 text-center'}>{prediction.home_team}</p>
               <p className={'text-2xl text-primary font-bold'}>
-                {(prediction.home_win_prob * 100).toFixed(2)}%
+                {formatFraction(prediction.home_win_prob)}
               </p>
               <p className={'text-xs text-secondary-foreground/60'}>WIN</p>
               <div
@@ -92,7 +95,7 @@ function MatchDayCard() {
                 }
               >
                 <p className={'text-secondary-foreground/70'}>XG</p>
-                <p className={'text-primary font-bold'}>{prediction.home_xg.toFixed(2)}</p>
+                <p className={'text-primary font-bold'}>{formatDecimal(prediction.home_xg)}</p>
               </div>
             </div>
             <div className={'flex flex-col items-center justify-center gap-4 mx-4'}>
@@ -104,7 +107,7 @@ function MatchDayCard() {
               >
                 <p className={'text-xs text-secondary-foreground/60'}>DRAW</p>
                 <p className={'text-md text-secondary-foreground'}>
-                  {(prediction.draw_prob * 100).toFixed(2)}%
+                  {formatFraction(prediction.draw_prob)}
                 </p>
               </div>
             </div>
@@ -118,7 +121,7 @@ function MatchDayCard() {
               </div>
               <p className={'text-sm mt-2 text-center'}>{prediction.away_team}</p>
               <p className={'text-2xl font-bold text-chart-2'}>
-                {(prediction.away_win_prob * 100).toFixed(2)}%
+                {formatFraction(prediction.away_win_prob)}
               </p>
               <p className={'text-xs text-secondary-foreground/60'}>WIN</p>
               <div
@@ -127,7 +130,7 @@ function MatchDayCard() {
                 }
               >
                 <p className={'text-secondary-foreground/70'}>XG</p>
-                <p className={'text-chart-2 font-bold'}>{prediction.away_xg.toFixed(2)}</p>
+                <p className={'text-chart-2 font-bold'}>{formatDecimal(prediction.away_xg)}</p>
               </div>
             </div>
           </div>
@@ -153,11 +156,11 @@ function MatchDayCard() {
             <div className={'flex gap-4'}>
               <div className={'text-center'}>
                 <p className={'text-xs text-secondary-foreground/60 mb-1'}>EV</p>
-                <p className={'text-primary font-bold text-sm'}>+{bestMarket?.ev.toFixed(2)}%</p>
+                <p className={'text-primary font-bold text-sm'}>+{formatPercent(bestMarket?.ev)}</p>
               </div>
               <div className={'text-center'}>
                 <p className={'text-xs text-secondary-foreground/60 mb-1'}>Kelly Stake</p>
-                <p className={'text-sm'}>{bestMarket?.kelly.toFixed(2)}%</p>
+                <p className={'text-sm'}>{formatFraction(bestMarket?.kelly)}</p>
               </div>
             </div>
           </div>

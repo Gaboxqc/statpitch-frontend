@@ -5,7 +5,18 @@ import Layout from './Layout.jsx'
 import PricingPage from './pages/PricingPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Client errors are not worth retrying; only retry transient server/network failures.
+      retry: (failureCount, error) => {
+        const status = error?.response?.status
+        if (status >= 400 && status < 500) return false
+        return failureCount < 2
+      },
+    },
+  },
+})
 
 const router = createBrowserRouter([
   {

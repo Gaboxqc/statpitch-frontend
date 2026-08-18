@@ -68,18 +68,12 @@ function LoginPage() {
 
           <div className={'flex flex-col gap-4 border-t border-accent/50 pt-12'}>
             <p className={'text-sm text-foreground/40'}>
-              "StatPitch changed how I approach value betting. The ML edge indicators are genuinely
-              different from anything else out there."
+              Every published probability is logged and scored against the final result, so the
+              accuracy and ROI figures above are reproducible rather than promotional.
             </p>
-            <div className={'flex items-center gap-2'}>
-              <p className={'bg-accent rounded-full h-10 w-10 content-center text-center'}>LM</p>
-              <div>
-                <p>Lionel Messi</p>
-                <p className={'text-xs text-foreground/40'}>
-                  Pro subscriber <span>• 14 months</span>
-                </p>
-              </div>
-            </div>
+            <p className={'text-xs text-foreground/30'}>
+              For informational purposes only. StatPitch does not facilitate or endorse gambling.
+            </p>
           </div>
         </div>
       </div>

@@ -1,16 +1,17 @@
-import {
-  ArrowIcon,
-  ChartIcon,
-  InfoIcon,
-  TargetIcon,
-  ThunderIcon,
-} from '../../assets/icons/index.js'
+import { InfoIcon } from '../../assets/icons/index.js'
 import useStats from '../../hooks/useStats.js'
 import { buildStats } from '../../utils/buildStats.jsx'
 
 function SummaryBar() {
-  const { stats, loading, error } = useStats()
+  const { stats, loading } = useStats()
   const items = buildStats(stats)
+
+  if (loading)
+    return (
+      <div
+        className={'h-10 bg-accent/20 border-y border-secondary-foreground/20 mt-14 animate-pulse'}
+      ></div>
+    )
   return (
     <div
       className={
@@ -63,7 +64,7 @@ function SummaryBar() {
           >
             <p>For informational purposes only.</p>
             <p className={'text-xs text-foreground/50 mt-2'}>
-              PredictIX does not facilitate or endorse gambling. All outputs are statistical models
+              StatPitch does not facilitate or endorse gambling. All outputs are statistical models
               — not predictions of future results.
             </p>
           </div>
