@@ -10,8 +10,8 @@ import FixtureDetail from './FixtureDetail'
 import QueryError from '../ui/QueryError'
 import TeamCrest from '../ui/TeamCrest'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
-import { MODEL } from '../../constants/content'
 import { competitionName } from '../../constants/competitions'
+import { predictionSource } from '../../utils/humanise'
 import { describeKickoffLong } from '../../utils/datetime'
 
 function MatchDayCard() {
@@ -194,7 +194,8 @@ function MatchDayCard() {
                   </p>
                 </div>
                 <p className={'text-xs shrink-0'}>
-                  Model {prediction.model_version} · {MODEL.ensemble}
+                  Model {prediction.model_version} ·{' '}
+                  {predictionSource(prediction.prediction_source)?.label ?? 'unknown source'}
                 </p>
               </div>
             </div>

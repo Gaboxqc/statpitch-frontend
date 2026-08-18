@@ -76,7 +76,7 @@ function PredictionsSection() {
         }
       >
         <p className={'text-xs text-secondary-foreground/60'}>
-          Model {visible[0]?.model_version ?? MODEL.fallbackVersion} · {MODEL.ensemble}
+          Model {visible[0]?.model_version ?? MODEL.fallbackVersion}
         </p>
         <p className={'text-xs text-secondary-foreground/60'}>{DISCLAIMER.short}</p>
       </div>

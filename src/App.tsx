@@ -10,6 +10,7 @@ import RouteFallback from './components/ui/RouteFallback'
 // The home route is the landing page, so it stays in the main bundle;
 // the others are split out and fetched on demand.
 const PricingPage = lazy(() => import('./pages/PricingPage'))
+const TrackRecordPage = lazy(() => import('./pages/TrackRecordPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 
 const queryClient = new QueryClient({
@@ -42,6 +43,7 @@ const router = createBrowserRouter(
       element: <Layout />,
       children: [
         { index: true, element: <HomePage /> },
+        { path: 'track-record', element: withFallback(<TrackRecordPage />) },
         { path: 'pricing', element: withFallback(<PricingPage />) },
       ],
     },
