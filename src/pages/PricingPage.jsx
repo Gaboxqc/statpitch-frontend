@@ -15,11 +15,13 @@ function PricingPage() {
           }
         >
           <BrainIcon className={'h-4 w-4 text-primary'} />
-          <h1 className={''}>ML-POWERED PREDICTIONS</h1>
+          <p>ML-POWERED PREDICTIONS</p>
         </div>
         <div>
-          <h2 className={'text-3xl font-bold'}>Transparent Pricing</h2>
-          <h3 className={'text-3xl font-bold text-primary'}>No dark patterns</h3>
+          <h1 className={'text-3xl font-bold'}>
+            Transparent Pricing
+            <span className={'block text-primary'}>No dark patterns</span>
+          </h1>
         </div>
         <p className={'text-sm text-secondary-foreground/60'}>
           Choose the plan that matches your edge. Every tier includes a confidence score and
@@ -63,7 +65,7 @@ function PricingPage() {
         </div>
       </div>
       <div className={'mt-24 flex flex-col items-center gap-4 text-center'}>
-        <h3>Frequently asked questions</h3>
+        <h2 className={'text-xl font-bold'}>Frequently asked questions</h2>
         <ExpandableCard
           title={'How accurate is the model?'}
           description={`Over the past 90 days, our ensemble model achieved a ${MARKETING_STATS.accuracy} accuracy rate on 1X2 predictions with a confidence threshold above 70%. ROI on tracked selections sits at ${MARKETING_STATS.roi} for the rolling 30-day window. Past performance does not guarantee future results.`}

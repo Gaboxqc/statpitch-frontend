@@ -1,9 +1,10 @@
 import { LogoIcon, MenuIcon } from '../../assets/icons/index.js'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Link, NavLink } from 'react-router'
 
 function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
+  const menuId = useId()
   const linkBase = 'py-1.5 px-2 rounded-sm text-sm'
   const activeClass = 'bg-accent text-foreground'
   const inactiveClass = 'text-secondary-foreground'
@@ -46,6 +47,10 @@ function Navbar() {
                 'border border-secondary-foreground/20 rounded-md p-1 bg-secondary-foreground/15 m-2 md:hidden'
               }
               onClick={() => setIsOpened((prev) => !prev)}
+              aria-label={isOpened ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpened}
+              aria-controls={menuId}
+              type='button'
             >
               <MenuIcon className={'h-6 w-6 text-secondary-foreground'} />
             </button>
@@ -61,7 +66,8 @@ function Navbar() {
         </div>
 
         <div
-          className={`flex flex-col items-center gap-2 mt-4 text-sm ${isOpened ? 'block' : 'hidden'}`}
+          id={menuId}
+          className={`flex-col items-center gap-2 mt-4 text-sm md:hidden ${isOpened ? 'flex' : 'hidden'}`}
         >
           <NavLink
             to={'/'}

@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { BRAND, DISCLAIMER } from '../../constants/content.js'
 
 function Footer() {
   const [isOpened, setIsOpened] = useState(false)
+  const detailId = useId()
   return (
     <footer
       className={
@@ -22,19 +23,18 @@ function Footer() {
           >
             <span className={'text-secondary-foreground'}>{DISCLAIMER.short}</span>{' '}
             {DISCLAIMER.body}{' '}
-            <span className={`${isOpened ? 'inline' : 'hidden'}`}>{DISCLAIMER.extended} </span>
-            <span
-              className={`text-secondary-foreground underline cursor-pointer ${isOpened ? 'hidden' : ''}`}
-              onClick={() => setIsOpened(true)}
-            >
-              Read more
+            <span id={detailId} hidden={!isOpened}>
+              {DISCLAIMER.extended}{' '}
             </span>
-            <span
-              className={`text-secondary-foreground underline cursor-pointer ${isOpened ? '' : 'hidden'}`}
-              onClick={() => setIsOpened(false)}
+            <button
+              type='button'
+              className={'text-secondary-foreground underline cursor-pointer'}
+              aria-expanded={isOpened}
+              aria-controls={detailId}
+              onClick={() => setIsOpened((prev) => !prev)}
             >
-              Less
-            </span>
+              {isOpened ? 'Less' : 'Read more'}
+            </button>
           </p>
           <p className={'text-xs text-secondary-foreground/60'}>
             © {new Date().getFullYear()} {BRAND}

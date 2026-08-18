@@ -3,15 +3,17 @@ import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../../assets/
 import OutcomeBar from '../ui/OutcomeBar.jsx'
 import { useBestPrediction } from '../../hooks/queries.js'
 import { buildPredictionView } from '../../utils/predictionView.js'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import MarketList from './MarketList.jsx'
 import QueryError from '../ui/QueryError.jsx'
 import { formatDecimal, formatFraction, formatPercent } from '../../utils/format.js'
 import { DEFAULT_COMPETITION, MODEL } from '../../constants/content.js'
+import { formatMatchDateTime, toISOString } from '../../utils/datetime.js'
 
 function MatchDayCard() {
   const { prediction, loading, error } = useBestPrediction({ limit: 10, offset: 0 })
   const [isOpened, setIsOpened] = useState(false)
+  const marketsId = useId()
 
   if (loading)
     return (
@@ -37,7 +39,7 @@ function MatchDayCard() {
           <div className={'grid grid-cols-1  md:grid-cols-2'}>
             <div className={'flex items-center gap-2 pb-2'}>
               <div className={'h-1 w-1 bg-primary rounded-full animate-pulse'}></div>
-              <p className={'text-secondary-foreground text-xs'}>MATCH OF THE DAY</p>
+              <h2 className={'text-secondary-foreground text-xs'}>MATCH OF THE DAY</h2>
             </div>
 
             <div
@@ -49,14 +51,9 @@ function MatchDayCard() {
                 <p className={'text-xs'}>{DEFAULT_COMPETITION}</p>
               </div>
               <div>
-                <p className={'text-xs'}>
-                  Tonight,{' '}
-                  {new Date(prediction.commence_time).toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}{' '}
-                  GMT-6
-                </p>
+                <time dateTime={toISOString(prediction.commence_time)} className={'text-xs'}>
+                  {formatMatchDateTime(prediction.commence_time)}
+                </time>
               </div>
             </div>
           </div>
@@ -66,7 +63,7 @@ function MatchDayCard() {
               <div className={'w-20 h-20 md:w-40 md:h-40'}>
                 <img
                   src={prediction.home_flag_url}
-                  alt='HomePage flag'
+                  alt={`${prediction.home_team} flag`}
                   className={'w-full h-full object-contain rounded-sm'}
                 />
               </div>
@@ -101,7 +98,7 @@ function MatchDayCard() {
               <div className={'w-20 h-20 md:w-40 md:h-40'}>
                 <img
                   src={prediction.away_flag_url}
-                  alt='Away flag'
+                  alt={`${prediction.away_team} flag`}
                   className={'w-full h-full object-contain rounded-sm'}
                 />
               </div>
@@ -176,6 +173,9 @@ function MatchDayCard() {
                 'mt-4 p-4 max-h-12 lg:justify-self-end bg-accent/40 border border-accent/80 text-foreground rounded-md py-2 flex items-center justify-center gap-2 text-sm'
               }
               onClick={() => setIsOpened((prev) => !prev)}
+              type='button'
+              aria-expanded={isOpened}
+              aria-controls={marketsId}
             >
               <ChartIcon className={'h-4 w-4 text-primary'} />
               <p>Market Breakdown</p>
@@ -183,12 +183,7 @@ function MatchDayCard() {
             </button>
           </div>
         </div>
-        <MarketList
-          markets={markets}
-          prediction={prediction}
-          isOpened={isOpened}
-          bestBet={bestBet}
-        />
+        <MarketList id={marketsId} markets={markets} isOpened={isOpened} bestBet={bestBet} />
       </div>
     </div>
   )

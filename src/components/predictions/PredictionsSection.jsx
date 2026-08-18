@@ -19,9 +19,9 @@ function PredictionsSection() {
 
   return (
     <div className={'mt-12 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
-      <h3 className={'text-foreground text-lg font-bold ml-2'}>
+      <h2 className={'text-foreground text-lg font-bold ml-2'}>
         <span className={'text-secondary-foreground'}>{predictions.length}</span> Predictions
-      </h3>
+      </h2>
       {predictions.map((prediction) => {
         return <MatchCard key={prediction.id} prediction={prediction} />
       })}
