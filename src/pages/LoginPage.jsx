@@ -1,6 +1,7 @@
 import { BrainIcon, GithubIcon, GoogleIcon, LogoIcon } from '../assets/icons/index.js'
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { MARKETING_STATS } from '../constants/content.js'
 
 function LoginPage() {
   const [isNewAccount, setIsNewAccount] = useState(false)
@@ -12,7 +13,7 @@ function LoginPage() {
         }
       >
         <div className={'p-8 flex flex-col justify-between h-full'}>
-          <Link to={'/statpitch'} className={'items-center font-bold gap-2 hidden lg:flex'}>
+          <Link to={'/'} className={'items-center font-bold gap-2 hidden lg:flex'}>
             <LogoIcon className={'h-6 w-6 text-primary'} />
             <p className={'text-xl'}>
               Stat<span className={'text-primary'}>Pitch</span>
@@ -32,7 +33,7 @@ function LoginPage() {
                   'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
                 }
               >
-                <p className={'text-xl text-primary'}>71.4%</p>
+                <p className={'text-xl text-primary'}>{MARKETING_STATS.accuracy}</p>
                 <p className={'text-sm '}>Model accuracy</p>
                 <p className={'text-xs text-foreground/40'}>30-day rolling</p>
               </div>
@@ -41,7 +42,7 @@ function LoginPage() {
                   'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
                 }
               >
-                <p className={'text-xl text-primary'}>+8.3%</p>
+                <p className={'text-xl text-primary'}>{MARKETING_STATS.roi}</p>
                 <p className={'text-sm '}>ROI tracked</p>
                 <p className={'text-xs text-foreground/40'}>This month</p>
               </div>
@@ -50,7 +51,7 @@ function LoginPage() {
                   'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
                 }
               >
-                <p className={'text-xl text-primary'}>1,200+</p>
+                <p className={'text-xl text-primary'}>{MARKETING_STATS.marketsCovered}</p>
                 <p className={'text-sm '}>Markets covered</p>
                 <p className={'text-xs text-foreground/40'}>Daily</p>
               </div>
@@ -59,7 +60,7 @@ function LoginPage() {
                   'flex flex-col gap-2 bg-accent/20 border border-accent/40 rounded-md p-4'
                 }
               >
-                <p className={'text-xl text-primary'}>38</p>
+                <p className={'text-xl text-primary'}>{MARKETING_STATS.leagues}</p>
                 <p className={'text-sm '}>Leagues</p>
                 <p className={'text-xs text-foreground/40'}>Top competitions</p>
               </div>

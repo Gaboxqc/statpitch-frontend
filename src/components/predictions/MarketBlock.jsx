@@ -1,5 +1,5 @@
-import BasicBarChart from './ui/BasicBarChart.jsx'
-import { formatDecimal, formatFraction, formatPercent, toPercentValue } from '../utils/format.js'
+import ProbabilityBar from '../ui/ProbabilityBar.jsx'
+import { formatDecimal, formatFraction, formatPercent, toPercentValue } from '../../utils/format.js'
 
 function getEVColor(EV) {
   if (EV > 0) return 'text-primary'
@@ -63,7 +63,7 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }) {
             </p>
           </div>
           <div className={'flex flex-col gap-2'}>
-            <BasicBarChart prob={toPercentValue(prob)} />
+            <ProbabilityBar prob={toPercentValue(prob)} />
             <div
               className={'flex justify-between items-center text-xs text-secondary-foreground/50'}
             >

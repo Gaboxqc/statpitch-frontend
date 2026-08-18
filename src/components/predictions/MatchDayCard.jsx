@@ -1,12 +1,13 @@
 import DonutChart from '../ui/DonutChart.jsx'
 import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index.js'
-import BarChart from '../ui/BarChart.jsx'
-import useBestPrediction from '../../hooks/useBestPrediction.js'
-import { buildMarkets } from '../../utils/buildMarkets.js'
+import OutcomeBar from '../ui/OutcomeBar.jsx'
+import { useBestPrediction } from '../../hooks/queries.js'
+import { buildPredictionView } from '../../utils/predictionView.js'
 import { useState } from 'react'
-import MatchCardContainer from '../MatchCardContainer.jsx'
+import MarketList from './MarketList.jsx'
 import QueryError from '../ui/QueryError.jsx'
-import { formatDecimal, formatFraction, formatPercent, toPercentValue } from '../../utils/format.js'
+import { formatDecimal, formatFraction, formatPercent } from '../../utils/format.js'
+import { DEFAULT_COMPETITION, MODEL } from '../../constants/content.js'
 
 function MatchDayCard() {
   const { prediction, loading, error } = useBestPrediction({ limit: 10, offset: 0 })
@@ -19,22 +20,7 @@ function MatchDayCard() {
   if (error) return <QueryError error={error} className={'m-2 mt-4 lg:w-2/3 lg:mx-auto'} />
   if (!prediction) return <p className={'text-center mt-8'}>No prediction available.</p>
 
-  const markets = buildMarkets(prediction)
-  const bestBet = prediction.best_overall_bet
-  const bestMarket = markets.find((market) => market.key === bestBet)
-
-  const isHomeWin = prediction.home_win_prob > prediction.away_win_prob
-  const winner = isHomeWin
-    ? {
-        isHome: true,
-        name: prediction.home_team,
-        prob: toPercentValue(prediction.home_win_prob),
-      }
-    : {
-        isHome: false,
-        name: prediction.away_team,
-        prob: toPercentValue(prediction.away_win_prob),
-      }
+  const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
 
   return (
     <div
@@ -60,7 +46,7 @@ function MatchDayCard() {
               }
             >
               <div>
-                <p className={'text-xs'}>FIFA World Cup</p>
+                <p className={'text-xs'}>{DEFAULT_COMPETITION}</p>
               </div>
               <div>
                 <p className={'text-xs'}>
@@ -135,7 +121,7 @@ function MatchDayCard() {
             </div>
           </div>
 
-          <BarChart
+          <OutcomeBar
             home={prediction.home_win_prob * 100}
             away={prediction.away_win_prob * 100}
             draw={prediction.draw_prob * 100}
@@ -149,7 +135,9 @@ function MatchDayCard() {
             <div className={'flex items-center gap-2'}>
               <ThunderIcon className={'h-4 w-4 text-primary'} />
               <div className={'flex flex-col gap-1'}>
-                <p className={'text-xs text-secondary-foreground/60'}>TOP PICK MODEL V3</p>
+                <p className={'text-xs text-secondary-foreground/60'}>
+                  TOP PICK · MODEL {prediction.model_version ?? MODEL.fallbackVersion}
+                </p>
                 <p className={'text-sm'}>{bestMarket?.market}</p>
               </div>
             </div>
@@ -178,7 +166,7 @@ function MatchDayCard() {
                   </p>
                 </div>
                 <p className={'text-xs shrink-0'}>
-                  Model {prediction.model_version} - Gradient Boost - Neuronal Net Ensemble
+                  Model {prediction.model_version ?? MODEL.fallbackVersion} · {MODEL.ensemble}
                 </p>
               </div>
             </div>
@@ -195,7 +183,7 @@ function MatchDayCard() {
             </button>
           </div>
         </div>
-        <MatchCardContainer
+        <MarketList
           markets={markets}
           prediction={prediction}
           isOpened={isOpened}

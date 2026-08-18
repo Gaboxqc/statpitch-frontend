@@ -1,7 +1,7 @@
-import SummaryBar from '../components/bars/SummaryBar.jsx'
-import MatchDayCard from '../components/cards/MatchDayCard.jsx'
-import PredictionsSection from '../components/PredictionsSection.jsx'
-import FiltersBar from '../components/bars/FiltersBar.jsx'
+import SummaryBar from '../components/predictions/SummaryBar.jsx'
+import MatchDayCard from '../components/predictions/MatchDayCard.jsx'
+import PredictionsSection from '../components/predictions/PredictionsSection.jsx'
+import FiltersBar from '../components/predictions/FiltersBar.jsx'
 
 function HomePage() {
   return (

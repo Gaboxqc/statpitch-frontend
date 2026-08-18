@@ -1,7 +1,7 @@
-import { BrainIcon } from '../assets/icons/index.js'
+import { BrainIcon } from '../../assets/icons/index.js'
 import MarketBlock from './MarketBlock.jsx'
 
-function MatchCardContainer({ markets, bestBet, isOpened }) {
+function MarketList({ markets, bestBet, isOpened }) {
   return (
     <div className={`flex-col mt-12 gap-4 w-full ${isOpened ? 'flex' : 'hidden'}`}>
       <div className={'flex justify-between text-secondary-foreground/50 text-xs'}>
@@ -26,4 +26,4 @@ function MatchCardContainer({ markets, bestBet, isOpened }) {
   )
 }
 
-export default MatchCardContainer
+export default MarketList
