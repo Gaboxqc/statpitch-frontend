@@ -6,7 +6,7 @@ import { useElapsed } from '../../hooks/useElapsed'
 import { COLD_START_HINT_MS } from '../../services/api'
 import { buildPredictionView } from '../../utils/predictionView'
 import { useId, useState } from 'react'
-import MarketList from './MarketList'
+import FixtureDetail from './FixtureDetail'
 import QueryError from '../ui/QueryError'
 import TeamCrest from '../ui/TeamCrest'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
@@ -214,7 +214,13 @@ function MatchDayCard() {
             </button>
           </div>
         </div>
-        <MarketList id={marketsId} markets={markets} isOpened={isOpened} bestBet={bestBet} />
+        <FixtureDetail
+          id={marketsId}
+          fixture={prediction}
+          markets={markets}
+          bestBet={bestBet}
+          isOpened={isOpened}
+        />
       </div>
     </div>
   )

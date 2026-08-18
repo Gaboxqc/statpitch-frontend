@@ -1,7 +1,8 @@
 import { useId, useState } from 'react'
 import DonutChart from '../ui/DonutChart'
 import ProbabilityTiles from '../ui/ProbabilityTiles'
-import MarketList from './MarketList'
+import FixtureDetail from './FixtureDetail'
+import FinalScore from './FinalScore'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import TeamCrest from '../ui/TeamCrest'
 import { buildPredictionView } from '../../utils/predictionView'
@@ -49,6 +50,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
                 Prediction only
               </p>
             )}
+            {prediction.home_score !== null && <FinalScore fixture={prediction} />}
             <ClockIcon className={'h-4 w-4 text-secondary-foreground/60'} />
             <time
               dateTime={kickoff.dateTime}
@@ -111,7 +113,13 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
       />
 
       <div className={'w-full px-4'}>
-        <MarketList id={marketsId} markets={markets} isOpened={isOpened} bestBet={bestBet} />
+        <FixtureDetail
+          id={marketsId}
+          fixture={prediction}
+          markets={markets}
+          bestBet={bestBet}
+          isOpened={isOpened}
+        />
       </div>
     </div>
   )
