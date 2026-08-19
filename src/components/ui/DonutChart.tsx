@@ -45,7 +45,7 @@ function DonutChart({ value, size = 56 }: { value: number; size?: number }) {
         />
       </svg>
       <div className='absolute inset-0 flex items-center justify-center'>
-        <span className={`text-xs font-bold leading-none ${confTextClass(value)}`}>
+        <span className={`numeric text-xs font-semibold leading-none ${confTextClass(value)}`}>
           {Math.round(value)}%
         </span>
       </div>

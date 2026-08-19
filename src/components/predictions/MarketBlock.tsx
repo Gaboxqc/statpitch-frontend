@@ -37,8 +37,10 @@ function getKellyRender(kelly: number | null, ev: number | null, priced: boolean
         'text-xs text-secondary-foreground/70 p-2 bg-primary/10 border border-primary/20 rounded-sm'
       }
     >
-      CONSIDER{' '}
-      <span className={'text-primary font-bold'}>Stake {formatFraction(kelly)} of bankroll</span>
+      <span className={'eyebrow'}>Consider</span>{' '}
+      <span className={'text-primary font-semibold tabular-nums'}>
+        Stake {formatFraction(kelly)} of bankroll
+      </span>
     </p>
   )
 }
@@ -47,13 +49,13 @@ function getMarketNameRender(market: string, isBest: boolean) {
   if (isBest)
     return (
       <div className={'flex items-center gap-2'}>
-        <p>{market}</p>
-        <p className={'text-xs p-1 bg-primary/10 border border-primary/20 rounded-sm text-primary'}>
-          BEST BET
+        <p className={'font-medium'}>{market}</p>
+        <p className={'eyebrow p-1 bg-primary/10 border border-primary/20 rounded-sm text-primary'}>
+          Best bet
         </p>
       </div>
     )
-  return <p>{market}</p>
+  return <p className={'font-medium'}>{market}</p>
 }
 
 interface MarketBlockProps extends Omit<Market, 'key'> {
@@ -77,7 +79,7 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }: MarketBlockProps
         <div className={'flex flex-col gap-4 w-full'}>
           <div className={'flex justify-between items-center gap-2 text-sm'}>
             {getMarketNameRender(market, isBest)}
-            <p className={`${getEVColor(ev)} font-bold`}>
+            <p className={`numeric ${getEVColor(ev)} font-semibold`}>
               {/* EV arrives as a 0-1 fraction: 0.0617 is a +6.17% edge. */}
               {ev === null ? 'Not priced' : `${formatSignedFraction(ev)} EV`}
             </p>
@@ -85,15 +87,15 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }: MarketBlockProps
           {getKellyRender(kelly, ev, priced)}
           <div className={'flex items-center gap-2 text-xs text-secondary-foreground/50'}>
             {priced && (
-              <p>
-                BOOK <span className={'text-foreground'}>{formatDecimal(odds)}</span> |{' '}
+              <p className={'eyebrow'}>
+                Book <span className={'numeric text-foreground'}>{formatDecimal(odds)}</span> |{' '}
               </p>
             )}
-            <p>
-              FAIR ODDS <span className={'text-foreground'}>{fairOdds}</span> |{' '}
+            <p className={'eyebrow'}>
+              Fair odds <span className={'numeric text-foreground'}>{fairOdds}</span> |{' '}
             </p>
-            <p>
-              MODEL <span className={'text-foreground'}>{formatFraction(prob)}</span>{' '}
+            <p className={'eyebrow'}>
+              Model <span className={'numeric text-foreground'}>{formatFraction(prob)}</span>{' '}
             </p>
           </div>
           <div className={'flex flex-col gap-2'}>
@@ -103,11 +105,11 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }: MarketBlockProps
             >
               {priced && (
                 <p>
-                  Implied <span>{formatFraction(1 / odds)}</span>
+                  Implied <span className={'numeric'}>{formatFraction(1 / odds)}</span>
                 </p>
               )}
               <p>
-                Model <span>{formatFraction(prob)}</span>
+                Model <span className={'numeric'}>{formatFraction(prob)}</span>
               </p>
             </div>
           </div>

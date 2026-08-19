@@ -20,24 +20,28 @@ function PricingCard({
       }`}
     >
       {isPopular && (
-        <span className='absolute -top-3 left-1/2 -translate-x-1/2 text-xs bg-primary font-bold text-primary-foreground px-3 py-1 rounded-full'>
-          Most Popular
+        <span className='absolute -top-3 left-1/2 -translate-x-1/2 eyebrow bg-primary text-primary-foreground px-3 py-1 rounded-full'>
+          Most popular
         </span>
       )}
 
       <div>
-        <p className={'text-sm text-foreground'}>{name}</p>
+        <p className={'text-sm font-medium text-foreground'}>{name}</p>
         <p className={'text-xs text-secondary-foreground'}>{description}</p>
       </div>
 
-      <p className={'text-3xl font-bold'}>
+      <p className={'numeric text-2xl font-semibold'}>
         {price}
-        {period && <span className={'text-sm text-secondary-foreground'}>{period}</span>}
+        {period && (
+          <span className={'font-sans text-sm font-normal text-secondary-foreground'}>
+            {period}
+          </span>
+        )}
       </p>
 
       <Link
         to={buttonLink}
-        className={`w-11/12 bg-accent/40 self-center p-2 rounded-md text-sm text-center font-bold my-2 ${isPopular ? 'text-background bg-primary' : 'text-foreground border border-accent/50'}`}
+        className={`w-11/12 bg-accent/40 self-center p-2 rounded-md text-sm text-center font-semibold my-2 ${isPopular ? 'text-background bg-primary' : 'text-foreground border border-accent/50'}`}
       >
         {buttonText}
       </Link>

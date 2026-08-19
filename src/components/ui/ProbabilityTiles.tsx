@@ -43,8 +43,10 @@ function ProbabilityTiles({
             highlighted ? 'bg-primary/10 border-primary/50' : 'border-secondary-foreground/20'
           }`}
         >
-          <p className={'text-secondary-foreground/60'}>{label}</p>
-          <p className={`font-bold ${highlighted ? 'text-primary' : 'text-secondary-foreground'}`}>
+          <p className={'eyebrow text-secondary-foreground/60'}>{label}</p>
+          <p
+            className={`numeric font-semibold ${highlighted ? 'text-primary' : 'text-secondary-foreground'}`}
+          >
             {formatFraction(value)}
           </p>
         </div>

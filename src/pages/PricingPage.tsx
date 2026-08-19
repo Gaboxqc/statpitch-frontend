@@ -15,25 +15,25 @@ function PricingPage() {
       <div className={'mt-12 flex flex-col items-center gap-4 text-center'}>
         <div
           className={
-            'flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/15 p-2 text-sm font-bold text-primary'
+            'eyebrow flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/15 px-3 py-1.5 text-primary'
           }
         >
           <BrainIcon className={'h-4 w-4 text-primary'} />
-          <p>ML-POWERED PREDICTIONS</p>
+          <p>ML-powered predictions</p>
         </div>
         <div>
-          <h1 className={'text-3xl font-bold'}>
+          <h1 className={'text-2xl font-semibold md:text-3xl'}>
             Transparent Pricing
             <span className={'block text-primary'}>No dark patterns</span>
           </h1>
         </div>
-        <p className={'text-sm text-secondary-foreground/60'}>
+        <p className={'max-w-xl text-base text-secondary-foreground/60'}>
           Choose the plan that matches your edge. Every tier includes a confidence score and
           probability breakdown — no black boxes.
         </p>
       </div>
       <div>
-        <p className={'my-12 text-center'}>Monthly</p>
+        <p className={'eyebrow my-12 text-center text-secondary-foreground'}>Monthly</p>
         <div className={'grid grid-cols-1 gap-4 md:grid-cols-3'}>
           {pricingPlans.map((plan) => (
             <PricingCard key={plan.name} {...plan} />
@@ -49,7 +49,7 @@ function PricingPage() {
         </p>
       </div>
       <div className={'mt-24 flex flex-col items-center gap-4 text-center'}>
-        <h2 className={'text-xl font-bold'}>Frequently asked questions</h2>
+        <h2 className={'text-xl font-semibold'}>Frequently asked questions</h2>
         <ExpandableCard
           title={'How is performance measured?'}
           description={
@@ -96,7 +96,7 @@ function PricingPage() {
           className={'p-3 bg-primary text-background rounded-md flex items-center gap-2 my-4'}
         >
           <BrainIcon className={'h-4 w-4 text-background'} />
-          <span className={'text-sm font-bold'}>Start free trial</span>
+          <span className={'text-sm font-semibold'}>Start free trial</span>
         </Link>
       </div>
     </section>

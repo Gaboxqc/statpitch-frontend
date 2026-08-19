@@ -14,7 +14,7 @@ function Navbar() {
     >
       <nav className={'container mx-auto flex flex-col'}>
         <div className={'flex text-foreground items-center justify-between mx-2 md:mx-0 text-lg'}>
-          <div className={'flex items-center font-bold gap-2'}>
+          <div className={'flex items-center font-semibold gap-2 tracking-tight'}>
             <LogoIcon className={'h-6 w-6 text-primary'} />
 
             <p>
@@ -45,7 +45,7 @@ function Navbar() {
           </div>
 
           <div className={'flex gap-4 items-center'}>
-            <Link to={'/login'} className={'text-md text-sm text-secondary-foreground'}>
+            <Link to={'/login'} className={'text-sm text-secondary-foreground'}>
               Sign in
             </Link>
             <button
@@ -63,7 +63,7 @@ function Navbar() {
             <Link
               to={'/login'}
               className={
-                'bg-primary text-secondary font-bold text-sm rounded-sm py-1.5 px-2 m-2 md:block hidden'
+                'bg-primary text-secondary text-sm font-semibold rounded-sm py-1.5 px-2 m-2 md:block hidden'
               }
             >
               Get started
@@ -106,7 +106,9 @@ function Navbar() {
           <Link
             to={'/login'}
             key={'login'}
-            className={'bg-primary w-11/12 p-2 rounded-sm text-background text-center font-bold'}
+            className={
+              'bg-primary w-11/12 p-2 rounded-sm text-background text-center text-sm font-semibold'
+            }
             onClick={() => setIsOpened(false)}
           >
             Get started free

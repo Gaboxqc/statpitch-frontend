@@ -34,14 +34,14 @@ class ErrorBoundary extends Component<Props, State> {
           'min-h-screen bg-background text-foreground flex flex-col items-center justify-center gap-4 px-4 text-center'
         }
       >
-        <h1 className={'text-xl font-bold'}>Something went wrong</h1>
+        <h1 className={'text-xl font-semibold'}>Something went wrong</h1>
         <p className={'text-sm text-secondary-foreground/60 max-w-md'}>
           The page failed to render. Reloading usually clears it.
         </p>
         <button
           type='button'
           onClick={() => window.location.reload()}
-          className={'bg-primary text-background font-bold text-sm rounded-md px-4 py-2'}
+          className={'bg-primary text-background text-sm font-semibold rounded-md px-4 py-2'}
         >
           Reload page
         </button>

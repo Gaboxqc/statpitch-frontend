@@ -53,7 +53,7 @@ function TrackRecordPage() {
   return (
     <div className={'container mx-auto px-4 pt-20 pb-16 flex flex-col gap-10'}>
       <header className={'flex flex-col gap-2'}>
-        <h1 className={'text-2xl font-bold text-foreground'}>Track record</h1>
+        <h1 className={'text-xl font-semibold text-foreground'}>Track record</h1>
         <p className={'text-sm text-secondary-foreground/70 max-w-2xl'}>
           Every selection below was published before kick-off and settled against a real bookmaker
           price at one unit a bet. Predictions come from the model; the selections, stakes and
@@ -62,7 +62,7 @@ function TrackRecordPage() {
       </header>
 
       <section className={'flex flex-col gap-4'}>
-        <h2 className={'text-sm text-secondary-foreground'}>Return on investment</h2>
+        <h2 className={'text-sm font-medium text-secondary-foreground'}>Return on investment</h2>
         {statsError ? (
           <QueryError error={statsError} />
         ) : statsLoading ? (
@@ -73,13 +73,15 @@ function TrackRecordPage() {
       </section>
 
       <section className={'flex flex-col gap-4'}>
-        <h2 className={'text-sm text-secondary-foreground'}>Cumulative profit and loss</h2>
+        <h2 className={'text-sm font-medium text-secondary-foreground'}>
+          Cumulative profit and loss
+        </h2>
         {curveError ? <QueryError error={curveError} /> : <EquityCurve bets={curveBets} />}
       </section>
 
       <section className={'flex flex-col gap-4'}>
         <div className={'flex flex-wrap items-center justify-between gap-4'}>
-          <h2 className={'text-sm text-secondary-foreground'}>Settled bets</h2>
+          <h2 className={'text-sm font-medium text-secondary-foreground'}>Settled bets</h2>
 
           <div className={'flex items-center gap-2 text-xs'}>
             <label className={'flex items-center gap-2'}>

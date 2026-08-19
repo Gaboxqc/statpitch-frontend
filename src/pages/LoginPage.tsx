@@ -15,7 +15,10 @@ function LoginPage() {
         }
       >
         <div className={'p-8 flex flex-col justify-between h-full'}>
-          <Link to={'/'} className={'items-center font-bold gap-2 hidden lg:flex'}>
+          <Link
+            to={'/'}
+            className={'items-center font-semibold gap-2 hidden lg:flex tracking-tight'}
+          >
             <LogoIcon className={'h-6 w-6 text-primary'} />
             <p className={'text-xl'}>
               Stat<span className={'text-primary'}>Pitch</span>
@@ -23,8 +26,8 @@ function LoginPage() {
           </Link>
 
           <div>
-            <p className={'text-2xl'}>ML-powered predictions.</p>
-            <p className={'text-2xl text-primary'}>Edge that compounds.</p>
+            <p className={'text-xl'}>ML-powered predictions.</p>
+            <p className={'text-xl text-primary'}>Edge that compounds.</p>
             <p className={'text-sm text-foreground/40 mt-4'}>
               Probabilities come from a fitted goal model rated on club Elo, recent venue form and
               rest days. Fixtures are re-synced once a day.
@@ -46,9 +49,13 @@ function LoginPage() {
 
       <div className={'flex items-center justify-center w-full lg:w-4/6'}>
         <div className={'w-90 flex flex-col justify-center gap-8 h-full '}>
-          <div className={'flex items-center font-bold gap-2 self-center mt-14 lg:hidden'}>
+          <div
+            className={
+              'flex items-center font-semibold gap-2 self-center mt-14 lg:hidden tracking-tight'
+            }
+          >
             <LogoIcon className={'h-10 w-8 text-primary'} />
-            <p className={'text-2xl'}>
+            <p className={'text-xl'}>
               Stat<span className={'text-primary'}>Pitch</span>
             </p>
           </div>
@@ -61,7 +68,7 @@ function LoginPage() {
             <button
               type='button'
               aria-pressed={!isNewAccount}
-              className={`w-60 h-10 ml-1 rounded-sm text-sm cursor-pointer ${isNewAccount ? 'text-foreground/50' : 'bg-accent/50 text-foreground'}`}
+              className={`w-60 h-10 ml-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'text-foreground/50' : 'bg-accent/50 text-foreground'}`}
               onClick={() => setIsNewAccount(false)}
             >
               Sign in
@@ -69,7 +76,7 @@ function LoginPage() {
             <button
               type='button'
               aria-pressed={isNewAccount}
-              className={`w-60 h-10 mr-1 rounded-sm text-sm cursor-pointer ${isNewAccount ? 'bg-accent/50 text-foreground' : 'text-foreground/50'}`}
+              className={`w-60 h-10 mr-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'bg-accent/50 text-foreground' : 'text-foreground/50'}`}
               onClick={() => setIsNewAccount(true)}
             >
               Create account
@@ -77,7 +84,9 @@ function LoginPage() {
           </div>
 
           <div>
-            <h1 className={'text-xl'}>{isNewAccount ? 'Get started free' : 'Welcome back'}</h1>
+            <h1 className={'text-xl font-semibold'}>
+              {isNewAccount ? 'Get started free' : 'Welcome back'}
+            </h1>
             <p className={'text-sm text-secondary-foreground/50'}>
               {isNewAccount
                 ? '14-day free trial. No credit card required.'
@@ -90,8 +99,8 @@ function LoginPage() {
             <div className={'flex flex-col gap-4'}>
               {isNewAccount && (
                 <div className={'flex flex-col gap-1'}>
-                  <label htmlFor='name' className={'text-sm text-foreground/40'}>
-                    FULL NAME
+                  <label htmlFor='name' className={'eyebrow text-foreground/40'}>
+                    Full name
                   </label>
                   <input
                     id='name'
@@ -105,8 +114,8 @@ function LoginPage() {
                 </div>
               )}
               <div className={'flex flex-col gap-1'}>
-                <label htmlFor='email' className={'text-sm text-foreground/40'}>
-                  EMAIL
+                <label htmlFor='email' className={'eyebrow text-foreground/40'}>
+                  Email
                 </label>
                 <input
                   id='email'
@@ -119,8 +128,8 @@ function LoginPage() {
                 />
               </div>
               <div className={'flex flex-col gap-1'}>
-                <label htmlFor='password' className={'text-sm text-foreground/40'}>
-                  PASSWORD
+                <label htmlFor='password' className={'eyebrow text-foreground/40'}>
+                  Password
                 </label>
                 <input
                   id='password'
@@ -142,7 +151,7 @@ function LoginPage() {
             <button
               type='submit'
               className={
-                'flex items-center justify-center gap-2 bg-primary text-background p-3 rounded-md font-bold text-sm cursor-pointer'
+                'flex items-center justify-center gap-2 bg-primary text-background p-3 rounded-md text-sm font-semibold cursor-pointer'
               }
             >
               <BrainIcon className={'h-4 w-4'} />
@@ -159,7 +168,7 @@ function LoginPage() {
             <button
               type='button'
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30 cursor-pointer'
+                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md text-sm font-medium border border-accent/30 cursor-pointer'
               }
             >
               <GoogleIcon className={'h-4 w-4'} />
@@ -168,7 +177,7 @@ function LoginPage() {
             <button
               type='button'
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md font-bold text-sm border border-accent/30 cursor-pointer'
+                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md text-sm font-medium border border-accent/30 cursor-pointer'
               }
             >
               <GithubIcon className={'h-4 w-4'} />

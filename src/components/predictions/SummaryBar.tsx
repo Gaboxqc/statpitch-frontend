@@ -28,7 +28,7 @@ function StatItem({ id, label, value, color, hint }: StatItemData) {
     <li className={'flex items-center gap-2 shrink-0'} title={hint}>
       <Icon className={'text-accent'} />
       <p className={'text-xs'}>{label}</p>
-      <p className={`text-md font-bold ${color}`}>{value}</p>
+      <p className={`numeric text-sm font-semibold ${color}`}>{value}</p>
     </li>
   )
 }
@@ -77,11 +77,11 @@ function SummaryBar() {
         <div className={'relative flex items-center gap-2 group'}>
           <button
             className={
-              'hidden lg:flex items-center gap-2 text-secondary-foreground/50 text-sm bg-accent/50 py-1 px-2 rounded-md shrink-0 cursor-pointer'
+              'hidden lg:flex items-center gap-2 text-secondary-foreground/50 bg-accent/50 py-1 px-2 rounded-md shrink-0 cursor-pointer'
             }
           >
             <InfoIcon className={'h-4 w-4'} />
-            DISCLAIMER
+            <span className={'eyebrow'}>Disclaimer</span>
           </button>
           <div
             className={

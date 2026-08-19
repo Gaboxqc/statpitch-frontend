@@ -17,7 +17,7 @@ function ExpandableCard({ title, description }: { title: string; description: st
           aria-controls={panelId}
           onClick={() => setIsOpened((prev) => !prev)}
         >
-          <span className={'text-sm'}>{title}</span>
+          <span className={'text-sm font-medium'}>{title}</span>
           <ShortArrowIcon
             className={`h-4 w-4 text-accent shrink-0 ${isOpened ? 'rotate-180' : ''}`}
           />

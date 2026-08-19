@@ -54,7 +54,7 @@ function MatchDayCard() {
           <div className={'grid grid-cols-1  md:grid-cols-2'}>
             <div className={'flex items-center gap-2 pb-2'}>
               <div className={'h-1 w-1 bg-primary rounded-full animate-pulse'}></div>
-              <h2 className={'text-secondary-foreground text-xs'}>MATCH OF THE DAY</h2>
+              <h2 className={'eyebrow text-secondary-foreground'}>Match of the day</h2>
             </div>
 
             <div
@@ -68,7 +68,7 @@ function MatchDayCard() {
               <div>
                 <time
                   dateTime={kickoff.dateTime}
-                  className={`text-xs ${kickoff.provisional ? 'italic opacity-70' : ''}`}
+                  className={`numeric text-xs ${kickoff.provisional ? 'italic opacity-70' : ''}`}
                 >
                   {kickoff.text}
                 </time>
@@ -83,29 +83,31 @@ function MatchDayCard() {
                 url={prediction.home_crest_url}
                 className={'w-20 h-20 md:w-40 md:h-40 text-4xl md:text-6xl'}
               />
-              <p className={'text-sm mt-2 text-center'}>{prediction.home_team}</p>
-              <p className={'text-2xl text-primary font-bold'}>
+              <p className={'text-sm font-medium mt-2 text-center'}>{prediction.home_team}</p>
+              <p className={'numeric text-xl md:text-2xl text-primary font-semibold'}>
                 {formatFraction(prediction.home_win_prob)}
               </p>
-              <p className={'text-xs text-secondary-foreground/60'}>WIN</p>
+              <p className={'eyebrow text-secondary-foreground/60'}>Win</p>
               <div
                 className={
                   'flex gap-2 mt-2 text-xs bg-accent/40 p-1 rounded-sm border border-accent/80'
                 }
               >
-                <p className={'text-secondary-foreground/70'}>XG</p>
-                <p className={'text-primary font-bold'}>{formatDecimal(prediction.home_xg)}</p>
+                <p className={'eyebrow text-secondary-foreground/70'}>xG</p>
+                <p className={'numeric text-primary font-semibold'}>
+                  {formatDecimal(prediction.home_xg)}
+                </p>
               </div>
             </div>
             <div className={'flex flex-col items-center justify-center gap-4 mx-4'}>
-              <p className={'text-xs'}>vs</p>
+              <p className={'eyebrow text-secondary-foreground/60'}>vs</p>
               <div
                 className={
                   'flex flex-col items-center bg-accent/40 border border-accent/80 px-4 py-2 rounded-xl'
                 }
               >
-                <p className={'text-xs text-secondary-foreground/60'}>DRAW</p>
-                <p className={'text-md text-secondary-foreground'}>
+                <p className={'eyebrow text-secondary-foreground/60'}>Draw</p>
+                <p className={'numeric text-lg text-secondary-foreground'}>
                   {formatFraction(prediction.draw_prob)}
                 </p>
               </div>
@@ -116,18 +118,20 @@ function MatchDayCard() {
                 url={prediction.away_crest_url}
                 className={'w-20 h-20 md:w-40 md:h-40 text-4xl md:text-6xl'}
               />
-              <p className={'text-sm mt-2 text-center'}>{prediction.away_team}</p>
-              <p className={'text-2xl font-bold text-chart-2'}>
+              <p className={'text-sm font-medium mt-2 text-center'}>{prediction.away_team}</p>
+              <p className={'numeric text-xl md:text-2xl font-semibold text-chart-2'}>
                 {formatFraction(prediction.away_win_prob)}
               </p>
-              <p className={'text-xs text-secondary-foreground/60'}>WIN</p>
+              <p className={'eyebrow text-secondary-foreground/60'}>Win</p>
               <div
                 className={
                   'flex gap-2 mt-2 text-xs bg-accent/40 p-1 rounded-sm border border-accent/80'
                 }
               >
-                <p className={'text-secondary-foreground/70'}>XG</p>
-                <p className={'text-chart-2 font-bold'}>{formatDecimal(prediction.away_xg)}</p>
+                <p className={'eyebrow text-secondary-foreground/70'}>xG</p>
+                <p className={'numeric text-chart-2 font-semibold'}>
+                  {formatDecimal(prediction.away_xg)}
+                </p>
               </div>
             </div>
           </div>
@@ -147,23 +151,25 @@ function MatchDayCard() {
               <div className={'flex items-center gap-2'}>
                 <ThunderIcon className={'h-4 w-4 text-primary'} />
                 <div className={'flex flex-col gap-1'}>
-                  <p className={'text-xs text-secondary-foreground/60'}>
-                    TOP PICK · MODEL {prediction.model_version}
+                  <p className={'eyebrow text-secondary-foreground/60'}>
+                    Top pick <span className={'numeric'}>· {prediction.model_version}</span>
                   </p>
-                  <p className={'text-sm'}>{bestMarket?.market}</p>
+                  <p className={'text-sm font-medium'}>{bestMarket?.market}</p>
                 </div>
               </div>
               <div className={'flex gap-4'}>
                 <div className={'text-center'}>
-                  <p className={'text-xs text-secondary-foreground/60 mb-1'}>EV</p>
+                  <p className={'eyebrow text-secondary-foreground/60 mb-1'}>EV</p>
                   {/* A 0-1 fraction from the API, and already signed by the formatter. */}
-                  <p className={'text-primary font-bold text-sm'}>
+                  <p className={'numeric text-primary font-semibold text-sm'}>
                     {formatSignedFraction(bestMarket?.ev)}
                   </p>
                 </div>
                 <div className={'text-center'}>
-                  <p className={'text-xs text-secondary-foreground/60 mb-1'}>Kelly Stake</p>
-                  <p className={'text-sm'}>{formatFraction(bestMarket?.kelly)}</p>
+                  <p className={'eyebrow text-secondary-foreground/60 mb-1'}>Kelly stake</p>
+                  <p className={'numeric text-sm font-semibold'}>
+                    {formatFraction(bestMarket?.kelly)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -185,16 +191,16 @@ function MatchDayCard() {
             <div className={'mt-4 text-secondary-foreground/50 flex gap-4'}>
               <DonutChart value={winner.prob} />
               <div>
-                <p className={'text-xs'}>AI CONFIDENCE</p>
+                <p className={'eyebrow'}>AI confidence</p>
                 <div className={'flex items-center gap-2'}>
                   <BrainIcon className={`text-primary`} />
                   <p className={`text-sm text-foreground`}>
                     Prediction:
-                    <span className={`font-bold text-primary`}> {winner.name} Win</span>
+                    <span className={`font-semibold text-primary`}> {winner.name} win</span>
                   </p>
                 </div>
                 <p className={'text-xs shrink-0'}>
-                  Model {prediction.model_version} ·{' '}
+                  Model <span className={'numeric'}>{prediction.model_version}</span> ·{' '}
                   {predictionSource(prediction.prediction_source)?.label ?? 'unknown source'}
                 </p>
               </div>
@@ -210,7 +216,7 @@ function MatchDayCard() {
               aria-controls={marketsId}
             >
               <ChartIcon className={'h-4 w-4 text-primary'} />
-              <p>Market Breakdown</p>
+              <p className={'font-medium'}>Market breakdown</p>
               <ShortArrowIcon className={`h-4 w-4 ${isOpened ? 'rotate-180' : ''}`} />
             </button>
           </div>
