@@ -16,9 +16,9 @@ function Window({ label, roi }: { label: string; roi: WindowRoi }) {
 
   return (
     <div className={'flex flex-col gap-1'}>
-      <p className={'text-xs text-secondary-foreground/50'}>{label}</p>
+      <p className={'eyebrow text-secondary-foreground/50'}>{label}</p>
       <p
-        className={`text-2xl font-bold ${
+        className={`numeric text-xl font-semibold ${
           !settled
             ? 'text-secondary-foreground/40'
             : roi.roi_pct! >= 0
@@ -28,7 +28,7 @@ function Window({ label, roi }: { label: string; roi: WindowRoi }) {
       >
         {settled ? formatSignedPercent(roi.roi_pct, 1) : '—'}
       </p>
-      <p className={'text-xs text-secondary-foreground/60'}>
+      <p className={'text-xs tabular-nums text-secondary-foreground/60'}>
         {settled ? (
           <>
             {roi.bets} bets · {roi.wins} won ({formatSignedPercent(roi.hit_rate_pct, 0).slice(1)})
@@ -64,7 +64,9 @@ function RoiSummary({ roi }: { roi: BasisRoi[] }) {
           }
         >
           <div>
-            <h3 className={'text-sm text-foreground'}>{BASIS_LABELS[entry.basis].title}</h3>
+            <h3 className={'text-sm font-medium text-foreground'}>
+              {BASIS_LABELS[entry.basis].title}
+            </h3>
             <p className={'text-xs text-secondary-foreground/50'}>
               {BASIS_LABELS[entry.basis].blurb}
             </p>

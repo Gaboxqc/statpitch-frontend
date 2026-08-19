@@ -36,7 +36,7 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
               className={'flex flex-col gap-1 bg-accent/20 border border-accent/40 rounded-md p-4'}
             >
               <p
-                className={`text-xl font-bold ${
+                className={`numeric text-xl font-semibold ${
                   !settled
                     ? 'text-secondary-foreground/40'
                     : entry.month.roi_pct! >= 0
@@ -46,7 +46,7 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
               >
                 {settled ? formatSignedPercent(entry.month.roi_pct, 1) : '—'}
               </p>
-              <p className={'text-sm'}>{LABELS[entry.basis]}</p>
+              <p className={'text-sm font-medium'}>{LABELS[entry.basis]}</p>
               <p className={'text-xs text-foreground/40'}>
                 {settled ? `30-day ROI · ${entry.month.bets} bets` : 'No bets settled yet'}
               </p>

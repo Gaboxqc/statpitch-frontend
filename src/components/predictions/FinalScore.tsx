@@ -25,12 +25,14 @@ function FinalScore({ fixture, variant = 'badge' }: FinalScoreProps) {
           'flex items-center gap-2 shrink-0 p-1 md:px-2 rounded-sm text-xs border border-secondary-foreground/25 bg-accent/30'
         }
       >
-        <span className={'font-bold tabular-nums'}>
+        <span className={'numeric font-semibold'}>
           {home}&ndash;{away}
         </span>
-        <span className={'text-secondary-foreground/50'}>FT</span>
+        <span className={'eyebrow text-secondary-foreground/50'}>FT</span>
         {won !== null && (
-          <span className={won ? 'text-primary' : 'text-chart-5'}>{won ? 'WON' : 'LOST'}</span>
+          <span className={`eyebrow ${won ? 'text-primary' : 'text-chart-5'}`}>
+            {won ? 'Won' : 'Lost'}
+          </span>
         )}
       </span>
     )
@@ -38,11 +40,9 @@ function FinalScore({ fixture, variant = 'badge' }: FinalScoreProps) {
 
   return (
     <section className={'flex flex-col gap-2 w-full'}>
-      <h3 className={'text-xs text-secondary-foreground/50'}>RESULT</h3>
-      <p className={'text-sm'}>
-        <span className={'font-bold tabular-nums'}>
-          {fixture.home_team} {home}&ndash;{away} {fixture.away_team}
-        </span>
+      <h3 className={'eyebrow text-secondary-foreground/50'}>Result</h3>
+      <p className={'text-sm font-medium tabular-nums'}>
+        {fixture.home_team} {home}&ndash;{away} {fixture.away_team}
       </p>
       {pick && (
         <p className={'text-xs text-secondary-foreground'}>

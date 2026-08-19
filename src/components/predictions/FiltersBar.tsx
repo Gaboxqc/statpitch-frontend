@@ -12,7 +12,7 @@ const DAY_LABELS: Record<DayKey, string> = {
   tomorrow: 'Tomorrow',
 }
 
-const PILL = 'text-xs p-1 rounded-sm border md:px-2 shrink-0 cursor-pointer'
+const PILL = 'text-xs font-medium p-1 rounded-sm border md:px-2 shrink-0 cursor-pointer'
 const PILL_ON = 'bg-primary/20 border-primary/50 text-primary'
 const PILL_OFF = 'border-transparent text-secondary-foreground hover:border-secondary-foreground/20'
 
@@ -67,7 +67,7 @@ function FiltersBar() {
               label={`${DAY_LABELS[day]}, ${counts[day]} fixtures`}
             >
               {DAY_LABELS[day]}{' '}
-              <span className={'text-secondary-foreground/50'}>{counts[day]}</span>
+              <span className={'numeric text-secondary-foreground/50'}>{counts[day]}</span>
             </Pill>
           ))}
         </div>
@@ -90,7 +90,7 @@ function FiltersBar() {
               onClick={() => setFilters({ confidence: tier })}
               label={`Win probability at or above ${formatFraction(tier, 0)}`}
             >
-              {formatFraction(tier, 0)}+
+              <span className={'numeric'}>{formatFraction(tier, 0)}+</span>
             </Pill>
           ))}
         </div>

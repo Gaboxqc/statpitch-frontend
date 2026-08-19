@@ -55,7 +55,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             />
             <span className={'text-secondary-foreground'}>
               {SERIES_STYLE[entry.basis].label}
-              <span className={'text-secondary-foreground/50'}>
+              <span className={'numeric text-secondary-foreground/50'}>
                 {' '}
                 {formatUnits(entry.final)} · {entry.totalBets} bets
               </span>
@@ -65,9 +65,10 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
       </div>
 
       <div className={'relative w-full'}>
+        {/* Every string drawn inside the plot is a figure, so the plot is mono. */}
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-          className={'w-full h-auto'}
+          className={'w-full h-auto font-mono'}
           role={'img'}
           aria-labelledby={titleId}
           onMouseLeave={() => setHovered(null)}
@@ -208,9 +209,11 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             }
             style={{ left: `${(x(active) / WIDTH) * 100}%` }}
           >
-            <p className={'text-secondary-foreground/60'}>{formatMatchDay(dates[active])}</p>
+            <p className={'numeric text-secondary-foreground/60'}>
+              {formatMatchDay(dates[active])}
+            </p>
             {series.map((entry) => (
-              <p key={entry.basis} className={'text-foreground'}>
+              <p key={entry.basis} className={'numeric text-foreground'}>
                 <span className={SERIES_STYLE[entry.basis].text}>■</span>{' '}
                 {SERIES_STYLE[entry.basis].label} {formatUnits(entry.cumulative[active])}
                 <span className={'text-secondary-foreground/50'}> · {entry.bets[active]} bets</span>

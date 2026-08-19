@@ -36,8 +36,9 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
               className={`gap-2 items-center p-1 shrink-0 bg-primary/10 rounded-sm text-xs text-primary border border-primary/50 mr-1 ${bestBet ? 'flex' : 'hidden'}`}
             >
               <ThunderIcon className={'h-3 w-3 text-primary'} />
-              <p>
-                {bestMarket?.market} {formatSignedFraction(bestMarket?.ev)} EV
+              <p className={'font-medium'}>
+                {bestMarket?.market}{' '}
+                <span className={'numeric'}>{formatSignedFraction(bestMarket?.ev)} EV</span>
               </p>
             </div>
             {/* No odds event matched, so there is a prediction but nothing to bet against. */}
@@ -54,7 +55,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
             <ClockIcon className={'h-4 w-4 text-secondary-foreground/60'} />
             <time
               dateTime={kickoff.dateTime}
-              className={`text-xs ${kickoff.provisional ? 'text-secondary-foreground/40 italic' : 'text-secondary-foreground/60'}`}
+              className={`numeric text-xs ${kickoff.provisional ? 'text-secondary-foreground/40 italic' : 'text-secondary-foreground/60'}`}
             >
               {kickoff.text}
             </time>
@@ -66,17 +67,19 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
             <div className={'flex items-center gap-2'}>
               <TeamCrest name={prediction.home_team} url={prediction.home_crest_url} />
 
-              <p className={'text-sm w-min'}>{prediction.home_team}</p>
+              <p className={'text-sm font-medium w-min'}>{prediction.home_team}</p>
               <p className='text-xs text-secondary-foreground shrink-0'>
-                xG {formatDecimal(prediction.home_xg)}
+                <span className={'eyebrow'}>xG</span>{' '}
+                <span className={'numeric'}>{formatDecimal(prediction.home_xg)}</span>
               </p>
             </div>
             <div className={'flex items-center gap-2'}>
               <TeamCrest name={prediction.away_team} url={prediction.away_crest_url} />
 
-              <p className={'text-sm'}>{prediction.away_team}</p>
+              <p className={'text-sm font-medium'}>{prediction.away_team}</p>
               <p className='text-xs text-secondary-foreground shrink-0'>
-                xG {formatDecimal(prediction.away_xg)}
+                <span className={'eyebrow'}>xG</span>{' '}
+                <span className={'numeric'}>{formatDecimal(prediction.away_xg)}</span>
               </p>
             </div>
           </div>

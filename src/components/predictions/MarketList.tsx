@@ -15,7 +15,7 @@ function MarketList({ markets, bestBet, isOpened, id }: MarketListProps) {
       <div className={'flex justify-between text-secondary-foreground/50 text-xs'}>
         <div className={'flex items-center gap-2'}>
           <BrainIcon className={'h-4 w-4 text-primary'} />
-          <p>MARKET ANALYSIS</p>
+          <p className={'eyebrow'}>Market analysis</p>
         </div>
         <p className={'hidden'}>EV = (model prob x book odds) - 1</p>
       </div>

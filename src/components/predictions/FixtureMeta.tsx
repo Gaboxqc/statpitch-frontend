@@ -45,9 +45,9 @@ function FixtureMeta({ fixture }: { fixture: Fixture }) {
 
   return (
     <section className={'flex flex-col gap-2 w-full'}>
-      <h3 className={'text-xs text-secondary-foreground/50'}>FIXTURE DETAIL</h3>
+      <h3 className={'eyebrow text-secondary-foreground/50'}>Fixture detail</h3>
 
-      <dl className={'flex flex-col gap-1'}>
+      <dl className={'flex flex-col gap-1 tabular-nums'}>
         <Row label={'Elo'}>
           <EloValue rating={fixture.home_elo} source={fixture.home_elo_source} />
           <span className={'text-secondary-foreground/40'}> vs </span>

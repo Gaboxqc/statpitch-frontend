@@ -58,8 +58,8 @@ function PredictionsSection() {
 
   return (
     <div className={'mt-12 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
-      <h2 className={'text-foreground text-lg font-bold ml-2'}>
-        <span className={'text-secondary-foreground'}>{visible.length}</span>{' '}
+      <h2 className={'text-foreground text-lg font-semibold ml-2'}>
+        <span className={'numeric text-secondary-foreground'}>{visible.length}</span>{' '}
         {filters.valueBetsOnly ? 'Value bets' : 'Predictions'}
         <span className={'text-secondary-foreground/50 font-normal text-sm'}>
           {' · '}
@@ -86,7 +86,11 @@ function PredictionsSection() {
         }
       >
         <p className={'text-xs text-secondary-foreground/60'}>
-          {visible.length > 0 ? `Model ${visible[0].model_version}` : ''}
+          {visible.length > 0 ? (
+            <span className={'numeric'}>Model {visible[0].model_version}</span>
+          ) : (
+            ''
+          )}
         </p>
         <p className={'text-xs text-secondary-foreground/60'}>{DISCLAIMER.short}</p>
       </div>

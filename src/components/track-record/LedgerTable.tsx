@@ -12,7 +12,7 @@ interface LedgerTableProps {
   onOffsetChange: (offset: number) => void
 }
 
-const TH = 'text-left font-normal text-secondary-foreground/50 py-2 px-2 whitespace-nowrap'
+const TH = 'eyebrow text-left text-secondary-foreground/50 py-2 px-2 whitespace-nowrap'
 const TD = 'py-2 px-2 align-top'
 
 /**
@@ -70,11 +70,11 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
           <tbody>
             {bets.map((bet) => (
               <tr key={bet.id} className={'border-b border-secondary-foreground/10'}>
-                <td className={`${TD} text-secondary-foreground/60 whitespace-nowrap`}>
+                <td className={`${TD} numeric text-secondary-foreground/60 whitespace-nowrap`}>
                   {formatMatchDay(bet.match_date)}
                 </td>
                 <td className={TD}>
-                  <span className={'text-foreground'}>
+                  <span className={'text-foreground font-medium'}>
                     {bet.home_team} v {bet.away_team}
                   </span>
                   <br />
@@ -86,17 +86,17 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
                 <td className={`${TD} text-secondary-foreground/60`}>
                   {bet.basis === '1x2' ? '1X2' : 'Overall'}
                 </td>
-                <td className={`${TD} text-right tabular-nums`}>{formatDecimal(bet.odds_taken)}</td>
-                <td className={`${TD} text-right tabular-nums text-secondary-foreground/60`}>
+                <td className={`${TD} numeric text-right`}>{formatDecimal(bet.odds_taken)}</td>
+                <td className={`${TD} numeric text-right text-secondary-foreground/60`}>
                   {formatFraction(bet.probability, 1)}
                 </td>
                 <td className={`${TD} text-right`}>
-                  <span className={bet.won ? 'text-primary' : 'text-chart-5'}>
+                  <span className={`font-medium ${bet.won ? 'text-primary' : 'text-chart-5'}`}>
                     {bet.won ? 'Won' : 'Lost'}
                   </span>
                 </td>
                 <td
-                  className={`${TD} text-right tabular-nums ${bet.won ? 'text-primary' : 'text-chart-5'}`}
+                  className={`${TD} numeric text-right ${bet.won ? 'text-primary' : 'text-chart-5'}`}
                 >
                   {bet.pnl_units >= 0 ? '+' : ''}
                   {bet.pnl_units.toFixed(2)}u
@@ -108,7 +108,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
       </div>
 
       <div className={'flex items-center justify-between text-xs'}>
-        <p className={'text-secondary-foreground/50'}>
+        <p className={'numeric text-secondary-foreground/50'}>
           {from}&ndash;{to} of {total}
         </p>
         <div className={'flex items-center gap-2'}>
