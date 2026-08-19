@@ -6,7 +6,7 @@ import { filterFixtures } from '../../utils/filterFixtures'
 import QueryError from '../ui/QueryError'
 import { COLD_START_HINT_MS } from '../../services/api'
 import { competitionName } from '../../constants/competitions'
-import { DISCLAIMER, MODEL } from '../../constants/content'
+import { DISCLAIMER } from '../../constants/content'
 import { formatMatchDay } from '../../utils/datetime'
 
 const DAY_LABELS = { yesterday: 'yesterday', today: 'today', tomorrow: 'tomorrow' } as const
@@ -21,6 +21,16 @@ function PredictionsSection() {
   })
   const slow = useElapsed(COLD_START_HINT_MS)
 
+  // The day is not a filter the user can widen — it always selects a subset —
+  // so it is applied first and the narrowing check runs against what that day
+  // actually holds. Comparing against the whole window told a genuinely empty
+  // day that its filters were too narrow.
+  const onThisDay = filterFixtures(fixtures, {
+    day: filters.day,
+    window,
+    confidence: null,
+    valueBetsOnly: false,
+  })
   const visible = filterFixtures(fixtures, {
     day: filters.day,
     window,
@@ -44,7 +54,7 @@ function PredictionsSection() {
 
   // An empty day and an over-narrow filter are different problems, and only one
   // of them is the user's to fix.
-  const narrowed = fixtures.length > 0 && visible.length === 0
+  const narrowed = onThisDay.length > 0 && visible.length === 0
 
   return (
     <div className={'mt-12 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
@@ -76,7 +86,7 @@ function PredictionsSection() {
         }
       >
         <p className={'text-xs text-secondary-foreground/60'}>
-          Model {visible[0]?.model_version ?? MODEL.fallbackVersion}
+          {visible.length > 0 ? `Model ${visible[0].model_version}` : ''}
         </p>
         <p className={'text-xs text-secondary-foreground/60'}>{DISCLAIMER.short}</p>
       </div>
