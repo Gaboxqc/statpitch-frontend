@@ -1,10 +1,5 @@
 export const BRAND = 'StatPitch'
 
-export const MODEL = {
-  /** Only reached when the fixture list is empty; every fixture carries its own. */
-  fallbackVersion: 'unknown',
-}
-
 export const DISCLAIMER = {
   short: 'For informational purposes only.',
   body: `${BRAND} does not facilitate, encourage, or endorse any form of gambling or wagering.`,

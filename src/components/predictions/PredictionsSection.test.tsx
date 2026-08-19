@@ -55,6 +55,32 @@ describe('PredictionsSection', () => {
     expect(await screen.findByText(/no fixtures match these filters/i)).toBeInTheDocument()
   })
 
+  /**
+   * Regression, caught against the live API: the window held fixtures on other
+   * days while today held none, and the day was being counted as a filter — so
+   * an empty day was blamed on the user's filters.
+   */
+  it('calls an empty day empty, even when other days have fixtures', async () => {
+    mockWindow()
+    mockFixtures([
+      { ...fixtureFixture, id: 1, match_date: WINDOW.yesterday },
+      { ...fixtureFixture, id: 2, match_date: WINDOW.tomorrow },
+    ])
+    renderWithQuery(<PredictionsSection />)
+
+    expect(await screen.findByText(/nothing scheduled today/i)).toBeInTheDocument()
+    expect(screen.queryByText(/no fixtures match these filters/i)).not.toBeInTheDocument()
+  })
+
+  it('names no model version when there is nothing to name one for', async () => {
+    mockWindow()
+    mockFixtures([])
+    renderWithQuery(<PredictionsSection />)
+
+    await screen.findByText(/nothing scheduled today/i)
+    expect(screen.queryByText(/model unknown/i)).not.toBeInTheDocument()
+  })
+
   it('drops fixtures without a selection when value bets are requested', async () => {
     mockWindow()
     mockFixtures([
