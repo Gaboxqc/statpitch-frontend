@@ -3,10 +3,12 @@
 @import './theme.css';
 
 @theme {
-  /* Prose is sans; mono is reserved for figures that have to line up. Running
-     the whole interface in JetBrains Mono made every disclaimer and heading read
-     as terminal output and cost reading speed for no gain. */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* JetBrains Mono is the interface face, prose included: a deliberate house
+     style for a numbers product. With one family doing every job, hierarchy has
+     to come from the size and weight ramp below rather than from a face change.
+     The two names are kept apart on purpose — --font-mono is what a figure asks
+     for, so figures stay mono if the interface face is ever reconsidered. */
+  --font-sans: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   /* One ramp. The old scale had everything at 12/14/16 and then jumped
@@ -60,12 +62,14 @@
 }
 
 /* A figure the eye is meant to compare against another figure: odds,
-   probabilities, EV, stakes, scorelines, P&L, model versions. Mono earns its
-   place here and nowhere else. */
+   probabilities, EV, stakes, scorelines, P&L, model versions. It resolves to the
+   interface face today, so it reads as a marker of intent — but it is the thing
+   that guarantees a column of figures stays monospaced and tabular whatever the
+   surrounding prose is set in. No tracking of its own: a figure sitting inside a
+   sentence has to keep the same rhythm as the sentence. */
 @utility numeric {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
 }
 
 /* The small capitalised label that titles a block. One definition, so the
@@ -74,7 +78,7 @@
   font-size: var(--text-2xs);
   line-height: 1.45;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
