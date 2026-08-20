@@ -27,13 +27,13 @@ function PricingPage() {
             <span className={'block text-primary'}>No dark patterns</span>
           </h1>
         </div>
-        <p className={'max-w-xl text-base text-secondary-foreground/60'}>
+        <p className={'max-w-xl text-base text-ink-subtle'}>
           Choose the plan that matches your edge. Every tier includes a confidence score and
           probability breakdown — no black boxes.
         </p>
       </div>
       <div>
-        <p className={'eyebrow my-12 text-center text-secondary-foreground'}>Monthly</p>
+        <p className={'eyebrow my-12 text-center text-ink-muted'}>Monthly</p>
         <div className={'grid grid-cols-1 gap-4 md:grid-cols-3'}>
           {pricingPlans.map((plan) => (
             <PricingCard key={plan.name} {...plan} />
@@ -42,7 +42,7 @@ function PricingPage() {
       </div>
       <div className={'mt-24 bg-accent/10 p-4 rounded-lg border border-accent/20'}>
         <LiveRoi />
-        <p className={'text-secondary-foreground/50 text-xs mt-4'}>
+        <p className={'text-ink-subtle text-xs mt-4'}>
           {COMPETITIONS.length} competitions covered,{' '}
           {COMPETITIONS.filter((entry) => entry.priced).length} of them priced against a bookmaker
           market. Only priced competitions can produce a selection.
@@ -88,7 +88,7 @@ function PricingPage() {
       >
         <div className={'h-1.5 w-1.5 bg-primary rounded-full animate-pulse'}></div>
         <p>Still not sure?</p>
-        <p className={'text-xs text-foreground/40'}>
+        <p className={'text-xs text-ink-subtle'}>
           Start free — no card needed. Upgrade when the edge speaks for itself.
         </p>
         <Link

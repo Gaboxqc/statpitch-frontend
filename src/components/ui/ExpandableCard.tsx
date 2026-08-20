@@ -19,15 +19,13 @@ function ExpandableCard({ title, description }: { title: string; description: st
         >
           <span className={'text-sm font-medium'}>{title}</span>
           <ShortArrowIcon
-            className={`h-4 w-4 text-accent shrink-0 ${isOpened ? 'rotate-180' : ''}`}
+            className={`h-4 w-4 text-ink-subtle shrink-0 ${isOpened ? 'rotate-180' : ''}`}
           />
         </button>
       </h3>
       <div id={panelId} hidden={!isOpened}>
         <p
-          className={
-            'text-sm text-foreground/50 mx-4 mb-4 text-start border-t border-accent/40 pt-4'
-          }
+          className={'text-sm text-ink-subtle mx-4 mb-4 text-start border-t border-accent/40 pt-4'}
         >
           {description}
         </p>

@@ -5,8 +5,8 @@ import type { EloSource, Fixture } from '../../types/api'
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className={'flex items-baseline gap-2 text-xs'}>
-      <dt className={'text-secondary-foreground/50 w-24 shrink-0'}>{label}</dt>
-      <dd className={'text-secondary-foreground'}>{children}</dd>
+      <dt className={'text-ink-subtle w-24 shrink-0'}>{label}</dt>
+      <dd className={'text-ink-muted'}>{children}</dd>
     </div>
   )
 }
@@ -15,7 +15,7 @@ function EloValue({ rating, source }: { rating: number | null; source: EloSource
   const described = eloSource(source)
   if (rating === null) {
     return (
-      <span className={'text-secondary-foreground/50'} title={described?.hint}>
+      <span className={'text-ink-subtle'} title={described?.hint}>
         unrated{described ? ` · ${described.label}` : ''}
       </span>
     )
@@ -24,7 +24,7 @@ function EloValue({ rating, source }: { rating: number | null; source: EloSource
     <span title={described?.hint}>
       {Math.round(rating)}
       {described && described.tier > 1 && (
-        <span className={'text-secondary-foreground/50'}> · {described.label}</span>
+        <span className={'text-ink-subtle'}> · {described.label}</span>
       )}
     </span>
   )
@@ -45,15 +45,15 @@ function FixtureMeta({ fixture }: { fixture: Fixture }) {
 
   return (
     <section className={'flex flex-col gap-2 w-full'}>
-      <h3 className={'eyebrow text-secondary-foreground/50'}>Fixture detail</h3>
+      <h3 className={'eyebrow text-ink-subtle'}>Fixture detail</h3>
 
       <dl className={'flex flex-col gap-1 tabular-nums'}>
         <Row label={'Elo'}>
           <EloValue rating={fixture.home_elo} source={fixture.home_elo_source} />
-          <span className={'text-secondary-foreground/40'}> vs </span>
+          <span className={'text-ink-subtle'}> vs </span>
           <EloValue rating={fixture.away_elo} source={fixture.away_elo_source} />
           {eloGap !== null && (
-            <span className={'text-secondary-foreground/50'}>
+            <span className={'text-ink-subtle'}>
               {' '}
               ({eloGap >= 0 ? '+' : ''}
               {eloGap} home)
@@ -78,7 +78,7 @@ function FixtureMeta({ fixture }: { fixture: Fixture }) {
         {model && (
           <Row label={'Model'}>
             <span title={model.hint}>{model.label}</span>
-            <span className={'text-secondary-foreground/40'}> · {fixture.model_version}</span>
+            <span className={'text-ink-subtle'}> · {fixture.model_version}</span>
           </Row>
         )}
 
@@ -86,7 +86,7 @@ function FixtureMeta({ fixture }: { fixture: Fixture }) {
       </dl>
 
       {!fixture.fully_rated && (
-        <p className={'text-xs text-secondary-foreground/60'}>
+        <p className={'text-xs text-ink-subtle'}>
           At least one club had no measured Elo and fell back to a prior. The prediction is still
           well formed, but it is a weaker claim than a fully rated fixture.
         </p>

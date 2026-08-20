@@ -11,7 +11,7 @@ function ContributionRow({ row, scale }: { row: FeatureContribution; scale: numb
 
   return (
     <li className={'flex items-center gap-2 text-xs'}>
-      <span className={'w-32 shrink-0 text-secondary-foreground/70 truncate'} title={row.feature}>
+      <span className={'w-32 shrink-0 text-ink-muted truncate'} title={row.feature}>
         {featureLabel(row.feature)}
       </span>
 
@@ -27,7 +27,7 @@ function ContributionRow({ row, scale }: { row: FeatureContribution; scale: numb
       </span>
 
       <span
-        className={`numeric w-14 shrink-0 text-right ${positive ? 'text-primary' : 'text-chart-5'}`}
+        className={`numeric w-14 shrink-0 text-right ${positive ? 'text-primary' : 'text-negative'}`}
       >
         &times;{formatDecimal(row.multiplier)}
       </span>
@@ -46,7 +46,7 @@ function TeamColumn({
 }) {
   return (
     <div className={'flex flex-col gap-2 min-w-0'}>
-      <h4 className={'text-xs font-medium text-foreground truncate'}>{team}</h4>
+      <h4 className={'text-xs font-medium text-ink truncate'}>{team}</h4>
       <ul className={'flex flex-col gap-1'}>
         {rows.map((row) => (
           <ContributionRow key={row.feature} row={row} scale={scale} />
@@ -85,16 +85,14 @@ function ExplanationBreakdown({ explanation, homeTeam, awayTeam }: ExplanationBr
 
   return (
     <section className={'flex flex-col gap-3 w-full'}>
-      <h3 className={'eyebrow text-secondary-foreground/50'}>What drove this prediction</h3>
+      <h3 className={'eyebrow text-ink-subtle'}>What drove this prediction</h3>
 
       <div className={'grid grid-cols-1 lg:grid-cols-2 gap-4'}>
         <TeamColumn team={homeTeam} rows={home} scale={scale} />
         <TeamColumn team={awayTeam} rows={away} scale={scale} />
       </div>
 
-      {explanation.units && (
-        <p className={'text-xs text-secondary-foreground/40'}>{explanation.units}</p>
-      )}
+      {explanation.units && <p className={'text-xs text-ink-subtle'}>{explanation.units}</p>}
     </section>
   )
 }

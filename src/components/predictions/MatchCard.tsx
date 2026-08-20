@@ -23,7 +23,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
     // the real control and carries the keyboard and screen-reader semantics.
     <div
       className={
-        'py-2 lg:py-2 flex flex-col items-center justify-center bg-secondary/40 text-foreground text-xs rounded-md border border-secondary-foreground/20'
+        'py-2 lg:py-2 flex flex-col items-center justify-center bg-secondary/40 text-ink text-xs rounded-md border border-secondary-foreground/20'
       }
       onClick={toggle}
     >
@@ -45,17 +45,17 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
             {!prediction.odds_coverage && (
               <p
                 className={
-                  'p-1 mr-1 shrink-0 rounded-sm text-xs text-secondary-foreground/60 border border-secondary-foreground/20'
+                  'p-1 mr-1 shrink-0 rounded-sm text-xs text-ink-subtle border border-secondary-foreground/20'
                 }
               >
                 Prediction only
               </p>
             )}
             {prediction.home_score !== null && <FinalScore fixture={prediction} />}
-            <ClockIcon className={'h-4 w-4 text-secondary-foreground/60'} />
+            <ClockIcon className={'h-4 w-4 text-ink-subtle'} />
             <time
               dateTime={kickoff.dateTime}
-              className={`numeric text-xs ${kickoff.provisional ? 'text-secondary-foreground/40 italic' : 'text-secondary-foreground/60'}`}
+              className={`numeric text-xs ${kickoff.provisional ? 'text-ink-subtle italic' : 'text-ink-subtle'}`}
             >
               {kickoff.text}
             </time>
@@ -68,7 +68,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
               <TeamCrest name={prediction.home_team} url={prediction.home_crest_url} />
 
               <p className={'text-sm font-medium w-min'}>{prediction.home_team}</p>
-              <p className='text-xs text-secondary-foreground shrink-0'>
+              <p className='text-xs text-ink-muted shrink-0'>
                 <span className={'eyebrow'}>xG</span>{' '}
                 <span className={'numeric'}>{formatDecimal(prediction.home_xg)}</span>
               </p>
@@ -77,7 +77,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
               <TeamCrest name={prediction.away_team} url={prediction.away_crest_url} />
 
               <p className={'text-sm font-medium'}>{prediction.away_team}</p>
-              <p className='text-xs text-secondary-foreground shrink-0'>
+              <p className='text-xs text-ink-muted shrink-0'>
                 <span className={'eyebrow'}>xG</span>{' '}
                 <span className={'numeric'}>{formatDecimal(prediction.away_xg)}</span>
               </p>
@@ -100,7 +100,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
                 }}
               >
                 <ShortArrowIcon
-                  className={`h-4 w-4 text-secondary-foreground/60 ${isOpened ? 'rotate-180' : ''}`}
+                  className={`h-4 w-4 text-ink-subtle ${isOpened ? 'rotate-180' : ''}`}
                 />
               </button>
             </div>

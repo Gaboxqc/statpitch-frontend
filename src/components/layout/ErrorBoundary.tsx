@@ -31,11 +31,11 @@ class ErrorBoundary extends Component<Props, State> {
       <div
         role='alert'
         className={
-          'min-h-screen bg-background text-foreground flex flex-col items-center justify-center gap-4 px-4 text-center'
+          'min-h-screen bg-background text-ink flex flex-col items-center justify-center gap-4 px-4 text-center'
         }
       >
         <h1 className={'text-xl font-semibold'}>Something went wrong</h1>
-        <p className={'text-sm text-secondary-foreground/60 max-w-md'}>
+        <p className={'text-sm text-ink-subtle max-w-md'}>
           The page failed to render. Reloading usually clears it.
         </p>
         <button

@@ -8,8 +8,8 @@ import {
 } from '../../utils/format'
 
 function getEVColor(ev: number | null) {
-  if (ev === null) return 'text-secondary-foreground/40'
-  return ev > 0 ? 'text-primary' : 'text-secondary-foreground/50'
+  if (ev === null) return 'text-ink-subtle'
+  return ev > 0 ? 'text-primary' : 'text-ink-subtle'
 }
 
 /**
@@ -19,24 +19,17 @@ function getEVColor(ev: number | null) {
  * what a null Kelly against a positive EV means.
  */
 function getKellyRender(kelly: number | null, ev: number | null, priced: boolean) {
-  if (!priced)
-    return (
-      <p className={'text-xs text-secondary-foreground/30'}>→ No price quoted for this market</p>
-    )
+  if (!priced) return <p className={'text-xs text-ink-subtle'}>→ No price quoted for this market</p>
   if (kelly === null || kelly <= 0) {
     const positiveEdge = ev !== null && ev > 0
     return (
-      <p className={'text-xs text-secondary-foreground/30'}>
+      <p className={'text-xs text-ink-subtle'}>
         {positiveEdge ? '→ Skip | Edge too small to stake' : '→ Skip | No positive edge'}
       </p>
     )
   }
   return (
-    <p
-      className={
-        'text-xs text-secondary-foreground/70 p-2 bg-primary/10 border border-primary/20 rounded-sm'
-      }
-    >
+    <p className={'text-xs text-ink-muted p-2 bg-primary/10 border border-primary/20 rounded-sm'}>
       <span className={'eyebrow'}>Consider</span>{' '}
       <span className={'text-primary font-semibold tabular-nums'}>
         Stake {formatFraction(kelly)} of bankroll
@@ -85,24 +78,22 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }: MarketBlockProps
             </p>
           </div>
           {getKellyRender(kelly, ev, priced)}
-          <div className={'flex items-center gap-2 text-xs text-secondary-foreground/50'}>
+          <div className={'flex items-center gap-2 text-xs text-ink-subtle'}>
             {priced && (
               <p className={'eyebrow'}>
-                Book <span className={'numeric text-foreground'}>{formatDecimal(odds)}</span> |{' '}
+                Book <span className={'numeric text-ink'}>{formatDecimal(odds)}</span> |{' '}
               </p>
             )}
             <p className={'eyebrow'}>
-              Fair odds <span className={'numeric text-foreground'}>{fairOdds}</span> |{' '}
+              Fair odds <span className={'numeric text-ink'}>{fairOdds}</span> |{' '}
             </p>
             <p className={'eyebrow'}>
-              Model <span className={'numeric text-foreground'}>{formatFraction(prob)}</span>{' '}
+              Model <span className={'numeric text-ink'}>{formatFraction(prob)}</span>{' '}
             </p>
           </div>
           <div className={'flex flex-col gap-2'}>
             <ProbabilityBar prob={toPercentValue(prob)} />
-            <div
-              className={'flex justify-between items-center text-xs text-secondary-foreground/50'}
-            >
+            <div className={'flex justify-between items-center text-xs text-ink-subtle'}>
               {priced && (
                 <p>
                   Implied <span className={'numeric'}>{formatFraction(1 / odds)}</span>

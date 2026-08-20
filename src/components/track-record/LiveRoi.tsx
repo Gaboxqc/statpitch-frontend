@@ -38,16 +38,16 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
               <p
                 className={`numeric text-xl font-semibold ${
                   !settled
-                    ? 'text-secondary-foreground/40'
+                    ? 'text-ink-subtle'
                     : entry.month.roi_pct! >= 0
                       ? 'text-primary'
-                      : 'text-chart-5'
+                      : 'text-negative'
                 }`}
               >
                 {settled ? formatSignedPercent(entry.month.roi_pct, 1) : '—'}
               </p>
               <p className={'text-sm font-medium'}>{LABELS[entry.basis]}</p>
-              <p className={'text-xs text-foreground/40'}>
+              <p className={'text-xs text-ink-subtle'}>
                 {settled ? `30-day ROI · ${entry.month.bets} bets` : 'No bets settled yet'}
               </p>
             </div>

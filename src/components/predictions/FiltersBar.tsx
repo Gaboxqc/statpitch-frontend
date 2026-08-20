@@ -14,7 +14,7 @@ const DAY_LABELS: Record<DayKey, string> = {
 
 const PILL = 'text-xs font-medium p-1 rounded-sm border md:px-2 shrink-0 cursor-pointer'
 const PILL_ON = 'bg-primary/20 border-primary/50 text-primary'
-const PILL_OFF = 'border-transparent text-secondary-foreground hover:border-secondary-foreground/20'
+const PILL_OFF = 'border-transparent text-ink-muted hover:border-secondary-foreground/20'
 
 function Pill({
   active,
@@ -56,7 +56,7 @@ function FiltersBar() {
       }
     >
       <div className={'container mx-auto px-2 flex items-center gap-6'}>
-        <FilterIcon className={'text-accent h-4 w-4 shrink-0'} aria-hidden={true} />
+        <FilterIcon className={'text-ink-muted h-4 w-4 shrink-0'} aria-hidden={true} />
 
         <div className={'flex items-center gap-2'} role={'group'} aria-label={'Match day'}>
           {DAYS.map((day) => (
@@ -66,8 +66,7 @@ function FiltersBar() {
               onClick={() => setFilters({ day })}
               label={`${DAY_LABELS[day]}, ${counts[day]} fixtures`}
             >
-              {DAY_LABELS[day]}{' '}
-              <span className={'numeric text-secondary-foreground/50'}>{counts[day]}</span>
+              {DAY_LABELS[day]} <span className={'numeric text-ink-subtle'}>{counts[day]}</span>
             </Pill>
           ))}
         </div>
@@ -95,13 +94,13 @@ function FiltersBar() {
           ))}
         </div>
 
-        <label className={'flex items-center gap-2 shrink-0 text-xs text-secondary-foreground'}>
+        <label className={'flex items-center gap-2 shrink-0 text-xs text-ink-muted'}>
           <span className={'sr-only'}>Competition</span>
           <select
             value={filters.competitionId ?? ''}
             onChange={(event) => setFilters({ competitionId: event.target.value || null })}
             className={
-              'text-xs bg-accent/60 border border-accent text-foreground rounded-sm p-1 md:px-2 cursor-pointer'
+              'text-xs bg-accent/60 border border-accent text-ink rounded-sm p-1 md:px-2 cursor-pointer'
             }
           >
             <option value={''}>All competitions</option>

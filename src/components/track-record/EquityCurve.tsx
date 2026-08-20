@@ -29,7 +29,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
 
   if (dates.length === 0) {
     return (
-      <p className={'text-sm text-secondary-foreground/60 py-8 text-center'}>
+      <p className={'text-sm text-ink-subtle py-8 text-center'}>
         No bets have settled yet, so there is no curve to draw.
       </p>
     )
@@ -53,9 +53,9 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
               className={'h-0.5 w-4 rounded-sm'}
               style={{ background: SERIES_STYLE[entry.basis].stroke }}
             />
-            <span className={'text-secondary-foreground'}>
+            <span className={'text-ink-muted'}>
               {SERIES_STYLE[entry.basis].label}
-              <span className={'numeric text-secondary-foreground/50'}>
+              <span className={'numeric text-ink-subtle'}>
                 {' '}
                 {formatUnits(entry.final)} · {entry.totalBets} bets
               </span>
@@ -85,7 +85,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             y1={y(0)}
             y2={y(0)}
             stroke={'var(--color-secondary-foreground)'}
-            strokeOpacity={0.35}
+            strokeOpacity={0.55}
             strokeDasharray={'3 3'}
           />
           <text
@@ -93,7 +93,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             y={y(0)}
             textAnchor={'end'}
             dominantBaseline={'middle'}
-            className={'fill-secondary-foreground/50'}
+            className={'fill-ink-subtle'}
             fontSize={10}
           >
             0u
@@ -103,7 +103,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             y={y(max)}
             textAnchor={'end'}
             dominantBaseline={'middle'}
-            className={'fill-secondary-foreground/50'}
+            className={'fill-ink-subtle'}
             fontSize={10}
           >
             {formatUnits(max)}
@@ -114,7 +114,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
               y={y(min)}
               textAnchor={'end'}
               dominantBaseline={'middle'}
-              className={'fill-secondary-foreground/50'}
+              className={'fill-ink-subtle'}
               fontSize={10}
             >
               {formatUnits(min)}
@@ -181,12 +181,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             />
           ))}
 
-          <text
-            x={PAD.left}
-            y={HEIGHT - 8}
-            className={'fill-secondary-foreground/50'}
-            fontSize={10}
-          >
+          <text x={PAD.left} y={HEIGHT - 8} className={'fill-ink-subtle'} fontSize={10}>
             {formatMatchDay(dates[0])}
           </text>
           {dates.length > 1 && (
@@ -194,7 +189,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
               x={WIDTH - PAD.right}
               y={HEIGHT - 8}
               textAnchor={'end'}
-              className={'fill-secondary-foreground/50'}
+              className={'fill-ink-subtle'}
               fontSize={10}
             >
               {formatMatchDay(dates.at(-1))}
@@ -209,21 +204,19 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             }
             style={{ left: `${(x(active) / WIDTH) * 100}%` }}
           >
-            <p className={'numeric text-secondary-foreground/60'}>
-              {formatMatchDay(dates[active])}
-            </p>
+            <p className={'numeric text-ink-subtle'}>{formatMatchDay(dates[active])}</p>
             {series.map((entry) => (
-              <p key={entry.basis} className={'numeric text-foreground'}>
+              <p key={entry.basis} className={'numeric text-ink'}>
                 <span className={SERIES_STYLE[entry.basis].text}>■</span>{' '}
                 {SERIES_STYLE[entry.basis].label} {formatUnits(entry.cumulative[active])}
-                <span className={'text-secondary-foreground/50'}> · {entry.bets[active]} bets</span>
+                <span className={'text-ink-subtle'}> · {entry.bets[active]} bets</span>
               </p>
             ))}
           </div>
         )}
       </div>
 
-      <figcaption className={'text-xs text-secondary-foreground/40'}>
+      <figcaption className={'text-xs text-ink-subtle'}>
         Cumulative profit and loss at one unit per bet. The two strategies are shown separately and
         never combined — they bet the same fixtures on different rules.
       </figcaption>

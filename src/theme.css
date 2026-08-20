@@ -1,15 +1,40 @@
 :root {
   --background: #08090d;
-  --foreground: #e1e4e8;
   --card: #0e1015;
   --primary: #10b981;
   --primary-foreground: #022c22;
   --secondary: #13161c;
-  --secondary-foreground: #94a3b8;
+
+  /* Three levels of ink, and only three. Hierarchy used to come from opacity
+     modifiers on --secondary-foreground, which put two thirds of the text under
+     4.5:1 — /30 through /60 all landed between 1.7 and 3.4 on this background.
+     Each value below is measured, not eyeballed: the ratio in the comment is
+     against --background, and the worst case is the lightest surface any text
+     of that level sits on. Never write text as an opacity of an ink. */
+  --ink: #e6e9ef; /* 16.4:1 — headings, figures, anything read first */
+  --ink-muted: #aab5c4; /* 9.6:1 — labels, secondary prose, table headers */
+  --ink-subtle: #8b97a8; /* 6.7:1, worst case 5.0:1 — captions, hints, metadata */
+
+  /* Reds read as text need more light than the same red as a bar fill, so the
+     two are separate tokens: --chart-5 fills, --negative writes. */
+  --negative: #f87171; /* 7.2:1 */
+  --ring: #34d399; /* 10.4:1 — focus, and never used for anything else */
+
+  /* Text default. An alias so `bg-background text-foreground` still reads as a
+     pair; every component reaches for the ink scale above. */
+  --foreground: var(--ink);
+
+  /* A surface, not an ink. Icons used to take this and landed at 1.9:1. */
   --accent: oklch(37% 0.013 285.805);
 
+  /* Hairlines and dividers. Not text: the opacity modifiers on this one are
+     fine, because WCAG asks 3:1 of a control boundary and nothing of a rule. */
+  --secondary-foreground: #94a3b8;
+
   --chart-1: #10b981;
-  --chart-2: #3b82f6;
+  /* Lightened from #3b82f6: the away side writes this at 12px on a tinted
+     panel, where the darker blue measured 4.2:1. */
+  --chart-2: #60a5fa;
   --chart-3: #f59e0b;
   --chart-4: #8b5cf6;
   --chart-5: #ef4444;
@@ -25,6 +50,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-negative: var(--negative);
+  --color-ring: var(--ring);
   --color-card: var(--card);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);

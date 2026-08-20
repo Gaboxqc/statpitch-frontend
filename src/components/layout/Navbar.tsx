@@ -6,14 +6,14 @@ function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
   const menuId = useId()
   const linkBase = 'py-1.5 px-2 rounded-sm text-sm'
-  const activeClass = 'bg-accent text-foreground'
-  const inactiveClass = 'text-secondary-foreground'
+  const activeClass = 'bg-accent text-ink'
+  const inactiveClass = 'text-ink-muted'
   return (
     <header
       className={'w-full bg-background h-fit py-1 fixed top-0 z-50 left-1/2 -translate-x-1/2'}
     >
       <nav className={'container mx-auto flex flex-col'}>
-        <div className={'flex text-foreground items-center justify-between mx-2 md:mx-0 text-lg'}>
+        <div className={'flex text-ink items-center justify-between mx-2 md:mx-0 text-lg'}>
           <div className={'flex items-center font-semibold gap-2 tracking-tight'}>
             <LogoIcon className={'h-6 w-6 text-primary'} />
 
@@ -45,7 +45,7 @@ function Navbar() {
           </div>
 
           <div className={'flex gap-4 items-center'}>
-            <Link to={'/login'} className={'text-sm text-secondary-foreground'}>
+            <Link to={'/login'} className={'text-sm text-ink-muted'}>
               Sign in
             </Link>
             <button
@@ -58,7 +58,7 @@ function Navbar() {
               aria-controls={menuId}
               type='button'
             >
-              <MenuIcon className={'h-6 w-6 text-secondary-foreground'} />
+              <MenuIcon className={'h-6 w-6 text-ink-muted'} />
             </button>
             <Link
               to={'/login'}
@@ -79,7 +79,7 @@ function Navbar() {
             to={'/'}
             end
             className={({ isActive }) =>
-              `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
+              `w-11/12 p-2 rounded-sm ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >
@@ -88,7 +88,7 @@ function Navbar() {
           <NavLink
             to={'/track-record'}
             className={({ isActive }) =>
-              `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
+              `w-11/12 p-2 rounded-sm ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >
@@ -97,7 +97,7 @@ function Navbar() {
           <NavLink
             to={'/pricing'}
             className={({ isActive }) =>
-              `w-11/12 p-2 rounded-sm ${isActive ? 'text-foreground bg-accent' : 'text-secondary-foreground'}`
+              `w-11/12 p-2 rounded-sm ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >

@@ -25,7 +25,7 @@ function CorrectScores({ scores, homeTeam, awayTeam }: CorrectScoresProps) {
 
   return (
     <section className={'flex flex-col gap-2 w-full'}>
-      <h3 className={'eyebrow text-secondary-foreground/50'}>Likely scorelines</h3>
+      <h3 className={'eyebrow text-ink-subtle'}>Likely scorelines</h3>
       <p className={'sr-only'}>
         Scores are given as {homeTeam} first, {awayTeam} second.
       </p>
@@ -41,13 +41,13 @@ function CorrectScores({ scores, homeTeam, awayTeam }: CorrectScoresProps) {
                 style={{ width: `${(score.probability / peak) * 100}%` }}
               />
             </span>
-            <span className={'numeric text-secondary-foreground/60 w-12 text-right shrink-0'}>
+            <span className={'numeric text-ink-subtle w-12 text-right shrink-0'}>
               {formatFraction(score.probability, 1)}
             </span>
           </li>
         ))}
       </ul>
-      <p className={'text-xs text-secondary-foreground/40'}>
+      <p className={'text-xs text-ink-subtle'}>
         Top {top.length} of {scores.length} scorelines, covering{' '}
         {formatFraction(
           top.reduce((sum, score) => sum + score.probability, 0),

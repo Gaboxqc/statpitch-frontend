@@ -27,7 +27,7 @@ function MatchDayCard() {
       <div className={'mt-4'}>
         <div className={'h-120 w-10/12 mx-auto bg-secondary animate-pulse rounded-md'}></div>
         {slow && (
-          <p className={'text-center text-xs text-secondary-foreground/60 mt-2'} role={'status'}>
+          <p className={'text-center text-xs text-ink-subtle mt-2'} role={'status'}>
             Waking the prediction service. This can take up to a minute.
           </p>
         )}
@@ -54,12 +54,12 @@ function MatchDayCard() {
           <div className={'grid grid-cols-1  md:grid-cols-2'}>
             <div className={'flex items-center gap-2 pb-2'}>
               <div className={'h-1 w-1 bg-primary rounded-full animate-pulse'}></div>
-              <h2 className={'eyebrow text-secondary-foreground'}>Match of the day</h2>
+              <h2 className={'eyebrow text-ink-muted'}>Match of the day</h2>
             </div>
 
             <div
               className={
-                'flex justify-between items-center py-4 text-secondary-foreground md:justify-end md:gap-4'
+                'flex justify-between items-center py-4 text-ink-muted md:justify-end md:gap-4'
               }
             >
               <div>
@@ -76,7 +76,7 @@ function MatchDayCard() {
             </div>
           </div>
 
-          <div className={'flex justify-center gap-4 text-foreground mt-4'}>
+          <div className={'flex justify-center gap-4 text-ink mt-4'}>
             <div className={'flex flex-col items-center'}>
               <TeamCrest
                 name={prediction.home_team}
@@ -87,27 +87,27 @@ function MatchDayCard() {
               <p className={'numeric text-xl md:text-2xl text-primary font-semibold'}>
                 {formatFraction(prediction.home_win_prob)}
               </p>
-              <p className={'eyebrow text-secondary-foreground/60'}>Win</p>
+              <p className={'eyebrow text-ink-subtle'}>Win</p>
               <div
                 className={
                   'flex gap-2 mt-2 text-xs bg-accent/40 p-1 rounded-sm border border-accent/80'
                 }
               >
-                <p className={'eyebrow text-secondary-foreground/70'}>xG</p>
+                <p className={'eyebrow text-ink-muted'}>xG</p>
                 <p className={'numeric text-primary font-semibold'}>
                   {formatDecimal(prediction.home_xg)}
                 </p>
               </div>
             </div>
             <div className={'flex flex-col items-center justify-center gap-4 mx-4'}>
-              <p className={'eyebrow text-secondary-foreground/60'}>vs</p>
+              <p className={'eyebrow text-ink-subtle'}>vs</p>
               <div
                 className={
                   'flex flex-col items-center bg-accent/40 border border-accent/80 px-4 py-2 rounded-xl'
                 }
               >
-                <p className={'eyebrow text-secondary-foreground/60'}>Draw</p>
-                <p className={'numeric text-lg text-secondary-foreground'}>
+                <p className={'eyebrow text-ink-subtle'}>Draw</p>
+                <p className={'numeric text-lg text-ink-muted'}>
                   {formatFraction(prediction.draw_prob)}
                 </p>
               </div>
@@ -122,13 +122,13 @@ function MatchDayCard() {
               <p className={'numeric text-xl md:text-2xl font-semibold text-chart-2'}>
                 {formatFraction(prediction.away_win_prob)}
               </p>
-              <p className={'eyebrow text-secondary-foreground/60'}>Win</p>
+              <p className={'eyebrow text-ink-subtle'}>Win</p>
               <div
                 className={
                   'flex gap-2 mt-2 text-xs bg-accent/40 p-1 rounded-sm border border-accent/80'
                 }
               >
-                <p className={'eyebrow text-secondary-foreground/70'}>xG</p>
+                <p className={'eyebrow text-ink-muted'}>xG</p>
                 <p className={'numeric text-chart-2 font-semibold'}>
                   {formatDecimal(prediction.away_xg)}
                 </p>
@@ -151,7 +151,7 @@ function MatchDayCard() {
               <div className={'flex items-center gap-2'}>
                 <ThunderIcon className={'h-4 w-4 text-primary'} />
                 <div className={'flex flex-col gap-1'}>
-                  <p className={'eyebrow text-secondary-foreground/60'}>
+                  <p className={'eyebrow text-ink-subtle'}>
                     Top pick <span className={'numeric'}>· {prediction.model_version}</span>
                   </p>
                   <p className={'text-sm font-medium'}>{bestMarket?.market}</p>
@@ -159,14 +159,14 @@ function MatchDayCard() {
               </div>
               <div className={'flex gap-4'}>
                 <div className={'text-center'}>
-                  <p className={'eyebrow text-secondary-foreground/60 mb-1'}>EV</p>
+                  <p className={'eyebrow text-ink-subtle mb-1'}>EV</p>
                   {/* A 0-1 fraction from the API, and already signed by the formatter. */}
                   <p className={'numeric text-primary font-semibold text-sm'}>
                     {formatSignedFraction(bestMarket?.ev)}
                   </p>
                 </div>
                 <div className={'text-center'}>
-                  <p className={'eyebrow text-secondary-foreground/60 mb-1'}>Kelly stake</p>
+                  <p className={'eyebrow text-ink-subtle mb-1'}>Kelly stake</p>
                   <p className={'numeric text-sm font-semibold'}>
                     {formatFraction(bestMarket?.kelly)}
                   </p>
@@ -178,7 +178,7 @@ function MatchDayCard() {
             // things: no market to bet into, versus a market with no edge in it.
             <p
               className={
-                'mt-4 text-xs text-secondary-foreground/60 border border-secondary-foreground/15 rounded-md px-2 py-3'
+                'mt-4 text-xs text-ink-subtle border border-secondary-foreground/15 rounded-md px-2 py-3'
               }
             >
               {prediction.odds_coverage
@@ -188,13 +188,13 @@ function MatchDayCard() {
           )}
 
           <div className={'grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4'}>
-            <div className={'mt-4 text-secondary-foreground/50 flex gap-4'}>
+            <div className={'mt-4 text-ink-subtle flex gap-4'}>
               <DonutChart value={winner.prob} />
               <div>
                 <p className={'eyebrow'}>AI confidence</p>
                 <div className={'flex items-center gap-2'}>
                   <BrainIcon className={`text-primary`} />
-                  <p className={`text-sm text-foreground`}>
+                  <p className={`text-sm text-ink`}>
                     Prediction:
                     <span className={`font-semibold text-primary`}> {winner.name} win</span>
                   </p>
@@ -208,7 +208,7 @@ function MatchDayCard() {
 
             <button
               className={
-                'mt-4 p-4 max-h-12 lg:justify-self-end bg-accent/40 border border-accent/80 text-foreground rounded-md py-2 flex items-center justify-center gap-2 text-sm'
+                'mt-4 p-4 max-h-12 lg:justify-self-end bg-accent/40 border border-accent/80 text-ink rounded-md py-2 flex items-center justify-center gap-2 text-sm'
               }
               onClick={() => setIsOpened((prev) => !prev)}
               type='button'

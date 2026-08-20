@@ -28,11 +28,7 @@ function roiItem(id: string, label: string, roi: WindowRoi | undefined): StatIte
     id,
     label,
     value: settled ? formatSignedPercent(roi.roi_pct, 1) : '—',
-    color: !settled
-      ? 'text-secondary-foreground/50'
-      : roi.roi_pct! >= 0
-        ? 'text-primary'
-        : 'text-chart-5',
+    color: !settled ? 'text-ink-subtle' : roi.roi_pct! >= 0 ? 'text-primary' : 'text-negative',
     hint: settled
       ? `${roi.bets} bets, ${roi.wins} won, ${roi.pnl_units.toFixed(2)}u`
       : EMPTY_WINDOW,
@@ -49,20 +45,20 @@ export function buildStats(stats: Stats | null): StatItemData[] {
       id: 'fixturesToday',
       label: 'Fixtures today',
       value: formatCount(stats.fixtures_today),
-      color: 'text-foreground',
+      color: 'text-ink',
       hint: `${stats.date_confirmed_today} with a confirmed kickoff`,
     },
     {
       id: 'fixturesTomorrow',
       label: 'Tomorrow',
       value: formatCount(stats.fixtures_tomorrow),
-      color: 'text-foreground',
+      color: 'text-ink',
     },
     {
       id: 'highConfidence',
       label: `High confidence (${threshold}+)`,
       value: formatCount(stats.high_confidence_today),
-      color: 'text-foreground',
+      color: 'text-ink',
       hint: 'Home or away probability at or above the threshold. A likely draw is not a confident match.',
     },
     {

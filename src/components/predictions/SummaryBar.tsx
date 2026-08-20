@@ -26,7 +26,7 @@ function StatItem({ id, label, value, color, hint }: StatItemData) {
   const Icon = STAT_ICONS[id] ?? ChartIcon
   return (
     <li className={'flex items-center gap-2 shrink-0'} title={hint}>
-      <Icon className={'text-accent'} />
+      <Icon className={'text-ink-subtle'} />
       <p className={'text-xs'}>{label}</p>
       <p className={`numeric text-sm font-semibold ${color}`}>{value}</p>
     </li>
@@ -58,7 +58,7 @@ function SummaryBar() {
           {[0, 1].map((copy) => (
             <ul
               key={copy}
-              className={'flex shrink-0 animate-marquee gap-6 text-sm text-zinc-500 px-4'}
+              className={'flex shrink-0 animate-marquee gap-6 text-sm text-ink-muted px-4'}
               aria-hidden={copy === 1}
             >
               {items.map((item) => (
@@ -68,7 +68,7 @@ function SummaryBar() {
           ))}
         </div>
 
-        <ul className={'hidden lg:flex w-full text-zinc-500 gap-6 text-sm'}>
+        <ul className={'hidden lg:flex w-full text-ink-muted gap-6 text-sm'}>
           {items.map((item) => (
             <StatItem key={item.id} {...item} />
           ))}
@@ -77,7 +77,7 @@ function SummaryBar() {
         <div className={'relative flex items-center gap-2 group'}>
           <button
             className={
-              'hidden lg:flex items-center gap-2 text-secondary-foreground/50 bg-accent/50 py-1 px-2 rounded-md shrink-0 cursor-pointer'
+              'hidden lg:flex items-center gap-2 text-ink-subtle bg-accent/50 py-1 px-2 rounded-md shrink-0 cursor-pointer'
             }
           >
             <InfoIcon className={'h-4 w-4'} />
@@ -89,7 +89,7 @@ function SummaryBar() {
             }
           >
             <p>{DISCLAIMER.short}</p>
-            <p className={'text-xs text-foreground/50 mt-2'}>{DISCLAIMER.body}</p>
+            <p className={'text-xs text-ink-subtle mt-2'}>{DISCLAIMER.body}</p>
           </div>
         </div>
       </div>
