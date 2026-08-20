@@ -30,7 +30,7 @@ describe('PredictionsSection', () => {
     renderWithQuery(<PredictionsSection />)
 
     // The team name also appears inside the (collapsed) detail panel.
-    expect(await screen.findAllByText('Club Atlético de Madrid')).not.toHaveLength(0)
+    expect(await screen.findAllByText('Atlético de Madrid')).not.toHaveLength(0)
   })
 
   // The whole window arrives in one request; the day is chosen locally.
@@ -42,8 +42,8 @@ describe('PredictionsSection', () => {
     ])
     renderWithQuery(<PredictionsSection />, { route: '/?day=tomorrow' })
 
-    expect(await screen.findAllByText('Tomorrow FC')).not.toHaveLength(0)
-    expect(screen.queryAllByText('Today FC')).toHaveLength(0)
+    expect(await screen.findAllByText('Tomorrow')).not.toHaveLength(0)
+    expect(screen.queryAllByText('Today')).toHaveLength(0)
   })
 
   // An empty day and an over-narrow filter are different problems.
@@ -89,8 +89,8 @@ describe('PredictionsSection', () => {
     ])
     renderWithQuery(<PredictionsSection />, { route: '/?value=1' })
 
-    expect(await screen.findAllByText('Picked FC')).not.toHaveLength(0)
-    expect(screen.queryAllByText('No Pick FC')).toHaveLength(0)
+    expect(await screen.findAllByText('Picked')).not.toHaveLength(0)
+    expect(screen.queryAllByText('No Pick')).toHaveLength(0)
     expect(screen.getByRole('heading', { name: /1 value bets/i })).toBeInTheDocument()
   })
 

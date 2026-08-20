@@ -1,5 +1,6 @@
 import { featureLabel } from '../../utils/humanise'
 import { formatDecimal } from '../../utils/format'
+import { displayName } from '../../utils/teamName'
 import type { Explanation, FeatureContribution } from '../../types/api'
 
 /** Bars diverge from a centre line, so each half can use at most half the width. */
@@ -46,7 +47,9 @@ function TeamColumn({
 }) {
   return (
     <div className={'flex flex-col gap-2 min-w-0'}>
-      <h4 className={'text-xs font-medium text-ink truncate'}>{team}</h4>
+      <h4 className={'text-xs font-medium text-ink truncate'} title={team}>
+        {displayName(team)}
+      </h4>
       <ul className={'flex flex-col gap-1'}>
         {rows.map((row) => (
           <ContributionRow key={row.feature} row={row} scale={scale} />

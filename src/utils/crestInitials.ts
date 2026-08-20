@@ -1,27 +1,8 @@
-// Club names carry a lot of boilerplate that says nothing about which club it
-// is, so it is dropped before initials are taken.
-const NOISE = new Set([
-  'fc',
-  'cf',
-  'afc',
-  'cfc',
-  'sc',
-  'ac',
-  'cd',
-  'rcd',
-  'rc',
-  'ud',
-  'sd',
-  'ss',
-  'as',
-  'club',
-  'calcio',
-  'de',
-  'del',
-  'la',
-  'el',
-  'the',
-])
+import { CLUB_NOISE, CONNECTIVES } from './teamName'
+
+// Initials drop every kind of boilerplate, including the connectives a display
+// name has to keep: "AM" is a better mark for Atlético de Madrid than "AD".
+const NOISE = new Set([...CLUB_NOISE, ...CONNECTIVES])
 
 export function crestInitials(name: string): string {
   const words = name.split(/\s+/).filter(Boolean)

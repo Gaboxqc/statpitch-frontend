@@ -1,5 +1,6 @@
 import { didMarketWin } from '../../utils/settleMarket'
 import { MARKET_LABELS } from '../../utils/buildMarkets'
+import { displayName } from '../../utils/teamName'
 import type { Fixture } from '../../types/api'
 
 interface FinalScoreProps {
@@ -41,8 +42,11 @@ function FinalScore({ fixture, variant = 'badge' }: FinalScoreProps) {
   return (
     <section className={'flex flex-col gap-2 w-full'}>
       <h3 className={'eyebrow text-ink-subtle'}>Result</h3>
-      <p className={'text-sm font-medium tabular-nums'}>
-        {fixture.home_team} {home}&ndash;{away} {fixture.away_team}
+      <p
+        className={'text-sm font-medium tabular-nums'}
+        title={`${fixture.home_team} versus ${fixture.away_team}`}
+      >
+        {displayName(fixture.home_team)} {home}&ndash;{away} {displayName(fixture.away_team)}
       </p>
       {pick && (
         <p className={'text-xs text-ink-muted'}>

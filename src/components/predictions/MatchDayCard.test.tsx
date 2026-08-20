@@ -23,7 +23,7 @@ describe('MatchDayCard', () => {
     expect(await screen.findByRole('heading', { name: /match of the day/i })).toBeInTheDocument()
     expect(screen.getAllByText('72.83%').length).toBeGreaterThan(0)
     // Kelly is a 0-1 fraction: scaled before rounding, not after.
-    expect(screen.getByText('0.49%')).toBeInTheDocument()
+    expect(screen.getAllByText('0.49%').length).toBeGreaterThan(0)
   })
 
   // Regression: EV was formatted as though it were already a percentage, so a
@@ -32,7 +32,7 @@ describe('MatchDayCard', () => {
     vi.spyOn(service, 'getBestToday').mockResolvedValue(pickedFixtureFixture)
     renderWithQuery(<MatchDayCard />)
 
-    expect(await screen.findByText('+3.20%')).toBeInTheDocument()
+    expect((await screen.findAllByText('+3.20%')).length).toBeGreaterThan(0)
   })
 
   it('explains a priced fixture that produced no selection', async () => {
