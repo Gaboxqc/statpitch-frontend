@@ -10,7 +10,7 @@
   --secondary: #13161c; /* inset: wells, tiles and fields inside a card */
 
   /* Three levels of ink, and only three. Hierarchy used to come from opacity
-     modifiers on --secondary-foreground, which put two thirds of the text under
+     modifiers on a single mid-grey, which put two thirds of the text under
      4.5:1 — /30 through /60 all landed between 1.7 and 3.4 on this background.
      Each value below is measured, not eyeballed: the ratio in the comment is
      against --background, and the worst case is the lightest surface any text
@@ -38,9 +38,6 @@
      field by its edge, so WCAG 1.4.11 applies to it and not to a divider. */
   --line: #272d39; /* 1.44:1 on the page */
   --line-strong: #5c6678; /* 3.44:1 page, 3.29 card, 3.13 inset */
-
-  /* Kept for the few places that still tint with it. Not a text colour. */
-  --secondary-foreground: #94a3b8;
 
   --chart-1: #10b981;
   /* Lightened from #3b82f6: the away side writes this at 12px on a tinted
@@ -72,7 +69,6 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
   --color-accent: var(--accent);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);

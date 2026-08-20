@@ -18,7 +18,7 @@ function ContributionRow({ row, scale }: { row: FeatureContribution; scale: numb
 
       <span className={'relative flex-1 h-3 min-w-16'}>
         {/* The zero line is the competition's own goal environment. */}
-        <span className={'absolute inset-y-0 left-1/2 w-px bg-secondary-foreground/25'} />
+        <span className={'absolute inset-y-0 left-1/2 w-px bg-line-strong'} />
         <span
           className={`absolute inset-y-0.5 rounded-full ${positive ? 'bg-primary/60' : 'bg-chart-5/60'}`}
           style={
