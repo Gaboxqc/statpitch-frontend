@@ -5,15 +5,17 @@ import { Link, NavLink } from 'react-router'
 function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
   const menuId = useId()
-  const linkBase = 'py-1.5 px-2 rounded-sm text-sm'
+  const linkBase = 'py-1.5 px-3 rounded-md text-sm'
   const activeClass = 'bg-accent text-ink'
   const inactiveClass = 'text-ink-muted'
   return (
     <header
-      className={'w-full bg-background h-fit py-1 fixed top-0 z-50 left-1/2 -translate-x-1/2'}
+      className={
+        'fixed top-0 right-0 left-0 z-50 bg-background border-b border-secondary-foreground/10'
+      }
     >
-      <nav className={'container mx-auto flex flex-col'}>
-        <div className={'flex text-ink items-center justify-between mx-2 md:mx-0 text-lg'}>
+      <nav className={'measure flex flex-col'}>
+        <div className={'flex h-14 text-ink items-center justify-between text-lg'}>
           <div className={'flex items-center font-semibold gap-2 tracking-tight'}>
             <LogoIcon className={'h-6 w-6 text-primary'} />
 
@@ -50,7 +52,7 @@ function Navbar() {
             </Link>
             <button
               className={
-                'border border-secondary-foreground/20 rounded-md p-1 bg-secondary-foreground/15 m-2 md:hidden'
+                'border border-secondary-foreground/20 rounded-md p-1 bg-secondary-foreground/15 md:hidden'
               }
               onClick={() => setIsOpened((prev) => !prev)}
               aria-label={isOpened ? 'Close menu' : 'Open menu'}
@@ -63,7 +65,7 @@ function Navbar() {
             <Link
               to={'/login'}
               className={
-                'bg-primary text-secondary text-sm font-semibold rounded-sm py-1.5 px-2 m-2 md:block hidden'
+                'bg-primary text-secondary text-sm font-semibold rounded-md py-1.5 px-3 md:block hidden'
               }
             >
               Get started
@@ -73,13 +75,13 @@ function Navbar() {
 
         <div
           id={menuId}
-          className={`flex-col items-center gap-2 mt-4 text-sm md:hidden ${isOpened ? 'flex' : 'hidden'}`}
+          className={`flex-col items-center gap-2 pb-4 text-sm md:hidden ${isOpened ? 'flex' : 'hidden'}`}
         >
           <NavLink
             to={'/'}
             end
             className={({ isActive }) =>
-              `w-11/12 p-2 rounded-sm ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
+              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >
@@ -88,7 +90,7 @@ function Navbar() {
           <NavLink
             to={'/track-record'}
             className={({ isActive }) =>
-              `w-11/12 p-2 rounded-sm ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
+              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >
@@ -97,7 +99,7 @@ function Navbar() {
           <NavLink
             to={'/pricing'}
             className={({ isActive }) =>
-              `w-11/12 p-2 rounded-sm ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
+              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >
@@ -107,7 +109,7 @@ function Navbar() {
             to={'/login'}
             key={'login'}
             className={
-              'bg-primary w-11/12 p-2 rounded-sm text-background text-center text-sm font-semibold'
+              'bg-primary w-full p-2 rounded-md text-background text-center text-sm font-semibold'
             }
             onClick={() => setIsOpened(false)}
           >

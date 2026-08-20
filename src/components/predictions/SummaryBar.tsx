@@ -40,25 +40,23 @@ function SummaryBar() {
   if (loading)
     return (
       <div
-        className={'h-10 bg-accent/20 border-y border-secondary-foreground/20 mt-14 animate-pulse'}
+        className={'h-11 bg-accent/20 border-b border-secondary-foreground/20 animate-pulse'}
       ></div>
     )
 
   return (
-    <div
-      className={
-        'flex items-center py-2 px-2 bg-accent/20 border-y border-secondary-foreground/20 mt-14'
-      }
-    >
+    <div className={'bg-accent/20 border-b border-secondary-foreground/20'}>
       <div
-        className={'flex w-full lg:container lg:mx-auto lg:px-2 lg:justify-between lg:items-center'}
+        className={
+          'measure flex w-full items-center gap-x-6 gap-y-2 py-3 lg:flex-wrap lg:justify-between'
+        }
       >
         {/* The marquee needs two identical copies to loop seamlessly. */}
         <div className={'flex w-full overflow-hidden lg:hidden'}>
           {[0, 1].map((copy) => (
             <ul
               key={copy}
-              className={'flex shrink-0 animate-marquee gap-6 text-sm text-ink-muted px-4'}
+              className={'flex shrink-0 animate-marquee gap-6 text-sm text-ink-muted pr-6'}
               aria-hidden={copy === 1}
             >
               {items.map((item) => (
@@ -68,7 +66,14 @@ function SummaryBar() {
           ))}
         </div>
 
-        <ul className={'hidden lg:flex w-full text-ink-muted gap-6 text-sm'}>
+        {/* The strip takes the room the disclaimer button leaves and wraps inside
+            it, so a sixth stat costs a line of the strip rather than a row of the
+            whole band. */}
+        <ul
+          className={
+            'hidden lg:flex lg:min-w-0 lg:flex-1 lg:flex-wrap text-ink-muted gap-x-6 gap-y-2 text-sm'
+          }
+        >
           {items.map((item) => (
             <StatItem key={item.id} {...item} />
           ))}
@@ -85,7 +90,7 @@ function SummaryBar() {
           </button>
           <div
             className={
-              'text-xs bg-secondary p-2 w-100 rounded-sm absolute top-8 right-0 border border-secondary-foreground/10 hidden group-hover:block'
+              'text-xs bg-secondary p-4 w-100 rounded-lg absolute top-9 right-0 border border-secondary-foreground/10 hidden group-hover:block'
             }
           >
             <p>{DISCLAIMER.short}</p>

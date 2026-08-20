@@ -8,7 +8,7 @@ function LoginPage() {
   const [isNewAccount, setIsNewAccount] = useState(false)
   useDocumentTitle(isNewAccount ? 'Create account' : 'Sign in')
   return (
-    <div className={'flex items-center w-screen'}>
+    <div className={'flex items-center w-full'}>
       <div
         className={
           'border border-emerald-500/20 bg-zinc-900/60 h-screen bg-linear-to-br from-emerald-950/30 via-transparent to-blue-950/20 w-2/6 hidden lg:block'
@@ -63,12 +63,12 @@ function LoginPage() {
           <div
             role='group'
             aria-label='Authentication mode'
-            className={'flex gap-4 mt-4 bg-accent/40 h-12 justify-between rounded-sm items-center'}
+            className={'flex gap-4 mt-4 bg-accent/40 h-12 justify-between rounded-md items-center'}
           >
             <button
               type='button'
               aria-pressed={!isNewAccount}
-              className={`w-60 h-10 ml-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'text-ink-subtle' : 'bg-accent/50 text-ink'}`}
+              className={`w-60 h-10 ml-1 rounded-md text-sm font-medium cursor-pointer ${isNewAccount ? 'text-ink-subtle' : 'bg-accent/50 text-ink'}`}
               onClick={() => setIsNewAccount(false)}
             >
               Sign in
@@ -76,7 +76,7 @@ function LoginPage() {
             <button
               type='button'
               aria-pressed={isNewAccount}
-              className={`w-60 h-10 mr-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'bg-accent/50 text-ink' : 'text-ink-subtle'}`}
+              className={`w-60 h-10 mr-1 rounded-md text-sm font-medium cursor-pointer ${isNewAccount ? 'bg-accent/50 text-ink' : 'text-ink-subtle'}`}
               onClick={() => setIsNewAccount(true)}
             >
               Create account
@@ -108,7 +108,7 @@ function LoginPage() {
                     type='text'
                     autoComplete='name'
                     required
-                    className={'w-full p-3 rounded-lg bg-accent/20 text-sm'}
+                    className={'w-full p-3 rounded-md bg-accent/20 text-sm'}
                     placeholder={'Your name'}
                   />
                 </div>
@@ -123,7 +123,7 @@ function LoginPage() {
                   type='email'
                   autoComplete='email'
                   required
-                  className={'w-full p-3 rounded-lg bg-accent/20 text-sm'}
+                  className={'w-full p-3 rounded-md bg-accent/20 text-sm'}
                   placeholder={'you@example.com'}
                 />
               </div>
@@ -137,7 +137,7 @@ function LoginPage() {
                   type='password'
                   autoComplete={isNewAccount ? 'new-password' : 'current-password'}
                   required
-                  className={'w-full p-3 rounded-lg bg-accent/20 text-sm'}
+                  className={'w-full p-3 rounded-md bg-accent/20 text-sm'}
                   placeholder={'•••••••••'}
                 />
               </div>

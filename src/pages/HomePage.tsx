@@ -13,7 +13,7 @@ function HomePage() {
         <h1 className={'sr-only'}>Today's football predictions</h1>
         <SummaryBar />
         <FiltersBar />
-        <div className={'container mx-auto'}>
+        <div className={'measure flex flex-col gap-16 py-10'}>
           <MatchDayCard />
           <PredictionsSection />
         </div>

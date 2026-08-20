@@ -5,11 +5,11 @@ import type { PredictionView } from '../../utils/predictionView'
 const VARIANTS = {
   compact: {
     wrapper: 'hidden lg:flex items-center gap-2',
-    tile: 'flex flex-col justify-center items-center h-14 w-14 border rounded-lg text-xs',
+    tile: 'flex flex-col justify-center items-center h-14 w-14 border rounded-md text-xs',
   },
   wide: {
     wrapper: 'grid grid-cols-3 gap-4 w-full lg:hidden',
-    tile: 'flex justify-center gap-2 border rounded-md px-8 py-2',
+    tile: 'flex justify-center gap-2 border rounded-md px-8 py-3',
   },
 }
 

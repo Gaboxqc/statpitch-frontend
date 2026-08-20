@@ -11,7 +11,7 @@ function QueryError({ error, className = '' }: { error: unknown; className?: str
   return (
     <div
       role={'alert'}
-      className={`flex flex-col gap-1 rounded-md border px-4 py-3 text-center ${
+      className={`flex flex-col gap-1 rounded-lg border px-4 py-3 text-center ${
         degraded ? 'border-secondary-foreground/20 bg-accent/20' : 'border-chart-5/30 bg-chart-5/10'
       } ${className}`}
     >

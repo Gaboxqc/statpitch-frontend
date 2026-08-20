@@ -11,7 +11,7 @@ function PricingPage() {
   useDocumentTitle('Pricing')
 
   return (
-    <section className={'container mx-auto px-2 py-14'}>
+    <section className={'measure pt-10 pb-24'}>
       <div className={'mt-12 flex flex-col items-center gap-4 text-center'}>
         <div
           className={
@@ -40,7 +40,7 @@ function PricingPage() {
           ))}
         </div>
       </div>
-      <div className={'mt-24 bg-accent/10 p-4 rounded-lg border border-accent/20'}>
+      <div className={'mt-24 bg-accent/10 p-6 rounded-lg border border-accent/20'}>
         <LiveRoi />
         <p className={'text-ink-subtle text-xs mt-4'}>
           {COMPETITIONS.length} competitions covered,{' '}
@@ -83,7 +83,7 @@ function PricingPage() {
       </div>
       <div
         className={
-          'my-24 flex flex-col items-center gap-4 text-center bg-accent/20 p-4 rounded-lg border border-accent/30'
+          'my-24 flex flex-col items-center gap-4 text-center bg-accent/20 p-6 rounded-lg border border-accent/30'
         }
       >
         <div className={'h-1.5 w-1.5 bg-primary rounded-full animate-pulse'}></div>
