@@ -35,7 +35,7 @@ function CorrectScores({ scores, homeTeam, awayTeam }: CorrectScoresProps) {
             <span className={'numeric font-semibold w-10 shrink-0'}>
               {score.home}&ndash;{score.away}
             </span>
-            <span className={'h-2 flex-1 bg-accent/30 rounded-full overflow-hidden'}>
+            <span className={'h-2 flex-1 bg-secondary rounded-full overflow-hidden'}>
               <span
                 className={'block h-full bg-primary/60 rounded-full'}
                 style={{ width: `${(score.probability / peak) * 100}%` }}

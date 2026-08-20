@@ -6,14 +6,10 @@ function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
   const menuId = useId()
   const linkBase = 'py-1.5 px-3 rounded-md text-sm'
-  const activeClass = 'bg-accent text-ink'
+  const activeClass = 'bg-secondary text-ink'
   const inactiveClass = 'text-ink-muted'
   return (
-    <header
-      className={
-        'fixed top-0 right-0 left-0 z-50 bg-background border-b border-secondary-foreground/10'
-      }
-    >
+    <header className={'fixed top-0 right-0 left-0 z-50 bg-background border-b border-line'}>
       <nav className={'measure flex flex-col'}>
         <div className={'flex h-14 text-ink items-center justify-between text-lg'}>
           <div className={'flex items-center font-semibold gap-2 tracking-tight'}>
@@ -51,9 +47,7 @@ function Navbar() {
               Sign in
             </Link>
             <button
-              className={
-                'border border-secondary-foreground/20 rounded-md p-1 bg-secondary-foreground/15 md:hidden'
-              }
+              className={'border border-line-strong rounded-md p-1 bg-secondary md:hidden'}
               onClick={() => setIsOpened((prev) => !prev)}
               aria-label={isOpened ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpened}
@@ -81,7 +75,7 @@ function Navbar() {
             to={'/'}
             end
             className={({ isActive }) =>
-              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
+              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >
@@ -90,7 +84,7 @@ function Navbar() {
           <NavLink
             to={'/track-record'}
             className={({ isActive }) =>
-              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
+              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >
@@ -99,7 +93,7 @@ function Navbar() {
           <NavLink
             to={'/pricing'}
             className={({ isActive }) =>
-              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-accent' : 'text-ink-muted'}`
+              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : 'text-ink-muted'}`
             }
             onClick={() => setIsOpened(false)}
           >

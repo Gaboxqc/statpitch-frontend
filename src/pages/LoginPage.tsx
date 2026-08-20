@@ -9,11 +9,7 @@ function LoginPage() {
   useDocumentTitle(isNewAccount ? 'Create account' : 'Sign in')
   return (
     <div className={'flex items-center w-full'}>
-      <div
-        className={
-          'border border-emerald-500/20 bg-zinc-900/60 h-screen bg-linear-to-br from-emerald-950/30 via-transparent to-blue-950/20 w-2/6 hidden lg:block'
-        }
-      >
+      <div className={'border-r border-line bg-card min-h-screen w-2/6 hidden lg:block'}>
         <div className={'p-8 flex flex-col justify-between h-full'}>
           <Link
             to={'/'}
@@ -35,7 +31,7 @@ function LoginPage() {
             <LiveRoi className={'mt-6'} />
           </div>
 
-          <div className={'flex flex-col gap-4 border-t border-accent/50 pt-12'}>
+          <div className={'flex flex-col gap-4 border-t border-line pt-12'}>
             <p className={'text-sm text-ink-subtle'}>
               Every selection is logged with the price it was taken at and settled against the final
               result, so the ROI above is measured rather than promotional.
@@ -63,12 +59,14 @@ function LoginPage() {
           <div
             role='group'
             aria-label='Authentication mode'
-            className={'flex gap-4 mt-4 bg-accent/40 h-12 justify-between rounded-md items-center'}
+            className={
+              'flex gap-4 mt-4 bg-card border border-line h-12 justify-between rounded-md items-center'
+            }
           >
             <button
               type='button'
               aria-pressed={!isNewAccount}
-              className={`w-60 h-10 ml-1 rounded-md text-sm font-medium cursor-pointer ${isNewAccount ? 'text-ink-subtle' : 'bg-accent/50 text-ink'}`}
+              className={`w-60 h-10 ml-1 rounded-md text-sm font-medium cursor-pointer ${isNewAccount ? 'text-ink-subtle' : 'bg-secondary text-ink'}`}
               onClick={() => setIsNewAccount(false)}
             >
               Sign in
@@ -76,7 +74,7 @@ function LoginPage() {
             <button
               type='button'
               aria-pressed={isNewAccount}
-              className={`w-60 h-10 mr-1 rounded-md text-sm font-medium cursor-pointer ${isNewAccount ? 'bg-accent/50 text-ink' : 'text-ink-subtle'}`}
+              className={`w-60 h-10 mr-1 rounded-md text-sm font-medium cursor-pointer ${isNewAccount ? 'bg-secondary text-ink' : 'text-ink-subtle'}`}
               onClick={() => setIsNewAccount(true)}
             >
               Create account
@@ -108,7 +106,9 @@ function LoginPage() {
                     type='text'
                     autoComplete='name'
                     required
-                    className={'w-full p-3 rounded-md bg-accent/20 text-sm'}
+                    className={
+                      'w-full p-3 rounded-md bg-secondary border border-line-strong text-sm'
+                    }
                     placeholder={'Your name'}
                   />
                 </div>
@@ -123,7 +123,7 @@ function LoginPage() {
                   type='email'
                   autoComplete='email'
                   required
-                  className={'w-full p-3 rounded-md bg-accent/20 text-sm'}
+                  className={'w-full p-3 rounded-md bg-secondary border border-line-strong text-sm'}
                   placeholder={'you@example.com'}
                 />
               </div>
@@ -137,7 +137,7 @@ function LoginPage() {
                   type='password'
                   autoComplete={isNewAccount ? 'new-password' : 'current-password'}
                   required
-                  className={'w-full p-3 rounded-md bg-accent/20 text-sm'}
+                  className={'w-full p-3 rounded-md bg-secondary border border-line-strong text-sm'}
                   placeholder={'•••••••••'}
                 />
               </div>
@@ -160,15 +160,15 @@ function LoginPage() {
           </form>
 
           <div className={'flex items-center gap-2'}>
-            <div className={'h-0.5 w-full bg-accent/50'}></div>
+            <div className={'h-0.5 w-full bg-secondary'}></div>
             <p className={'text-xs text-ink-subtle shrink-0'}>or continue with</p>
-            <div className={'h-0.5 w-full bg-accent/50'}></div>
+            <div className={'h-0.5 w-full bg-secondary'}></div>
           </div>
           <div className={'flex gap-2'}>
             <button
               type='button'
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md text-sm font-medium border border-accent/30 cursor-pointer'
+                'flex w-1/2 items-center justify-center gap-2 bg-secondary p-2 rounded-md text-sm font-medium border border-line cursor-pointer'
               }
             >
               <GoogleIcon className={'h-4 w-4'} />
@@ -177,7 +177,7 @@ function LoginPage() {
             <button
               type='button'
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-accent/20 p-2 rounded-md text-sm font-medium border border-accent/30 cursor-pointer'
+                'flex w-1/2 items-center justify-center gap-2 bg-secondary p-2 rounded-md text-sm font-medium border border-line cursor-pointer'
               }
             >
               <GithubIcon className={'h-4 w-4'} />

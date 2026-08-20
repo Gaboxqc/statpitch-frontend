@@ -40,12 +40,8 @@ function MatchDayCard() {
   const kickoff = describeKickoffLong(prediction)
 
   return (
-    <div className={'border border-emerald-500/20 bg-zinc-900/60 rounded-lg'}>
-      <div
-        className={
-          'flex flex-col bg-linear-to-br from-emerald-950/30 via-transparent to-blue-950/20 p-6'
-        }
-      >
+    <div className={'border border-line bg-card rounded-lg'}>
+      <div className={'flex flex-col p-6'}>
         <div className={'w-full'}>
           <div className={'grid grid-cols-1  md:grid-cols-2'}>
             <div className={'flex items-center gap-2 pb-2'}>
@@ -77,7 +73,7 @@ function MatchDayCard() {
               <TeamCrest
                 name={prediction.home_team}
                 url={prediction.home_crest_url}
-                className={'w-20 h-20 md:w-40 md:h-40 text-4xl md:text-6xl'}
+                className={'w-20 h-20 md:w-40 md:h-40'}
               />
               <p className={'text-sm font-medium mt-2 text-center'}>{prediction.home_team}</p>
               <p className={'numeric text-xl md:text-2xl text-primary font-semibold'}>
@@ -86,7 +82,7 @@ function MatchDayCard() {
               <p className={'eyebrow text-ink-subtle'}>Win</p>
               <div
                 className={
-                  'flex gap-2 mt-2 text-xs bg-accent/40 py-1 px-2 rounded-md border border-accent/80'
+                  'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
                 }
               >
                 <p className={'eyebrow text-ink-muted'}>xG</p>
@@ -99,7 +95,7 @@ function MatchDayCard() {
               <p className={'eyebrow text-ink-subtle'}>vs</p>
               <div
                 className={
-                  'flex flex-col items-center bg-accent/40 border border-accent/80 px-4 py-2 rounded-lg'
+                  'flex flex-col items-center bg-secondary border border-line px-4 py-2 rounded-lg'
                 }
               >
                 <p className={'eyebrow text-ink-subtle'}>Draw</p>
@@ -112,7 +108,7 @@ function MatchDayCard() {
               <TeamCrest
                 name={prediction.away_team}
                 url={prediction.away_crest_url}
-                className={'w-20 h-20 md:w-40 md:h-40 text-4xl md:text-6xl'}
+                className={'w-20 h-20 md:w-40 md:h-40'}
               />
               <p className={'text-sm font-medium mt-2 text-center'}>{prediction.away_team}</p>
               <p className={'numeric text-xl md:text-2xl font-semibold text-chart-2'}>
@@ -121,7 +117,7 @@ function MatchDayCard() {
               <p className={'eyebrow text-ink-subtle'}>Win</p>
               <div
                 className={
-                  'flex gap-2 mt-2 text-xs bg-accent/40 py-1 px-2 rounded-md border border-accent/80'
+                  'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
                 }
               >
                 <p className={'eyebrow text-ink-muted'}>xG</p>
@@ -141,7 +137,7 @@ function MatchDayCard() {
           {bestBet ? (
             <div
               className={
-                'flex justify-between items-center text-xs gap-3 mt-6 border border-primary/20 rounded-lg px-4 py-3 bg-primary/10'
+                'flex justify-between items-center text-xs gap-3 mt-6 border border-primary/40 rounded-lg px-4 py-3 bg-primary/10'
               }
             >
               <div className={'flex items-center gap-2'}>
@@ -172,11 +168,7 @@ function MatchDayCard() {
           ) : (
             // Two different reasons produce no pick, and they mean different
             // things: no market to bet into, versus a market with no edge in it.
-            <p
-              className={
-                'mt-6 text-xs text-ink-subtle border border-secondary-foreground/15 rounded-lg px-4 py-3'
-              }
-            >
+            <p className={'mt-6 text-xs text-ink-subtle border border-line rounded-lg px-4 py-3'}>
               {prediction.odds_coverage
                 ? 'Priced, but no selection cleared the minimum stake. Prediction only.'
                 : 'No odds matched this fixture, so nothing can be priced. Prediction only.'}
@@ -204,7 +196,7 @@ function MatchDayCard() {
 
             <button
               className={
-                'mt-4 px-4 max-h-12 lg:justify-self-end bg-accent/40 border border-accent/80 text-ink rounded-md py-2 flex items-center justify-center gap-2 text-sm'
+                'mt-4 px-4 max-h-12 lg:justify-self-end bg-secondary border border-line text-ink rounded-md py-2 flex items-center justify-center gap-2 text-sm'
               }
               onClick={() => setIsOpened((prev) => !prev)}
               type='button'

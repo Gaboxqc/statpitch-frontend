@@ -37,15 +37,10 @@ function SummaryBar() {
   const { stats, loading } = useStats()
   const items = buildStats(stats)
 
-  if (loading)
-    return (
-      <div
-        className={'h-11 bg-accent/20 border-b border-secondary-foreground/20 animate-pulse'}
-      ></div>
-    )
+  if (loading) return <div className={'h-11 bg-secondary border-b border-line animate-pulse'}></div>
 
   return (
-    <div className={'bg-accent/20 border-b border-secondary-foreground/20'}>
+    <div className={'bg-secondary border-b border-line'}>
       <div
         className={
           'measure flex w-full items-center gap-x-6 gap-y-2 py-3 lg:flex-wrap lg:justify-between'
@@ -82,7 +77,7 @@ function SummaryBar() {
         <div className={'relative flex items-center gap-2 group'}>
           <button
             className={
-              'hidden lg:flex items-center gap-2 text-ink-subtle bg-accent/50 py-1 px-2 rounded-md shrink-0 cursor-pointer'
+              'hidden lg:flex items-center gap-2 text-ink-subtle bg-secondary py-1 px-2 rounded-md shrink-0 cursor-pointer'
             }
           >
             <InfoIcon className={'h-4 w-4'} />
@@ -90,7 +85,7 @@ function SummaryBar() {
           </button>
           <div
             className={
-              'text-xs bg-secondary p-4 w-100 rounded-lg absolute top-9 right-0 border border-secondary-foreground/10 hidden group-hover:block'
+              'text-xs bg-secondary p-4 w-100 rounded-lg absolute top-9 right-0 border border-line hidden group-hover:block'
             }
           >
             <p>{DISCLAIMER.short}</p>

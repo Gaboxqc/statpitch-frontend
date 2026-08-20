@@ -1,9 +1,13 @@
 :root {
-  --background: #08090d;
-  --card: #0e1015;
+  /* Three surfaces, in order of elevation, and every one of them opaque. Panels
+     used to be stacked alpha — bg-accent at /10 /15 /20 /30 /40 /50 /60 /80 —
+     which made a card's real background depend on how many wrappers it sat in
+     and made every contrast figure a composite. */
+  --background: #08090d; /* the page */
+  --card: #0e1015; /* raised: cards and panels */
   --primary: #10b981;
   --primary-foreground: #022c22;
-  --secondary: #13161c;
+  --secondary: #13161c; /* inset: wells, tiles and fields inside a card */
 
   /* Three levels of ink, and only three. Hierarchy used to come from opacity
      modifiers on --secondary-foreground, which put two thirds of the text under
@@ -27,8 +31,15 @@
   /* A surface, not an ink. Icons used to take this and landed at 1.9:1. */
   --accent: oklch(37% 0.013 285.805);
 
-  /* Hairlines and dividers. Not text: the opacity modifiers on this one are
-     fine, because WCAG asks 3:1 of a control boundary and nothing of a rule. */
+  /* Two lines, and only two. Eight alpha weights of border were in play doing
+     one job: /10 /15 /20 /25 on the ink and /20 /30 /40 /50 /80 on the accent.
+     --line is a hairline on any surface. --line-strong is a control boundary,
+     and it is the one that has to clear 3:1 — a select or an input is read as a
+     field by its edge, so WCAG 1.4.11 applies to it and not to a divider. */
+  --line: #272d39; /* 1.44:1 on the page */
+  --line-strong: #5c6678; /* 3.44:1 page, 3.29 card, 3.13 inset */
+
+  /* Kept for the few places that still tint with it. Not a text colour. */
   --secondary-foreground: #94a3b8;
 
   --chart-1: #10b981;
@@ -55,6 +66,8 @@
   --color-ink-subtle: var(--ink-subtle);
   --color-negative: var(--negative);
   --color-ring: var(--ring);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-card: var(--card);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);

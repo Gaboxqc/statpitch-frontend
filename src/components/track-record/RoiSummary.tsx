@@ -55,9 +55,7 @@ function RoiSummary({ roi }: { roi: BasisRoi[] }) {
       {ordered.map((entry) => (
         <section
           key={entry.basis}
-          className={
-            'border border-secondary-foreground/15 rounded-lg p-5 bg-card flex flex-col gap-5'
-          }
+          className={'border border-line rounded-lg p-5 bg-card flex flex-col gap-5'}
         >
           <div>
             <h3 className={'text-sm font-medium text-ink'}>{BASIS_LABELS[entry.basis].title}</h3>
