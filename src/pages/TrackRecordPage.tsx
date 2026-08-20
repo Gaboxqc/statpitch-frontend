@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router'
 import EquityCurve from '../components/track-record/EquityCurve'
+import CalibrationChart from '../components/track-record/CalibrationChart'
 import RoiSummary from '../components/track-record/RoiSummary'
 import LedgerTable from '../components/track-record/LedgerTable'
 import QueryError from '../components/ui/QueryError'
@@ -70,6 +71,14 @@ function TrackRecordPage() {
         ) : (
           stats && <RoiSummary roi={stats.roi} />
         )}
+      </section>
+
+      {/* Above the curve on purpose: whether the probabilities hold up is a
+          stronger claim than what they returned, and it is the one nobody in
+          this space publishes. */}
+      <section className={'flex flex-col gap-4'}>
+        <h2 className={'text-sm font-medium text-ink-muted'}>Are the probabilities honest?</h2>
+        {curveError ? <QueryError error={curveError} /> : <CalibrationChart bets={curveBets} />}
       </section>
 
       <section className={'flex flex-col gap-4'}>
