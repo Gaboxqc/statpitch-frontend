@@ -5,7 +5,7 @@ import { Link, NavLink } from 'react-router'
 function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
   const menuId = useId()
-  const linkBase = 'py-1.5 text-sm border-b-2 transition-colors'
+  const linkBase = 'py-1.5 text-sm border-b-2 transition-[color,border-color]'
   const activeClass = 'border-primary text-ink'
   const inactiveClass = 'border-transparent text-ink-muted hover:text-ink'
   return (

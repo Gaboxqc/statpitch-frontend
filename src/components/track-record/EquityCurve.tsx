@@ -84,8 +84,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             x2={WIDTH - PAD.right}
             y1={y(0)}
             y2={y(0)}
-            stroke={'var(--color-secondary-foreground)'}
-            strokeOpacity={0.55}
+            stroke={'var(--color-line-strong)'}
             strokeDasharray={'3 3'}
           />
           <text
@@ -151,8 +150,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
                 x2={x(active)}
                 y1={PAD.top}
                 y2={PAD.top + PLOT_H}
-                stroke={'var(--color-secondary-foreground)'}
-                strokeOpacity={0.4}
+                stroke={'var(--color-line-strong)'}
               />
               {series.map((entry) => (
                 <circle
