@@ -32,7 +32,7 @@ function PricingCard({
 
       <p className={'numeric text-2xl font-semibold'}>
         {price}
-        {period && <span className={'font-sans text-sm font-normal text-ink-muted'}>{period}</span>}
+        {period && <span className={'text-sm font-normal text-ink-muted'}>{period}</span>}
       </p>
 
       <Link
