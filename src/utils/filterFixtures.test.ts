@@ -53,30 +53,6 @@ describe('filterFixtures', () => {
     expect(filterFixtures(fixtures, { ...base, valueBetsOnly: true })).toHaveLength(1)
   })
 
-  /**
-   * Ranking on Kelly rather than EV is deliberate: a 5% shot at 25.0 carries
-   * +25% EV and a stake far too small to be worth the variance.
-   */
-  it('orders value bets by Kelly, not EV', () => {
-    const lottery = {
-      ...pickedFixtureFixture,
-      id: 90,
-      match_date: '2026-08-18',
-      best_overall_ev: 0.25,
-      best_overall_kelly: 0.002,
-    }
-    const sound = {
-      ...pickedFixtureFixture,
-      id: 91,
-      match_date: '2026-08-18',
-      best_overall_ev: 0.04,
-      best_overall_kelly: 0.06,
-    }
-
-    const ranked = filterFixtures([lottery, sound], { ...base, valueBetsOnly: true })
-    expect(ranked.map((fixture) => fixture.id)).toEqual([91, 90])
-  })
-
   it('does not mutate the array it was given', () => {
     const fixtures = [
       { ...pickedFixtureFixture, id: 1, match_date: '2026-08-18', best_overall_kelly: 0.01 },

@@ -33,12 +33,11 @@ export function filterFixtures(fixtures: Fixture[], options: FilterOptions): Fix
     result = result.filter((fixture) => topOutcomeProb(fixture) >= confidence)
   }
 
+  // Ordering is no longer decided here. It used to happen only inside this
+  // branch, which left the default view — the one everybody lands on — in
+  // whatever order the API returned. See sortFixtures.
   if (valueBetsOnly) {
     result = result.filter((fixture) => fixture.best_overall_bet !== null)
-    // Ranking on Kelly rather than EV is deliberate: EV alone cannot separate a
-    // sound bet from a lottery ticket, since a 5% shot at 25.0 carries +25% EV
-    // and a stake far too small to be worth the variance.
-    result = [...result].sort((a, b) => (b.best_overall_kelly ?? 0) - (a.best_overall_kelly ?? 0))
   }
 
   return result

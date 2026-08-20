@@ -3,6 +3,8 @@ import { useFixtures, useWindow } from '../../hooks/queries'
 import { useElapsed } from '../../hooks/useElapsed'
 import { useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { filterFixtures } from '../../utils/filterFixtures'
+import { SORTS, SORT_LABELS, sortFixtures } from '../../utils/sortFixtures'
+import type { SortKey } from '../../utils/sortFixtures'
 import QueryError from '../ui/QueryError'
 import { COLD_START_HINT_MS } from '../../services/api'
 import { competitionName } from '../../constants/competitions'
@@ -12,7 +14,7 @@ import { formatMatchDay } from '../../utils/datetime'
 const DAY_LABELS = { yesterday: 'yesterday', today: 'today', tomorrow: 'tomorrow' } as const
 
 function PredictionsSection() {
-  const { filters } = useFixtureFilters()
+  const { filters, setFilters } = useFixtureFilters()
   const { window } = useWindow()
   // Only the competition goes to the API. Day, confidence and the value-bet
   // filter are applied to the single window response, so switching them is free.
@@ -31,12 +33,15 @@ function PredictionsSection() {
     confidence: null,
     valueBetsOnly: false,
   })
-  const visible = filterFixtures(fixtures, {
-    day: filters.day,
-    window,
-    confidence: filters.confidence,
-    valueBetsOnly: filters.valueBetsOnly,
-  })
+  const visible = sortFixtures(
+    filterFixtures(fixtures, {
+      day: filters.day,
+      window,
+      confidence: filters.confidence,
+      valueBetsOnly: filters.valueBetsOnly,
+    }),
+    filters.sort,
+  )
 
   if (loading)
     return (
@@ -58,15 +63,37 @@ function PredictionsSection() {
 
   return (
     <div className={'flex flex-col gap-4'}>
-      <h2 className={'text-ink text-lg font-semibold'}>
-        <span className={'numeric text-ink-muted'}>{visible.length}</span>{' '}
-        {filters.valueBetsOnly ? 'Value bets' : 'Predictions'}
-        <span className={'text-ink-subtle font-normal text-sm'}>
-          {' · '}
-          {window ? formatMatchDay(window[filters.day]) : DAY_LABELS[filters.day]}
-          {filters.competitionId ? ` · ${competitionName(filters.competitionId)}` : ''}
-        </span>
-      </h2>
+      <div className={'flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2'}>
+        <h2 className={'text-ink text-lg font-semibold'}>
+          <span className={'numeric text-ink-muted'}>{visible.length}</span>{' '}
+          {filters.valueBetsOnly ? 'Value bets' : 'Predictions'}
+          <span className={'text-ink-subtle font-normal text-sm'}>
+            {' · '}
+            {window ? formatMatchDay(window[filters.day]) : DAY_LABELS[filters.day]}
+            {filters.competitionId ? ` · ${competitionName(filters.competitionId)}` : ''}
+          </span>
+        </h2>
+
+        {/* The order belongs to the list, not to the filter bar: it is not a
+            filter, and it has to be visible because the list is always in one
+            order whether or not anyone chose it. */}
+        <label className={'flex shrink-0 items-center gap-2 text-xs text-ink-subtle'}>
+          Sort by
+          <select
+            value={filters.sort}
+            onChange={(event) => setFilters({ sort: event.target.value as SortKey })}
+            className={
+              'cursor-pointer rounded-md border border-line-strong bg-secondary py-1 px-2 text-xs text-ink'
+            }
+          >
+            {SORTS.map((key) => (
+              <option key={key} value={key}>
+                {SORT_LABELS[key]}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       {visible.length === 0 && (
         <p className={'text-center mt-8 text-ink-muted'}>
