@@ -44,7 +44,7 @@ function PredictionsSection() {
         <div className={'h-30 w-11/12 lg:w-8/12 bg-accent mx-auto animate-pulse rounded-sm'}></div>
         <div className={'h-30 w-11/12 lg:w-8/12 bg-accent mx-auto animate-pulse rounded-sm'}></div>
         {slow && (
-          <p className={'text-center text-xs text-secondary-foreground/60'} role={'status'}>
+          <p className={'text-center text-xs text-ink-subtle'} role={'status'}>
             Waking the prediction service. This can take up to a minute.
           </p>
         )}
@@ -58,10 +58,10 @@ function PredictionsSection() {
 
   return (
     <div className={'mt-12 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
-      <h2 className={'text-foreground text-lg font-semibold ml-2'}>
-        <span className={'numeric text-secondary-foreground'}>{visible.length}</span>{' '}
+      <h2 className={'text-ink text-lg font-semibold ml-2'}>
+        <span className={'numeric text-ink-muted'}>{visible.length}</span>{' '}
         {filters.valueBetsOnly ? 'Value bets' : 'Predictions'}
-        <span className={'text-secondary-foreground/50 font-normal text-sm'}>
+        <span className={'text-ink-subtle font-normal text-sm'}>
           {' · '}
           {window ? formatMatchDay(window[filters.day]) : DAY_LABELS[filters.day]}
           {filters.competitionId ? ` · ${competitionName(filters.competitionId)}` : ''}
@@ -69,7 +69,7 @@ function PredictionsSection() {
       </h2>
 
       {visible.length === 0 && (
-        <p className={'text-center mt-8 text-secondary-foreground'}>
+        <p className={'text-center mt-8 text-ink-muted'}>
           {narrowed
             ? 'No fixtures match these filters. Try widening them.'
             : `Nothing scheduled ${DAY_LABELS[filters.day]}.`}
@@ -85,14 +85,14 @@ function PredictionsSection() {
           'flex flex-col gap-4 lg:flex-row lg:justify-between border-t border-secondary-foreground/10 pt-4 text-start mt-8'
         }
       >
-        <p className={'text-xs text-secondary-foreground/60'}>
+        <p className={'text-xs text-ink-subtle'}>
           {visible.length > 0 ? (
             <span className={'numeric'}>Model {visible[0].model_version}</span>
           ) : (
             ''
           )}
         </p>
-        <p className={'text-xs text-secondary-foreground/60'}>{DISCLAIMER.short}</p>
+        <p className={'text-xs text-ink-subtle'}>{DISCLAIMER.short}</p>
       </div>
     </div>
   )

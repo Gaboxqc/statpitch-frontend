@@ -15,10 +15,10 @@ function QueryError({ error, className = '' }: { error: unknown; className?: str
         degraded ? 'border-secondary-foreground/20 bg-accent/20' : 'border-chart-5/30 bg-chart-5/10'
       } ${className}`}
     >
-      <p className={'text-sm text-foreground'}>
+      <p className={'text-sm text-ink'}>
         {degraded ? 'Odds are unavailable right now.' : "We couldn't load this data."}
       </p>
-      <p className={'text-xs text-secondary-foreground/60'}>{describeError(error)}</p>
+      <p className={'text-xs text-ink-subtle'}>{describeError(error)}</p>
     </div>
   )
 }

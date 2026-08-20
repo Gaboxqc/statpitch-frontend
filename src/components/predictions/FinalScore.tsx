@@ -28,9 +28,9 @@ function FinalScore({ fixture, variant = 'badge' }: FinalScoreProps) {
         <span className={'numeric font-semibold'}>
           {home}&ndash;{away}
         </span>
-        <span className={'eyebrow text-secondary-foreground/50'}>FT</span>
+        <span className={'eyebrow text-ink-subtle'}>FT</span>
         {won !== null && (
-          <span className={`eyebrow ${won ? 'text-primary' : 'text-chart-5'}`}>
+          <span className={`eyebrow ${won ? 'text-primary' : 'text-negative'}`}>
             {won ? 'Won' : 'Lost'}
           </span>
         )}
@@ -40,14 +40,14 @@ function FinalScore({ fixture, variant = 'badge' }: FinalScoreProps) {
 
   return (
     <section className={'flex flex-col gap-2 w-full'}>
-      <h3 className={'eyebrow text-secondary-foreground/50'}>Result</h3>
+      <h3 className={'eyebrow text-ink-subtle'}>Result</h3>
       <p className={'text-sm font-medium tabular-nums'}>
         {fixture.home_team} {home}&ndash;{away} {fixture.away_team}
       </p>
       {pick && (
-        <p className={'text-xs text-secondary-foreground'}>
-          Published pick <span className={'text-foreground'}>{MARKET_LABELS[pick] ?? pick}</span>{' '}
-          <span className={won ? 'text-primary' : 'text-chart-5'}>{won ? 'won' : 'lost'}</span>.
+        <p className={'text-xs text-ink-muted'}>
+          Published pick <span className={'text-ink'}>{MARKET_LABELS[pick] ?? pick}</span>{' '}
+          <span className={won ? 'text-primary' : 'text-negative'}>{won ? 'won' : 'lost'}</span>.
         </p>
       )}
     </section>

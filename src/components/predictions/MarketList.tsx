@@ -12,7 +12,7 @@ interface MarketListProps {
 function MarketList({ markets, bestBet, isOpened, id }: MarketListProps) {
   return (
     <div id={id} className={`flex-col mt-12 gap-4 w-full ${isOpened ? 'flex' : 'hidden'}`}>
-      <div className={'flex justify-between text-secondary-foreground/50 text-xs'}>
+      <div className={'flex justify-between text-ink-subtle text-xs'}>
         <div className={'flex items-center gap-2'}>
           <BrainIcon className={'h-4 w-4 text-primary'} />
           <p className={'eyebrow'}>Market analysis</p>

@@ -28,7 +28,7 @@ function LoginPage() {
           <div>
             <p className={'text-xl'}>ML-powered predictions.</p>
             <p className={'text-xl text-primary'}>Edge that compounds.</p>
-            <p className={'text-sm text-foreground/40 mt-4'}>
+            <p className={'text-sm text-ink-subtle mt-4'}>
               Probabilities come from a fitted goal model rated on club Elo, recent venue form and
               rest days. Fixtures are re-synced once a day.
             </p>
@@ -36,11 +36,11 @@ function LoginPage() {
           </div>
 
           <div className={'flex flex-col gap-4 border-t border-accent/50 pt-12'}>
-            <p className={'text-sm text-foreground/40'}>
+            <p className={'text-sm text-ink-subtle'}>
               Every selection is logged with the price it was taken at and settled against the final
               result, so the ROI above is measured rather than promotional.
             </p>
-            <p className={'text-xs text-foreground/30'}>
+            <p className={'text-xs text-ink-subtle'}>
               For informational purposes only. StatPitch does not facilitate or endorse gambling.
             </p>
           </div>
@@ -68,7 +68,7 @@ function LoginPage() {
             <button
               type='button'
               aria-pressed={!isNewAccount}
-              className={`w-60 h-10 ml-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'text-foreground/50' : 'bg-accent/50 text-foreground'}`}
+              className={`w-60 h-10 ml-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'text-ink-subtle' : 'bg-accent/50 text-ink'}`}
               onClick={() => setIsNewAccount(false)}
             >
               Sign in
@@ -76,7 +76,7 @@ function LoginPage() {
             <button
               type='button'
               aria-pressed={isNewAccount}
-              className={`w-60 h-10 mr-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'bg-accent/50 text-foreground' : 'text-foreground/50'}`}
+              className={`w-60 h-10 mr-1 rounded-sm text-sm font-medium cursor-pointer ${isNewAccount ? 'bg-accent/50 text-ink' : 'text-ink-subtle'}`}
               onClick={() => setIsNewAccount(true)}
             >
               Create account
@@ -87,7 +87,7 @@ function LoginPage() {
             <h1 className={'text-xl font-semibold'}>
               {isNewAccount ? 'Get started free' : 'Welcome back'}
             </h1>
-            <p className={'text-sm text-secondary-foreground/50'}>
+            <p className={'text-sm text-ink-subtle'}>
               {isNewAccount
                 ? '14-day free trial. No credit card required.'
                 : 'Sign in to access your predictions dashboard'}
@@ -99,7 +99,7 @@ function LoginPage() {
             <div className={'flex flex-col gap-4'}>
               {isNewAccount && (
                 <div className={'flex flex-col gap-1'}>
-                  <label htmlFor='name' className={'eyebrow text-foreground/40'}>
+                  <label htmlFor='name' className={'eyebrow text-ink-subtle'}>
                     Full name
                   </label>
                   <input
@@ -108,13 +108,13 @@ function LoginPage() {
                     type='text'
                     autoComplete='name'
                     required
-                    className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
+                    className={'w-full p-3 rounded-lg bg-accent/20 text-sm'}
                     placeholder={'Your name'}
                   />
                 </div>
               )}
               <div className={'flex flex-col gap-1'}>
-                <label htmlFor='email' className={'eyebrow text-foreground/40'}>
+                <label htmlFor='email' className={'eyebrow text-ink-subtle'}>
                   Email
                 </label>
                 <input
@@ -123,12 +123,12 @@ function LoginPage() {
                   type='email'
                   autoComplete='email'
                   required
-                  className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
+                  className={'w-full p-3 rounded-lg bg-accent/20 text-sm'}
                   placeholder={'you@example.com'}
                 />
               </div>
               <div className={'flex flex-col gap-1'}>
-                <label htmlFor='password' className={'eyebrow text-foreground/40'}>
+                <label htmlFor='password' className={'eyebrow text-ink-subtle'}>
                   Password
                 </label>
                 <input
@@ -137,12 +137,12 @@ function LoginPage() {
                   type='password'
                   autoComplete={isNewAccount ? 'new-password' : 'current-password'}
                   required
-                  className={'w-full p-3 rounded-lg bg-accent/20 focus:outline-none text-sm'}
+                  className={'w-full p-3 rounded-lg bg-accent/20 text-sm'}
                   placeholder={'•••••••••'}
                 />
               </div>
               {!isNewAccount && (
-                <a href='#reset' className={'text-xs self-end text-foreground/40'}>
+                <a href='#reset' className={'text-xs self-end text-ink-subtle'}>
                   Forgot password?
                 </a>
               )}
@@ -161,7 +161,7 @@ function LoginPage() {
 
           <div className={'flex items-center gap-2'}>
             <div className={'h-0.5 w-full bg-accent/50'}></div>
-            <p className={'text-xs text-foreground/30 shrink-0'}>or continue with</p>
+            <p className={'text-xs text-ink-subtle shrink-0'}>or continue with</p>
             <div className={'h-0.5 w-full bg-accent/50'}></div>
           </div>
           <div className={'flex gap-2'}>
@@ -184,7 +184,7 @@ function LoginPage() {
               Github
             </button>
           </div>
-          <p className={'flex items-center gap-2 self-center text-sm text-foreground/40'}>
+          <p className={'flex items-center gap-2 self-center text-sm text-ink-subtle'}>
             {isNewAccount ? 'Already have an account?' : "Don't have an account?"}
             <button
               type='button'
@@ -194,7 +194,7 @@ function LoginPage() {
               {isNewAccount ? 'Sign in' : 'Sign up free'}
             </button>
           </p>
-          <p className={'text-xs text-foreground/30'}>
+          <p className={'text-xs text-ink-subtle'}>
             By continuing you agree to our Terms of Service & Privacy Policy.
           </p>
         </div>

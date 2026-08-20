@@ -7,7 +7,7 @@ function Footer() {
   return (
     <footer
       className={
-        'container mx-auto bg-background text-foreground text-center py-2 lg:py-0 h-fit gap-12 justify-between flex flex-col px-2 mt-16'
+        'container mx-auto bg-background text-ink text-center py-2 lg:py-0 h-fit gap-12 justify-between flex flex-col px-2 mt-16'
       }
     >
       <div className={'border-t border-secondary-foreground/10 pt-4 w-screen self-center'}>
@@ -18,17 +18,16 @@ function Footer() {
         >
           <p
             className={
-              'text-xs text-secondary-foreground/60 lg:shrink-0 text-start px-4 lg:px-0 lg:max-w-10/12 mb-4 lg:mb-0'
+              'text-xs text-ink-subtle lg:shrink-0 text-start px-4 lg:px-0 lg:max-w-10/12 mb-4 lg:mb-0'
             }
           >
-            <span className={'text-secondary-foreground'}>{DISCLAIMER.short}</span>{' '}
-            {DISCLAIMER.body}{' '}
+            <span className={'text-ink-muted'}>{DISCLAIMER.short}</span> {DISCLAIMER.body}{' '}
             <span id={detailId} hidden={!isOpened}>
               {DISCLAIMER.extended}{' '}
             </span>
             <button
               type='button'
-              className={'text-secondary-foreground underline cursor-pointer'}
+              className={'text-ink-muted underline cursor-pointer'}
               aria-expanded={isOpened}
               aria-controls={detailId}
               onClick={() => setIsOpened((prev) => !prev)}
@@ -36,7 +35,7 @@ function Footer() {
               {isOpened ? 'Less' : 'Read more'}
             </button>
           </p>
-          <p className={'text-xs text-secondary-foreground/60'}>
+          <p className={'text-xs text-ink-subtle'}>
             © {new Date().getFullYear()} {BRAND}
           </p>
         </div>

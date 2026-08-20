@@ -49,6 +49,14 @@
   table {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Every interactive element had an invisible focus state: the browser default
+     against a near-black ground, and on the login inputs not even that. One ring,
+     in a colour reserved for it, offset far enough to clear a rounded border. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
 }
 
 /* A figure the eye is meant to compare against another figure: odds,

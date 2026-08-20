@@ -26,22 +26,18 @@ function PricingCard({
       )}
 
       <div>
-        <p className={'text-sm font-medium text-foreground'}>{name}</p>
-        <p className={'text-xs text-secondary-foreground'}>{description}</p>
+        <p className={'text-sm font-medium text-ink'}>{name}</p>
+        <p className={'text-xs text-ink-muted'}>{description}</p>
       </div>
 
       <p className={'numeric text-2xl font-semibold'}>
         {price}
-        {period && (
-          <span className={'font-sans text-sm font-normal text-secondary-foreground'}>
-            {period}
-          </span>
-        )}
+        {period && <span className={'font-sans text-sm font-normal text-ink-muted'}>{period}</span>}
       </p>
 
       <Link
         to={buttonLink}
-        className={`w-11/12 bg-accent/40 self-center p-2 rounded-md text-sm text-center font-semibold my-2 ${isPopular ? 'text-background bg-primary' : 'text-foreground border border-accent/50'}`}
+        className={`w-11/12 bg-accent/40 self-center p-2 rounded-md text-sm text-center font-semibold my-2 ${isPopular ? 'text-background bg-primary' : 'text-ink border border-accent/50'}`}
       >
         {buttonText}
       </Link>
@@ -53,17 +49,17 @@ function PricingCard({
               className={`h-4 w-4 bg-accent/40 rounded-sm border  flex items-center justify-center ${isPopular ? 'bg-primary/20 border-primary/50' : 'bg-accent/40 border-accent/50'}`}
             >
               <CheckIcon
-                className={`h-2.5 w-2.5 ${isPopular ? 'text-primary' : 'text-secondary-foreground'}`}
+                className={`h-2.5 w-2.5 ${isPopular ? 'text-primary' : 'text-ink-muted'}`}
               />
             </div>
-            <p className={'text-xs text-foreground'}>{feature}</p>
+            <p className={'text-xs text-ink'}>{feature}</p>
           </li>
         ))}
 
         {notAvailableFeatures.map((feature: string) => (
           <li key={feature} className={'flex items-center gap-2'}>
             <div className='h-4 w-4 bg-accent/10 rounded-sm border border-accent/20 flex items-center justify-center' />
-            <p className={'text-xs text-foreground/30'}>{feature}</p>
+            <p className={'text-xs text-ink-subtle'}>{feature}</p>
           </li>
         ))}
       </ul>
