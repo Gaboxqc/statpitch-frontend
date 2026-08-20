@@ -15,7 +15,7 @@ function PricingPage() {
       <div className={'mt-12 flex flex-col items-center gap-4 text-center'}>
         <div
           className={
-            'eyebrow flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/15 px-3 py-1.5 text-primary'
+            'eyebrow flex w-fit items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-primary'
           }
         >
           <BrainIcon className={'h-4 w-4 text-primary'} />
@@ -40,7 +40,7 @@ function PricingPage() {
           ))}
         </div>
       </div>
-      <div className={'mt-24 bg-accent/10 p-6 rounded-lg border border-accent/20'}>
+      <div className={'mt-24 bg-card p-6 rounded-lg border border-line'}>
         <LiveRoi />
         <p className={'text-ink-subtle text-xs mt-4'}>
           {COMPETITIONS.length} competitions covered,{' '}
@@ -83,7 +83,7 @@ function PricingPage() {
       </div>
       <div
         className={
-          'my-24 flex flex-col items-center gap-4 text-center bg-accent/20 p-6 rounded-lg border border-accent/30'
+          'my-24 flex flex-col items-center gap-4 text-center bg-secondary p-6 rounded-lg border border-line'
         }
       >
         <div className={'h-1.5 w-1.5 bg-primary rounded-full animate-pulse'}></div>

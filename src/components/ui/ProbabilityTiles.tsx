@@ -40,7 +40,7 @@ function ProbabilityTiles({
         <div
           key={label}
           className={`${styles.tile} ${
-            highlighted ? 'bg-primary/10 border-primary/50' : 'border-secondary-foreground/20'
+            highlighted ? 'bg-primary/10 border-primary/40' : 'border-line'
           }`}
         >
           <p className={'eyebrow text-ink-subtle'}>{label}</p>

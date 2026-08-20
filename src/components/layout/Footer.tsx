@@ -5,7 +5,7 @@ function Footer() {
   const [isOpened, setIsOpened] = useState(false)
   const detailId = useId()
   return (
-    <footer className={'bg-background text-ink mt-24 border-t border-secondary-foreground/10'}>
+    <footer className={'bg-background text-ink mt-24 border-t border-line'}>
       <div className={'measure'}>
         <div
           className={

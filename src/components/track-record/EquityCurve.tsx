@@ -200,7 +200,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
         {active !== null && (
           <div
             className={
-              'absolute top-0 -translate-x-1/2 pointer-events-none bg-card border border-secondary-foreground/20 rounded-md px-3 py-2 text-xs whitespace-nowrap'
+              'absolute top-0 -translate-x-1/2 pointer-events-none bg-card border border-line rounded-md px-3 py-2 text-xs whitespace-nowrap'
             }
             style={{ left: `${(x(active) / WIDTH) * 100}%` }}
           >

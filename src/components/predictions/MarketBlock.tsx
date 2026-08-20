@@ -29,7 +29,7 @@ function getKellyRender(kelly: number | null, ev: number | null, priced: boolean
     )
   }
   return (
-    <p className={'text-xs text-ink-muted p-3 bg-primary/10 border border-primary/20 rounded-md'}>
+    <p className={'text-xs text-ink-muted p-3 bg-primary/10 border border-primary/40 rounded-md'}>
       <span className={'eyebrow'}>Consider</span>{' '}
       <span className={'text-primary font-semibold tabular-nums'}>
         Stake {formatFraction(kelly)} of bankroll
@@ -45,7 +45,7 @@ function getMarketNameRender(market: string, isBest: boolean) {
         <p className={'font-medium'}>{market}</p>
         <p
           className={
-            'eyebrow py-1 px-2 bg-primary/10 border border-primary/20 rounded-md text-primary'
+            'eyebrow py-1 px-2 bg-primary/10 border border-primary/40 rounded-md text-primary'
           }
         >
           Best bet
@@ -70,7 +70,7 @@ function MarketBlock({ market, prob, ev, odds, kelly, isBest }: MarketBlockProps
 
   return (
     <div className={'flex flex-col justify-center items-center'}>
-      <div className={'bg-accent/15 h-0.5 my-4 w-full'}></div>
+      <div className={'bg-line h-0.5 my-4 w-full'}></div>
       <div className={'flex w-full items-center justify-center'}>
         <div className={`${isBest ? 'block' : 'hidden'} h-50 w-0.5 bg-primary mr-4`}></div>
         <div className={'flex flex-col gap-4 w-full'}>

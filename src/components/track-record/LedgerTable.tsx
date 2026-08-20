@@ -40,7 +40,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
             Settled bets, newest first, showing {from} to {to} of {total}.
           </caption>
           <thead>
-            <tr className={'border-b border-secondary-foreground/15'}>
+            <tr className={'border-b border-line'}>
               <th scope={'col'} className={TH}>
                 Date
               </th>
@@ -69,7 +69,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
           </thead>
           <tbody>
             {bets.map((bet) => (
-              <tr key={bet.id} className={'border-b border-secondary-foreground/10'}>
+              <tr key={bet.id} className={'border-b border-line'}>
                 <td className={`${TD} numeric text-ink-subtle whitespace-nowrap`}>
                   {formatMatchDay(bet.match_date)}
                 </td>
@@ -117,7 +117,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
             disabled={offset === 0}
             onClick={() => onOffsetChange(Math.max(0, offset - limit))}
             className={
-              'px-3 py-1.5 rounded-md border border-secondary-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
+              'px-3 py-1.5 rounded-md border border-line-strong disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
             }
           >
             Previous
@@ -127,7 +127,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
             disabled={to >= total}
             onClick={() => onOffsetChange(offset + limit)}
             className={
-              'px-3 py-1.5 rounded-md border border-secondary-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
+              'px-3 py-1.5 rounded-md border border-line-strong disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
             }
           >
             Next

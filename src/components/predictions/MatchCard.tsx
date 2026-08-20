@@ -23,7 +23,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
     // the real control and carries the keyboard and screen-reader semantics.
     <div
       className={
-        'py-3 flex flex-col items-center justify-center bg-secondary/40 text-ink text-xs rounded-lg border border-secondary-foreground/20'
+        'py-3 flex flex-col items-center justify-center bg-card text-ink text-xs rounded-lg border border-line'
       }
       onClick={toggle}
     >
@@ -33,7 +33,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
 
           <div className={'flex items-center gap-1'}>
             <div
-              className={`gap-2 items-center py-1 px-2 shrink-0 bg-primary/10 rounded-md text-xs text-primary border border-primary/50 mr-1 ${bestBet ? 'flex' : 'hidden'}`}
+              className={`gap-2 items-center py-1 px-2 shrink-0 bg-primary/10 rounded-md text-xs text-primary border border-primary/40 mr-1 ${bestBet ? 'flex' : 'hidden'}`}
             >
               <ThunderIcon className={'h-3 w-3 text-primary'} />
               <p className={'font-medium'}>
@@ -45,7 +45,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
             {!prediction.odds_coverage && (
               <p
                 className={
-                  'py-1 px-2 mr-1 shrink-0 rounded-md text-xs text-ink-subtle border border-secondary-foreground/20'
+                  'py-1 px-2 mr-1 shrink-0 rounded-md text-xs text-ink-subtle border border-line'
                 }
               >
                 Prediction only

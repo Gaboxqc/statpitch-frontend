@@ -41,8 +41,8 @@ function PredictionsSection() {
   if (loading)
     return (
       <div className={'w-full flex flex-col gap-4'}>
-        <div className={'h-30 w-full bg-accent animate-pulse rounded-lg'}></div>
-        <div className={'h-30 w-full bg-accent animate-pulse rounded-lg'}></div>
+        <div className={'h-30 w-full bg-secondary animate-pulse rounded-lg'}></div>
+        <div className={'h-30 w-full bg-secondary animate-pulse rounded-lg'}></div>
         {slow && (
           <p className={'text-center text-xs text-ink-subtle'} role={'status'}>
             Waking the prediction service. This can take up to a minute.
@@ -82,7 +82,7 @@ function PredictionsSection() {
 
       <div
         className={
-          'flex flex-col gap-4 lg:flex-row lg:justify-between border-t border-secondary-foreground/10 pt-6 text-start mt-8'
+          'flex flex-col gap-4 lg:flex-row lg:justify-between border-t border-line pt-6 text-start mt-8'
         }
       >
         <p className={'text-xs text-ink-subtle'}>

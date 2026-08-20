@@ -7,7 +7,7 @@ function ExpandableCard({ title, description }: { title: string; description: st
 
   return (
     <div
-      className={`rounded-lg border w-full ${isOpened ? 'bg-accent/20 border-accent/50' : 'bg-accent/10 border-accent/20'}`}
+      className={`rounded-lg border w-full ${isOpened ? 'bg-secondary border-line' : 'bg-card border-line'}`}
     >
       <h3>
         <button
@@ -24,9 +24,7 @@ function ExpandableCard({ title, description }: { title: string; description: st
         </button>
       </h3>
       <div id={panelId} hidden={!isOpened}>
-        <p
-          className={'text-sm text-ink-subtle mx-4 mb-4 text-start border-t border-accent/40 pt-4'}
-        >
+        <p className={'text-sm text-ink-subtle mx-4 mb-4 text-start border-t border-line pt-4'}>
           {description}
         </p>
       </div>

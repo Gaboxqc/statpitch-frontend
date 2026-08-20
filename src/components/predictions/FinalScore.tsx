@@ -22,7 +22,7 @@ function FinalScore({ fixture, variant = 'badge' }: FinalScoreProps) {
     return (
       <span
         className={
-          'flex items-center gap-2 shrink-0 py-1 px-2 rounded-md text-xs border border-secondary-foreground/25 bg-accent/30'
+          'flex items-center gap-2 shrink-0 py-1 px-2 rounded-md text-xs border border-line bg-secondary'
         }
       >
         <span className={'numeric font-semibold'}>

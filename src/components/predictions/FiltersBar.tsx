@@ -13,8 +13,8 @@ const DAY_LABELS: Record<DayKey, string> = {
 }
 
 const PILL = 'text-xs font-medium py-1 px-2 rounded-md border shrink-0 cursor-pointer'
-const PILL_ON = 'bg-primary/20 border-primary/50 text-primary'
-const PILL_OFF = 'border-transparent text-ink-muted hover:border-secondary-foreground/20'
+const PILL_ON = 'bg-primary/10 border-primary/40 text-primary'
+const PILL_OFF = 'border-transparent text-ink-muted hover:border-line'
 
 function Pill({
   active,
@@ -50,7 +50,7 @@ function FiltersBar() {
   const counts = countByDay(fixtures, window)
 
   return (
-    <div className={'border-b border-secondary-foreground/10'}>
+    <div className={'border-b border-line'}>
       <div className={'measure flex flex-wrap items-center gap-x-6 gap-y-3 py-3 md:py-4'}>
         <FilterIcon className={'text-ink-muted h-4 w-4 shrink-0'} aria-hidden={true} />
 
@@ -96,7 +96,7 @@ function FiltersBar() {
             value={filters.competitionId ?? ''}
             onChange={(event) => setFilters({ competitionId: event.target.value || null })}
             className={
-              'text-xs bg-accent/60 border border-accent text-ink rounded-md py-1 px-2 cursor-pointer'
+              'text-xs bg-secondary border border-line-strong text-ink rounded-md py-1 px-2 cursor-pointer'
             }
           >
             <option value={''}>All competitions</option>

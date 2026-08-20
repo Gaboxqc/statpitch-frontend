@@ -66,7 +66,7 @@ function TrackRecordPage() {
         {statsError ? (
           <QueryError error={statsError} />
         ) : statsLoading ? (
-          <div className={'h-40 bg-accent/20 animate-pulse rounded-lg'} />
+          <div className={'h-40 bg-secondary animate-pulse rounded-lg'} />
         ) : (
           stats && <RoiSummary roi={stats.roi} />
         )}
@@ -88,7 +88,7 @@ function TrackRecordPage() {
                 value={basis ?? ''}
                 onChange={(event) => update({ basis: event.target.value || null, offset: null })}
                 className={
-                  'text-xs bg-accent/60 border border-accent text-ink rounded-md py-1 px-2 cursor-pointer'
+                  'text-xs bg-secondary border border-line-strong text-ink rounded-md py-1 px-2 cursor-pointer'
                 }
               >
                 <option value={''}>Both strategies</option>
@@ -105,7 +105,7 @@ function TrackRecordPage() {
                   update({ competition: event.target.value || null, offset: null })
                 }
                 className={
-                  'text-xs bg-accent/60 border border-accent text-ink rounded-md py-1 px-2 cursor-pointer'
+                  'text-xs bg-secondary border border-line-strong text-ink rounded-md py-1 px-2 cursor-pointer'
                 }
               >
                 <option value={''}>All competitions</option>
@@ -122,7 +122,7 @@ function TrackRecordPage() {
         {ledgerError ? (
           <QueryError error={ledgerError} />
         ) : ledgerLoading ? (
-          <div className={'h-64 bg-accent/20 animate-pulse rounded-lg'} />
+          <div className={'h-64 bg-secondary animate-pulse rounded-lg'} />
         ) : (
           <LedgerTable
             bets={bets}
@@ -134,7 +134,7 @@ function TrackRecordPage() {
         )}
       </section>
 
-      <p className={'text-xs text-ink-subtle border-t border-secondary-foreground/10 pt-4'}>
+      <p className={'text-xs text-ink-subtle border-t border-line pt-4'}>
         {DISCLAIMER.short} {DISCLAIMER.body}
       </p>
     </div>

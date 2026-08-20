@@ -16,7 +16,7 @@ function PricingCard({
   return (
     <div
       className={`flex flex-col p-5 border rounded-lg gap-5 relative ${
-        isPopular ? 'border-primary bg-primary/10' : 'border-accent/50 bg-accent/20'
+        isPopular ? 'border-primary bg-primary/10' : 'border-line bg-secondary'
       }`}
     >
       {isPopular && (
@@ -37,7 +37,7 @@ function PricingCard({
 
       <Link
         to={buttonLink}
-        className={`w-full bg-accent/40 p-2.5 rounded-md text-sm text-center font-semibold my-2 ${isPopular ? 'text-background bg-primary' : 'text-ink border border-accent/50'}`}
+        className={`w-full p-2.5 rounded-md text-sm text-center font-semibold my-2 ${isPopular ? 'bg-primary text-background' : 'bg-secondary text-ink border border-line'}`}
       >
         {buttonText}
       </Link>
@@ -46,7 +46,7 @@ function PricingCard({
         {availableFeatures.map((feature: string) => (
           <li key={feature} className={'flex items-center gap-2'}>
             <div
-              className={`h-4 w-4 bg-accent/40 rounded-md border flex items-center justify-center ${isPopular ? 'bg-primary/20 border-primary/50' : 'bg-accent/40 border-accent/50'}`}
+              className={`h-4 w-4 bg-secondary rounded-md border flex items-center justify-center ${isPopular ? 'bg-primary/10 border-primary/40' : 'bg-secondary border-line'}`}
             >
               <CheckIcon
                 className={`h-2.5 w-2.5 ${isPopular ? 'text-primary' : 'text-ink-muted'}`}
@@ -58,7 +58,7 @@ function PricingCard({
 
         {notAvailableFeatures.map((feature: string) => (
           <li key={feature} className={'flex items-center gap-2'}>
-            <div className='h-4 w-4 bg-accent/10 rounded-md border border-accent/20 flex items-center justify-center' />
+            <div className='h-4 w-4 bg-card rounded-md border border-line flex items-center justify-center' />
             <p className={'text-xs text-ink-subtle'}>{feature}</p>
           </li>
         ))}

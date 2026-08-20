@@ -1,7 +1,7 @@
 function barColor(prob: number): string {
   if (prob >= 70) return 'bg-primary'
   if (prob >= 50) return 'bg-orange-400'
-  return 'bg-accent/80'
+  return 'bg-line'
 }
 
 /** A single probability as a filled bar. `prob` is 0–100. */
@@ -12,7 +12,7 @@ function ProbabilityBar({ prob }: { prob: number }) {
         className={`h-1 rounded-l-full lg:h-2 ${barColor(prob)}`}
         style={{ width: `${prob}%` }}
       />
-      <div className={`h-1 bg-accent/20 lg:h-2`} style={{ width: `${100 - prob}%` }} />
+      <div className={`h-1 bg-secondary lg:h-2`} style={{ width: `${100 - prob}%` }} />
     </div>
   )
 }
