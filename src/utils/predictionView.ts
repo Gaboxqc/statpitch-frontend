@@ -45,3 +45,20 @@ export function buildPredictionView(prediction: Fixture): PredictionView {
 
   return { markets, bestBet, bestMarket, winner, state: fixtureState(prediction) }
 }
+
+/**
+ * How settled the match is, which is what a reader hears when a card says
+ * "confidence" — and it is not the top outcome's probability. A 40/35/25
+ * fixture and a 40/10/50 fixture share a leader on 40% and are nothing alike;
+ * the gap back to second place is what separates them.
+ */
+export function certainty(fixture: Fixture): { margin: number; label: string } {
+  const [first, second] = [fixture.home_win_prob, fixture.draw_prob, fixture.away_win_prob].sort(
+    (a, b) => b - a,
+  )
+  const margin = first - second
+
+  if (margin >= 0.3) return { margin, label: 'Clear favourite' }
+  if (margin >= 0.12) return { margin, label: 'Leaning' }
+  return { margin, label: 'Close call' }
+}

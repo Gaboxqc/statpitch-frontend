@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildPredictionView, fixtureState } from './predictionView'
+import { buildPredictionView, certainty, fixtureState } from './predictionView'
 import { fixtureFixture, pickedFixtureFixture } from '../test/fixtures'
 
 describe('buildPredictionView', () => {
@@ -64,5 +64,43 @@ describe('fixtureState', () => {
   it('calls a played fixture settled, pick or no pick', () => {
     expect(fixtureState({ ...pickedFixtureFixture, home_score: 3, away_score: 1 })).toBe('settled')
     expect(fixtureState({ ...fixtureFixture, home_score: 0, away_score: 0 })).toBe('settled')
+  })
+})
+
+describe('certainty', () => {
+  // Both fixtures below lead on 50% and are nothing alike, which is the whole
+  // reason the top outcome cannot stand in for confidence.
+  it('measures the gap back to second place, not the leader', () => {
+    const open = certainty({
+      ...fixtureFixture,
+      home_win_prob: 0.5,
+      draw_prob: 0.45,
+      away_win_prob: 0.05,
+    })
+    const settled = certainty({
+      ...fixtureFixture,
+      home_win_prob: 0.5,
+      draw_prob: 0.25,
+      away_win_prob: 0.25,
+    })
+
+    expect(open.label).toBe('Close call')
+    expect(settled.label).toBe('Leaning')
+  })
+
+  it('calls a runaway fixture what it is', () => {
+    expect(certainty(fixtureFixture).label).toBe('Clear favourite')
+  })
+
+  // The draw can be the thing in second place, and often is.
+  it('counts the draw as a contender', () => {
+    const result = certainty({
+      ...fixtureFixture,
+      home_win_prob: 0.45,
+      draw_prob: 0.44,
+      away_win_prob: 0.11,
+    })
+    expect(result.label).toBe('Close call')
+    expect(result.margin).toBeCloseTo(0.01)
   })
 })

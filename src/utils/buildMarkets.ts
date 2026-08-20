@@ -1,3 +1,4 @@
+import { displayName } from './teamName'
 import type { Fixture, Market, MarketKey } from '../types/api'
 
 /**
@@ -27,7 +28,7 @@ export function buildMarkets(prediction: Fixture): Market[] {
   return [
     {
       key: 'home_win',
-      market: prediction.home_team + ' Win',
+      market: displayName(prediction.home_team) + ' Win',
       ev: prediction.ev_home,
       odds: prediction.odds_home,
       prob: prediction.home_win_prob,
@@ -43,7 +44,7 @@ export function buildMarkets(prediction: Fixture): Market[] {
     },
     {
       key: 'away_win',
-      market: prediction.away_team + ' Win',
+      market: displayName(prediction.away_team) + ' Win',
       ev: prediction.ev_away,
       odds: prediction.odds_away,
       prob: prediction.away_win_prob,

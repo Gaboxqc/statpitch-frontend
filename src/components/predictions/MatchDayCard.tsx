@@ -4,14 +4,20 @@ import OutcomeBar from '../ui/OutcomeBar'
 import { useBestToday } from '../../hooks/queries'
 import { useElapsed } from '../../hooks/useElapsed'
 import { COLD_START_HINT_MS } from '../../services/api'
-import { buildPredictionView } from '../../utils/predictionView'
+import { buildPredictionView, certainty } from '../../utils/predictionView'
 import { useId, useState } from 'react'
 import FixtureDetail from './FixtureDetail'
 import QueryError from '../ui/QueryError'
 import TeamCrest from '../ui/TeamCrest'
-import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
+import ReliabilityBadge from '../ui/ReliabilityBadge'
+import {
+  formatDecimal,
+  formatFraction,
+  formatSignedFraction,
+  shortModelVersion,
+} from '../../utils/format'
 import { competitionName } from '../../constants/competitions'
-import { predictionSource } from '../../utils/humanise'
+import { displayName } from '../../utils/teamName'
 import { describeKickoffLong } from '../../utils/datetime'
 
 function MatchDayCard() {
@@ -37,6 +43,7 @@ function MatchDayCard() {
   if (!prediction) return <p className={'text-center mt-8'}>No prediction available.</p>
 
   const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
+  const matchCertainty = certainty(prediction)
   const kickoff = describeKickoffLong(prediction)
 
   return (
@@ -75,7 +82,9 @@ function MatchDayCard() {
                 url={prediction.home_crest_url}
                 className={'w-20 h-20 md:w-40 md:h-40'}
               />
-              <p className={'text-sm font-medium mt-2 text-center'}>{prediction.home_team}</p>
+              <p className={'text-sm font-medium mt-2 text-center'} title={prediction.home_team}>
+                {displayName(prediction.home_team)}
+              </p>
               <p className={'numeric text-xl md:text-2xl text-primary font-semibold'}>
                 {formatFraction(prediction.home_win_prob)}
               </p>
@@ -110,7 +119,9 @@ function MatchDayCard() {
                 url={prediction.away_crest_url}
                 className={'w-20 h-20 md:w-40 md:h-40'}
               />
-              <p className={'text-sm font-medium mt-2 text-center'}>{prediction.away_team}</p>
+              <p className={'text-sm font-medium mt-2 text-center'} title={prediction.away_team}>
+                {displayName(prediction.away_team)}
+              </p>
               <p className={'numeric text-xl md:text-2xl font-semibold text-chart-2'}>
                 {formatFraction(prediction.away_win_prob)}
               </p>
@@ -178,19 +189,38 @@ function MatchDayCard() {
           <div className={'grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4'}>
             <div className={'mt-4 text-ink-subtle flex gap-4'}>
               <DonutChart value={winner.prob} />
-              <div>
-                <p className={'eyebrow'}>AI confidence</p>
+              <div className={'flex flex-col gap-1'}>
+                {/* "AI confidence" used to head a ring showing the top outcome's
+                    probability — a fact about the match, not about the model.
+                    The gap back to second place says how settled the match is,
+                    and the badge says what the prediction is worth. */}
+                <p className={'eyebrow text-ink-subtle'}>Model view</p>
                 <div className={'flex items-center gap-2'}>
                   <BrainIcon className={`text-primary`} />
                   <p className={`text-sm text-ink`}>
                     Prediction:
-                    <span className={`font-semibold text-primary`}> {winner.name} win</span>
+                    <span className={`font-semibold text-primary`}>
+                      {' '}
+                      {displayName(winner.name)} win
+                    </span>
                   </p>
                 </div>
-                <p className={'text-xs shrink-0'}>
-                  Model <span className={'numeric'}>{prediction.model_version}</span> ·{' '}
-                  {predictionSource(prediction.prediction_source)?.label ?? 'unknown source'}
+                <p className={'text-xs text-ink-muted'}>
+                  {matchCertainty.label}
+                  <span className={'text-ink-subtle'}>
+                    {' · '}
+                    <span className={'numeric'}>
+                      {formatFraction(matchCertainty.margin, 0)}
+                    </span>{' '}
+                    clear of the next outcome
+                  </span>
                 </p>
+                <div className={'flex flex-wrap items-center gap-2 text-xs text-ink-subtle'}>
+                  <ReliabilityBadge fixture={prediction} showWhenClean={true} />
+                  <span className={'numeric'} title={prediction.model_version}>
+                    {shortModelVersion(prediction.model_version)}
+                  </span>
+                </div>
               </div>
             </div>
 

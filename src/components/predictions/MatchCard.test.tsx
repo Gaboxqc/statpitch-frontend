@@ -22,14 +22,14 @@ describe('MatchCard states', () => {
     renderWithQuery(<MatchCard prediction={pickedFixtureFixture} />)
 
     expect(within(card()).getByText(/%\s*stake$/)).toBeInTheDocument()
-    expect(within(card()).queryByText(/^No edge$|^No odds$/)).not.toBeInTheDocument()
+    expect(within(card()).queryByText(/^No pick$|^No odds$/)).not.toBeInTheDocument()
     expect(within(card()).queryByText('FT')).not.toBeInTheDocument()
   })
 
   it('says why a priced fixture carries no bet', () => {
     renderWithQuery(<MatchCard prediction={fixtureFixture} />)
 
-    expect(within(card()).getByText('No edge')).toBeInTheDocument()
+    expect(within(card()).getByText('No pick')).toBeInTheDocument()
     expect(within(card()).queryByText(/%\s*stake$/)).not.toBeInTheDocument()
   })
 

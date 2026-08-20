@@ -13,13 +13,23 @@ const renderDetail = (fixture: Fixture) => {
 }
 
 describe('FixtureDetail', () => {
-  it('ranks the scoreline distribution by probability', () => {
+  // A ranked list flattened the distribution; the grid keeps both axes, so a
+  // 2-0 is findable by its own coordinates rather than by its rank.
+  it('places each scoreline at its own coordinates', () => {
     renderDetail(fixtureFixture)
 
-    const scores = screen.getByRole('heading', { name: /likely scorelines/i }).parentElement!
-    const rows = within(scores).getAllByRole('listitem')
-    expect(rows[0]).toHaveTextContent('2–0')
-    expect(rows[0]).toHaveTextContent('12.1%')
+    const grid = screen.getByRole('table', { name: /probability of each scoreline/i })
+    // Two goals for the home side is a row; none for the away side is a column.
+    const twoScored = within(grid).getByRole('row', { name: /^2 / })
+    expect(within(twoScored).getByTitle('2–0: 12.1%')).toHaveTextContent('12.1%')
+  })
+
+  // The model publishes a top-N, so most of the grid has no figure at all —
+  // and an empty cell is a scoreline outside that set, not an impossible one.
+  it('leaves scorelines the model did not publish blank', () => {
+    renderDetail(fixtureFixture)
+
+    expect(screen.getByText(/not one with no chance/i)).toBeInTheDocument()
   })
 
   it('shows the model attribution for both sides', () => {
@@ -53,7 +63,8 @@ describe('FixtureDetail', () => {
   it('settles the published pick against the final score', () => {
     renderDetail(settledFixtureFixture)
 
-    expect(screen.getByText(/arsenal fc 3–1 everton fc/i)).toBeInTheDocument()
+    // The club type comes off the name; the full name stays in the title.
+    expect(screen.getByText(/arsenal 3–1 everton/i)).toBeInTheDocument()
     // btts_yes on a 3-1 is a winner.
     expect(screen.getByText('won')).toBeInTheDocument()
   })

@@ -1,5 +1,6 @@
 import { MARKET_LABELS } from '../../utils/buildMarkets'
 import { competitionName } from '../../constants/competitions'
+import { displayName } from '../../utils/teamName'
 import { formatDecimal, formatFraction } from '../../utils/format'
 import { formatMatchDay } from '../../utils/datetime'
 import type { SettledBet } from '../../types/api'
@@ -74,8 +75,11 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
                   {formatMatchDay(bet.match_date)}
                 </td>
                 <td className={TD}>
-                  <span className={'text-ink font-medium'}>
-                    {bet.home_team} v {bet.away_team}
+                  <span
+                    className={'text-ink font-medium'}
+                    title={`${bet.home_team} v ${bet.away_team}`}
+                  >
+                    {displayName(bet.home_team)} v {displayName(bet.away_team)}
                   </span>
                   <br />
                   <span className={'text-ink-subtle'}>

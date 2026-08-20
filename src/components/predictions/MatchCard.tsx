@@ -5,10 +5,12 @@ import FixtureDetail from './FixtureDetail'
 import FinalScore from './FinalScore'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import TeamCrest from '../ui/TeamCrest'
+import ReliabilityBadge from '../ui/ReliabilityBadge'
 import { buildPredictionView } from '../../utils/predictionView'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
 import { describeKickoff } from '../../utils/datetime'
 import { competitionName } from '../../constants/competitions'
+import { displayName } from '../../utils/teamName'
 import type { PredictionView } from '../../utils/predictionView'
 import type { Fixture } from '../../types/api'
 
@@ -30,7 +32,9 @@ function TeamRow({ name, crest, xg }: { name: string; crest: string | null; xg: 
       {/* Narrow enough and the club name and its xG cannot share a line without
           one of them being clipped, and a clipped club name is not a name. */}
       <div className={'flex min-w-0 flex-col sm:flex-row sm:items-center sm:gap-2'}>
-        <p className={'text-sm font-medium'}>{name}</p>
+        <p className={'text-sm font-medium'} title={name}>
+          {displayName(name)}
+        </p>
         <p className={'text-xs text-ink-subtle shrink-0'}>
           xG <span className={'numeric text-ink-muted'}>{formatDecimal(xg)}</span>
         </p>
@@ -76,9 +80,19 @@ function Verdict({ fixture, view }: { fixture: Fixture; view: PredictionView }) 
 
 /** Why there is nothing to place, said once, where the pick would have been. */
 function ForecastNote({ fixture }: { fixture: Fixture }) {
-  return (
-    <p className={'eyebrow shrink-0 text-ink-subtle'}>
-      {fixture.odds_coverage ? 'No edge' : 'No odds'}
+  return fixture.odds_coverage ? (
+    <p
+      className={'eyebrow shrink-0 text-ink-subtle'}
+      title={'Priced, but no selection cleared the minimum stake'}
+    >
+      No pick
+    </p>
+  ) : (
+    <p
+      className={'eyebrow shrink-0 text-ink-subtle'}
+      title={'No odds matched this fixture, so nothing could be priced'}
+    >
+      No odds
     </p>
   )
 }
@@ -101,6 +115,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
         <p className={'truncate'}>{competitionName(prediction.competition_id)}</p>
 
         <div className={'flex shrink-0 items-center gap-3'}>
+          <ReliabilityBadge fixture={prediction} />
           {view.state === 'forecast' && <ForecastNote fixture={prediction} />}
           <span className={'flex items-center gap-1 text-ink-subtle'}>
             <ClockIcon className={'h-4 w-4'} />
