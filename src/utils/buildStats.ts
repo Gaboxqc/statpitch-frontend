@@ -1,40 +1,35 @@
-import { formatCount, formatFraction, formatSignedPercent } from './format'
-import type { Basis, Stats, WindowRoi } from '../types/api'
+import { formatCount, formatFraction } from './format'
+import type { DayKey, Stats } from '../types/api'
+
+/** The view a stat describes. Selecting the stat is how you get to it. */
+export interface StatFilter {
+  day?: DayKey
+  confidence?: number | null
+  valueBetsOnly?: boolean
+}
 
 export interface StatItemData {
   id: string
   label: string
   value: string
+  /** The raw figure, so a caller can tell an empty count from a formatted one. */
+  count: number
   color: string
   /** Longer explanation, surfaced as a title so the compact strip stays short. */
-  hint?: string
-}
-
-const EMPTY_WINDOW = 'No bets settled yet'
-
-function findBasis(stats: Stats, basis: Basis): WindowRoi | undefined {
-  return stats.roi.find((entry) => entry.basis === basis)?.month
+  hint: string
+  filter: StatFilter
 }
 
 /**
- * `roi_pct` arrives already on a 0–100 scale, unlike every probability and EV
- * on a fixture, which are 0–1 fractions. It is also null rather than 0.0 when
- * nothing settled — rendering that as break-even would claim a result that was
- * never measured.
+ * The two figures nothing else on the page carries.
+ *
+ * The day counts used to live here too, forty pixels above the day pills that
+ * already show them — two controls for the same thing. The 30-day ROI pair used
+ * to as well, at 287px of a 823px strip, rendering as an em-dash until a bet
+ * settles; it belongs to the track record, which is a page about exactly that.
+ * What is left is today's two insight numbers, and they are filters rather than
+ * a ticker: a count you cannot act on is decoration.
  */
-function roiItem(id: string, label: string, roi: WindowRoi | undefined): StatItemData {
-  const settled = roi && roi.bets > 0 && roi.roi_pct !== null
-  return {
-    id,
-    label,
-    value: settled ? formatSignedPercent(roi.roi_pct, 1) : '—',
-    color: !settled ? 'text-ink-subtle' : roi.roi_pct! >= 0 ? 'text-primary' : 'text-negative',
-    hint: settled
-      ? `${roi.bets} bets, ${roi.wins} won, ${roi.pnl_units.toFixed(2)}u`
-      : EMPTY_WINDOW,
-  }
-}
-
 export function buildStats(stats: Stats | null): StatItemData[] {
   if (!stats) return []
 
@@ -42,34 +37,22 @@ export function buildStats(stats: Stats | null): StatItemData[] {
 
   return [
     {
-      id: 'fixturesToday',
-      label: 'Fixtures today',
-      value: formatCount(stats.fixtures_today),
-      color: 'text-ink',
-      hint: `${stats.date_confirmed_today} with a confirmed kickoff`,
-    },
-    {
-      id: 'fixturesTomorrow',
-      label: 'Tomorrow',
-      value: formatCount(stats.fixtures_tomorrow),
-      color: 'text-ink',
-    },
-    {
       id: 'highConfidence',
       label: `High confidence (${threshold}+)`,
       value: formatCount(stats.high_confidence_today),
+      count: stats.high_confidence_today,
       color: 'text-ink',
       hint: 'Home or away probability at or above the threshold. A likely draw is not a confident match.',
+      filter: { day: 'today', confidence: stats.high_confidence_threshold },
     },
     {
       id: 'valueBets',
-      label: 'Value bets today',
+      label: 'Value bets',
       value: formatCount(stats.value_bets_today),
+      count: stats.value_bets_today,
       color: 'text-primary',
       hint: 'Selections clearing the minimum fractional Kelly.',
+      filter: { day: 'today', valueBetsOnly: true },
     },
-    // The two series measure different strategies and are never averaged.
-    roiItem('roi1x2', '30d ROI · 1X2', findBasis(stats, '1x2')),
-    roiItem('roiOverall', '30d ROI · Overall', findBasis(stats, 'overall')),
   ]
 }

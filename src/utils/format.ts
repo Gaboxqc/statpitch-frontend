@@ -54,3 +54,15 @@ export function formatDecimal(value: unknown, decimals = 2): string {
   const parsed = toNumber(value)
   return parsed === null ? FALLBACK : parsed.toFixed(decimals)
 }
+
+/**
+ * The publishable part of a model version. The API sends
+ * `goals-20260813-bb07c99e`: a family, the date it was fitted, and the commit
+ * that fitted it. The commit is what you quote in a bug report, not what a
+ * reader needs in a status strip, so it is trimmed here and kept in full in the
+ * title attribute wherever this is shown.
+ */
+export function shortModelVersion(value: unknown): string {
+  if (typeof value !== 'string' || value.trim() === '') return '—'
+  return value.split('-').slice(0, 2).join('-')
+}
