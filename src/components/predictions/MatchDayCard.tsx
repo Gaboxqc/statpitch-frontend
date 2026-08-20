@@ -85,7 +85,7 @@ function MatchDayCard() {
                   'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
                 }
               >
-                <p className={'eyebrow text-ink-muted'}>xG</p>
+                <p className={'text-xs text-ink-subtle'}>xG</p>
                 <p className={'numeric text-primary font-semibold'}>
                   {formatDecimal(prediction.home_xg)}
                 </p>
@@ -120,7 +120,7 @@ function MatchDayCard() {
                   'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
                 }
               >
-                <p className={'eyebrow text-ink-muted'}>xG</p>
+                <p className={'text-xs text-ink-subtle'}>xG</p>
                 <p className={'numeric text-chart-2 font-semibold'}>
                   {formatDecimal(prediction.away_xg)}
                 </p>

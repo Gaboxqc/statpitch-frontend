@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
+import { defaultSort, isSort } from '../utils/sortFixtures'
+import type { SortKey } from '../utils/sortFixtures'
 import type { DayKey } from '../types/api'
 
 export const DAYS: DayKey[] = ['yesterday', 'today', 'tomorrow']
@@ -14,6 +16,8 @@ export interface FixtureFilters {
   /** A 0–1 probability floor, or null for no floor. */
   confidence: number | null
   valueBetsOnly: boolean
+  /** Always resolved: absent from the URL means the default for this view. */
+  sort: SortKey
 }
 
 const isDay = (value: string | null): value is DayKey =>
@@ -29,11 +33,16 @@ export function useFixtureFilters() {
 
   const filters = useMemo<FixtureFilters>(() => {
     const rawConfidence = Number(searchParams.get('confidence'))
+    const rawSort = searchParams.get('sort')
+    const valueBetsOnly = searchParams.get('value') === '1'
     return {
       day: isDay(searchParams.get('day')) ? (searchParams.get('day') as DayKey) : 'today',
       competitionId: searchParams.get('competition'),
       confidence: Number.isFinite(rawConfidence) && rawConfidence > 0 ? rawConfidence : null,
-      valueBetsOnly: searchParams.get('value') === '1',
+      valueBetsOnly,
+      // Filtering to value bets changes what a sensible order is, so the
+      // default follows the filter until the reader picks one for themselves.
+      sort: isSort(rawSort) ? rawSort : defaultSort(valueBetsOnly),
     }
   }, [searchParams])
 
@@ -56,6 +65,15 @@ export function useFixtureFilters() {
 
           if (merged.valueBetsOnly) params.set('value', '1')
           else params.delete('value')
+
+          // Only an explicit choice is worth an address, and only the caller
+          // can say it was one — `filters.sort` is always resolved, so writing
+          // it back would freeze the derived default and leave a value-bet list
+          // ordered by kick-off because that was the default before the toggle.
+          if (next.sort !== undefined) {
+            if (next.sort === defaultSort(merged.valueBetsOnly)) params.delete('sort')
+            else params.set('sort', next.sort)
+          }
 
           return params
         },

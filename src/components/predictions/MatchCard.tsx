@@ -6,14 +6,86 @@ import FinalScore from './FinalScore'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import TeamCrest from '../ui/TeamCrest'
 import { buildPredictionView } from '../../utils/predictionView'
-import { formatDecimal, formatSignedFraction } from '../../utils/format'
+import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
 import { describeKickoff } from '../../utils/datetime'
 import { competitionName } from '../../constants/competitions'
+import type { PredictionView } from '../../utils/predictionView'
 import type { Fixture } from '../../types/api'
+
+/**
+ * The state is carried by the card's own border, because it is the one thing
+ * that has to read before anything is actually read. Everything else stays on
+ * the shared surface: three states, not three designs.
+ */
+const SHELL: Record<PredictionView['state'], string> = {
+  actionable: 'border-primary/40',
+  settled: 'border-line',
+  forecast: 'border-line',
+}
+
+function TeamRow({ name, crest, xg }: { name: string; crest: string | null; xg: number }) {
+  return (
+    <li className={'flex min-w-0 items-center gap-2'}>
+      <TeamCrest name={name} url={crest} />
+      {/* Narrow enough and the club name and its xG cannot share a line without
+          one of them being clipped, and a clipped club name is not a name. */}
+      <div className={'flex min-w-0 flex-col sm:flex-row sm:items-center sm:gap-2'}>
+        <p className={'text-sm font-medium'}>{name}</p>
+        <p className={'text-xs text-ink-subtle shrink-0'}>
+          xG <span className={'numeric text-ink-muted'}>{formatDecimal(xg)}</span>
+        </p>
+      </div>
+    </li>
+  )
+}
+
+/**
+ * One slot, three answers, and only one of them can be true at a time: the bet
+ * to place, the result it produced, or — when there is neither — how sure the
+ * model is. The donut used to sit on every card regardless, which spent the
+ * loudest element on the cards with the least to say.
+ */
+function Verdict({ fixture, view }: { fixture: Fixture; view: PredictionView }) {
+  if (view.state === 'settled') return <FinalScore fixture={fixture} />
+
+  if (view.state === 'actionable') {
+    return (
+      <div
+        className={
+          'flex shrink-0 flex-col gap-0.5 rounded-md border border-primary/40 bg-primary/10 py-1 px-2 text-right'
+        }
+      >
+        <p className={'flex items-center justify-end gap-1 eyebrow text-primary'}>
+          <ThunderIcon className={'h-3 w-3'} />
+          {view.bestMarket?.market}
+        </p>
+        <p className={'numeric text-sm font-semibold text-primary'}>
+          {formatSignedFraction(view.bestMarket?.ev)} EV
+        </p>
+        {view.bestMarket?.kelly ? (
+          <p className={'numeric text-xs text-ink-muted'}>
+            {formatFraction(view.bestMarket.kelly)} stake
+          </p>
+        ) : null}
+      </div>
+    )
+  }
+
+  return <DonutChart value={view.winner.prob} size={44} />
+}
+
+/** Why there is nothing to place, said once, where the pick would have been. */
+function ForecastNote({ fixture }: { fixture: Fixture }) {
+  return (
+    <p className={'eyebrow shrink-0 text-ink-subtle'}>
+      {fixture.odds_coverage ? 'No edge' : 'No odds'}
+    </p>
+  )
+}
 
 function MatchCard({ prediction }: { prediction: Fixture }) {
   const [isOpened, setIsOpened] = useState(false)
-  const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
+  const view = buildPredictionView(prediction)
   const kickoff = describeKickoff(prediction)
   const marketsId = useId()
   const toggle = () => setIsOpened((prev) => !prev)
@@ -21,110 +93,70 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
   return (
     // Clicking anywhere on the card is a mouse convenience; the chevron below is
     // the real control and carries the keyboard and screen-reader semantics.
-    <div
-      className={
-        'py-3 flex flex-col items-center justify-center bg-card text-ink text-xs rounded-lg border border-line'
-      }
+    <article
+      className={`flex flex-col gap-3 rounded-lg border bg-card p-4 text-ink text-xs ${SHELL[view.state]}`}
       onClick={toggle}
     >
-      <div className={'flex flex-col items-center justify-between w-full m-2 gap-2'}>
-        <div className={'flex items-center px-2 self-end w-full justify-between lg:px-4'}>
-          <p>{competitionName(prediction.competition_id)}</p>
+      <header className={'flex items-center justify-between gap-3 text-ink-muted'}>
+        <p className={'truncate'}>{competitionName(prediction.competition_id)}</p>
 
-          <div className={'flex items-center gap-1'}>
-            <div
-              className={`gap-2 items-center py-1 px-2 shrink-0 bg-primary/10 rounded-md text-xs text-primary border border-primary/40 mr-1 ${bestBet ? 'flex' : 'hidden'}`}
-            >
-              <ThunderIcon className={'h-3 w-3 text-primary'} />
-              <p className={'font-medium'}>
-                {bestMarket?.market}{' '}
-                <span className={'numeric'}>{formatSignedFraction(bestMarket?.ev)} EV</span>
-              </p>
-            </div>
-            {/* No odds event matched, so there is a prediction but nothing to bet against. */}
-            {!prediction.odds_coverage && (
-              <p
-                className={
-                  'py-1 px-2 mr-1 shrink-0 rounded-md text-xs text-ink-subtle border border-line'
-                }
-              >
-                Prediction only
-              </p>
-            )}
-            {prediction.home_score !== null && <FinalScore fixture={prediction} />}
-            <ClockIcon className={'h-4 w-4 text-ink-subtle'} />
+        <div className={'flex shrink-0 items-center gap-3'}>
+          {view.state === 'forecast' && <ForecastNote fixture={prediction} />}
+          <span className={'flex items-center gap-1 text-ink-subtle'}>
+            <ClockIcon className={'h-4 w-4'} />
             <time
               dateTime={kickoff.dateTime}
-              className={`numeric text-xs ${kickoff.provisional ? 'text-ink-subtle italic' : 'text-ink-subtle'}`}
+              className={`numeric ${kickoff.provisional ? 'italic' : ''}`}
             >
               {kickoff.text}
             </time>
-          </div>
+          </span>
         </div>
+      </header>
 
-        <div className={'flex items-center justify-between w-full'}>
-          <div className={'flex flex-col gap-2 ml-4 w-full'}>
-            <div className={'flex items-center gap-2'}>
-              <TeamCrest name={prediction.home_team} url={prediction.home_crest_url} />
+      <div className={'flex items-center justify-between gap-4'}>
+        <ul className={'flex min-w-0 flex-col gap-2'}>
+          <TeamRow
+            name={prediction.home_team}
+            crest={prediction.home_crest_url}
+            xg={prediction.home_xg}
+          />
+          <TeamRow
+            name={prediction.away_team}
+            crest={prediction.away_crest_url}
+            xg={prediction.away_xg}
+          />
+        </ul>
 
-              <p className={'text-sm font-medium w-min'}>{prediction.home_team}</p>
-              <p className='text-xs text-ink-muted shrink-0'>
-                <span className={'eyebrow'}>xG</span>{' '}
-                <span className={'numeric'}>{formatDecimal(prediction.home_xg)}</span>
-              </p>
-            </div>
-            <div className={'flex items-center gap-2'}>
-              <TeamCrest name={prediction.away_team} url={prediction.away_crest_url} />
-
-              <p className={'text-sm font-medium'}>{prediction.away_team}</p>
-              <p className='text-xs text-ink-muted shrink-0'>
-                <span className={'eyebrow'}>xG</span>{' '}
-                <span className={'numeric'}>{formatDecimal(prediction.away_xg)}</span>
-              </p>
-            </div>
-          </div>
-
-          <div className={'flex items-center gap-2 w-full px-4 justify-end'}>
-            <ProbabilityTiles prediction={prediction} winner={winner} variant={'compact'} />
-            <div className={'flex items-center gap-2 justify-end'}>
-              <DonutChart value={winner.prob} size={50} />
-              <button
-                type='button'
-                aria-expanded={isOpened}
-                aria-controls={marketsId}
-                aria-label={`Market analysis for ${prediction.home_team} versus ${prediction.away_team}`}
-                className={'p-1 cursor-pointer'}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  toggle()
-                }}
-              >
-                <ShortArrowIcon
-                  className={`h-4 w-4 text-ink-subtle ${isOpened ? 'rotate-180' : ''}`}
-                />
-              </button>
-            </div>
-          </div>
+        <div className={'flex shrink-0 items-center gap-3'}>
+          <ProbabilityTiles prediction={prediction} winner={view.winner} variant={'compact'} />
+          <Verdict fixture={prediction} view={view} />
+          <button
+            type='button'
+            aria-expanded={isOpened}
+            aria-controls={marketsId}
+            aria-label={`Market analysis for ${prediction.home_team} versus ${prediction.away_team}`}
+            className={'cursor-pointer p-1'}
+            onClick={(event) => {
+              event.stopPropagation()
+              toggle()
+            }}
+          >
+            <ShortArrowIcon className={`h-4 w-4 text-ink-subtle ${isOpened ? 'rotate-180' : ''}`} />
+          </button>
         </div>
       </div>
 
-      <ProbabilityTiles
-        prediction={prediction}
-        winner={winner}
-        variant={'wide'}
-        className={'mt-2 px-4 mb-2'}
+      <ProbabilityTiles prediction={prediction} winner={view.winner} variant={'wide'} />
+
+      <FixtureDetail
+        id={marketsId}
+        fixture={prediction}
+        markets={view.markets}
+        bestBet={view.bestBet}
+        isOpened={isOpened}
       />
-
-      <div className={'w-full px-4'}>
-        <FixtureDetail
-          id={marketsId}
-          fixture={prediction}
-          markets={markets}
-          bestBet={bestBet}
-          isOpened={isOpened}
-        />
-      </div>
-    </div>
+    </article>
   )
 }
 
