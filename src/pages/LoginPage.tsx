@@ -1,11 +1,17 @@
 import { BrainIcon, GithubIcon, GoogleIcon, LogoIcon } from '../assets/icons/index'
-import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import LiveRoi from '../components/track-record/LiveRoi'
 
 function LoginPage() {
-  const [isNewAccount, setIsNewAccount] = useState(false)
+  // "Get started" and "Sign in" are different intentions and used to land on the
+  // same side of this toggle. Which side is open lives in the address rather
+  // than in component state, so the two entry points differ, the choice
+  // survives a reload, and the URL never disagrees with what is on screen.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const isNewAccount = searchParams.get('new') === '1'
+  const setIsNewAccount = (next: boolean) =>
+    setSearchParams(next ? { new: '1' } : {}, { replace: true })
   useDocumentTitle(isNewAccount ? 'Create account' : 'Sign in')
   return (
     <div className={'flex items-center w-full'}>
@@ -189,7 +195,7 @@ function LoginPage() {
             <button
               type='button'
               className={'text-primary cursor-pointer'}
-              onClick={() => setIsNewAccount((prev) => !prev)}
+              onClick={() => setIsNewAccount(!isNewAccount)}
             >
               {isNewAccount ? 'Sign in' : 'Sign up free'}
             </button>
