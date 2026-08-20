@@ -33,3 +33,22 @@ describe('RoiSummary', () => {
     expect(screen.getByText(/8 bets · 3 won/)).toBeInTheDocument()
   })
 })
+
+describe('RoiSummary sample size', () => {
+  // +14.2% off twelve bets used to render exactly like +14.2% off four hundred.
+  it('marks a figure that has too few bets behind it', () => {
+    render(<RoiSummary roi={settledStatsFixture.roi} />)
+    expect(screen.getAllByText('Provisional').length).toBeGreaterThan(0)
+  })
+
+  it('drops the marker once the sample is worth reading', () => {
+    const bulked = settledStatsFixture.roi.map((entry) => ({
+      ...entry,
+      week: { ...entry.week, bets: 40, wins: 22 },
+      month: { ...entry.month, bets: 120, wins: 61 },
+    }))
+    render(<RoiSummary roi={bulked} />)
+
+    expect(screen.queryByText('Provisional')).not.toBeInTheDocument()
+  })
+})

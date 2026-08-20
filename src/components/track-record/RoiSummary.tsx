@@ -1,4 +1,5 @@
 import { formatSignedPercent } from '../../utils/format'
+import { MIN_BETS } from '../../utils/calibration'
 import type { Basis, BasisRoi, WindowRoi } from '../../types/api'
 
 const BASIS_LABELS: Record<Basis, { title: string; blurb: string }> = {
@@ -13,17 +14,30 @@ function Window({ label, roi }: { label: string; roi: WindowRoi }) {
   // roi_pct is null, not 0.0, when nothing settled. Rendering an unmeasured
   // window as break-even would claim a result that was never taken.
   const settled = roi.bets > 0 && roi.roi_pct !== null
+  // +14.2% off twelve bets used to render exactly like +14.2% off four hundred,
+  // with the sample size in 11px underneath. Below the threshold the figure
+  // keeps its sign and loses its colour: it is a running total, not a result.
+  const meaningful = settled && roi.bets >= MIN_BETS
+
+  const tone = !settled
+    ? 'text-ink-subtle'
+    : !meaningful
+      ? 'text-ink-muted'
+      : roi.roi_pct! >= 0
+        ? 'text-primary'
+        : 'text-negative'
 
   return (
     <div className={'flex flex-col gap-1'}>
       <p className={'eyebrow text-ink-subtle'}>{label}</p>
-      <p
-        className={`numeric text-xl font-semibold ${
-          !settled ? 'text-ink-subtle' : roi.roi_pct! >= 0 ? 'text-primary' : 'text-negative'
-        }`}
-      >
+      <p className={`numeric text-xl font-semibold ${tone}`}>
         {settled ? formatSignedPercent(roi.roi_pct, 1) : '—'}
       </p>
+      {settled && !meaningful && (
+        <p className={'eyebrow text-ink-subtle'} title={`Fewer than ${MIN_BETS} settled bets`}>
+          Provisional
+        </p>
+      )}
       <p className={'text-xs tabular-nums text-ink-subtle'}>
         {settled ? (
           <>

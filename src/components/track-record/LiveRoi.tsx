@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import { useStats } from '../../hooks/queries'
 import { formatSignedPercent } from '../../utils/format'
+import { MIN_BETS } from '../../utils/calibration'
 import type { Basis } from '../../types/api'
 
 const LABELS: Record<Basis, string> = { '1x2': '1X2 only', overall: 'All markets' }
@@ -30,6 +31,7 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
       <div className={'grid grid-cols-2 gap-4'}>
         {stats.roi.map((entry) => {
           const settled = entry.month.bets > 0 && entry.month.roi_pct !== null
+          const meaningful = settled && entry.month.bets >= MIN_BETS
           return (
             <div
               key={entry.basis}
@@ -39,16 +41,20 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
                 className={`numeric text-xl font-semibold ${
                   !settled
                     ? 'text-ink-subtle'
-                    : entry.month.roi_pct! >= 0
-                      ? 'text-primary'
-                      : 'text-negative'
+                    : !meaningful
+                      ? 'text-ink-muted'
+                      : entry.month.roi_pct! >= 0
+                        ? 'text-primary'
+                        : 'text-negative'
                 }`}
               >
                 {settled ? formatSignedPercent(entry.month.roi_pct, 1) : '—'}
               </p>
               <p className={'text-sm font-medium'}>{LABELS[entry.basis]}</p>
               <p className={'text-xs text-ink-subtle'}>
-                {settled ? `30-day ROI · ${entry.month.bets} bets` : 'No bets settled yet'}
+                {settled
+                  ? `30-day ROI · ${entry.month.bets} bets${meaningful ? '' : ' · provisional'}`
+                  : 'No bets settled yet'}
               </p>
             </div>
           )

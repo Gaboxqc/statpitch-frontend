@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { Link } from 'react-router'
 import DonutChart from '../ui/DonutChart'
 import ProbabilityTiles from '../ui/ProbabilityTiles'
 import FixtureDetail from './FixtureDetail'
@@ -126,6 +127,14 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
               {kickoff.text}
             </time>
           </span>
+          <Link
+            to={`/fixture/${prediction.id}`}
+            onClick={(event) => event.stopPropagation()}
+            aria-label={`Open ${prediction.home_team} versus ${prediction.away_team}`}
+            className={'eyebrow rounded-md px-1 text-ink-subtle hover:text-ink'}
+          >
+            Open
+          </Link>
         </div>
       </header>
 

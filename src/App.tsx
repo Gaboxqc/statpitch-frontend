@@ -12,6 +12,7 @@ import RouteFallback from './components/ui/RouteFallback'
 const PricingPage = lazy(() => import('./pages/PricingPage'))
 const TrackRecordPage = lazy(() => import('./pages/TrackRecordPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
+const FixturePage = lazy(() => import('./pages/FixturePage'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ const router = createBrowserRouter(
       element: <Layout />,
       children: [
         { index: true, element: <HomePage /> },
+        { path: 'fixture/:id', element: withFallback(<FixturePage />) },
         { path: 'track-record', element: withFallback(<TrackRecordPage />) },
         { path: 'pricing', element: withFallback(<PricingPage />) },
       ],
