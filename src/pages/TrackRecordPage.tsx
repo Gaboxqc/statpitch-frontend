@@ -51,7 +51,7 @@ function TrackRecordPage() {
   } = useLedger({ basis, competition_id: competitionId, offset, limit: PAGE_SIZE })
 
   return (
-    <div className={'container mx-auto px-4 pt-20 pb-16 flex flex-col gap-10'}>
+    <div className={'measure pt-10 pb-24 flex flex-col gap-12'}>
       <header className={'flex flex-col gap-2'}>
         <h1 className={'text-xl font-semibold text-ink'}>Track record</h1>
         <p className={'text-sm text-ink-muted max-w-2xl'}>
@@ -66,7 +66,7 @@ function TrackRecordPage() {
         {statsError ? (
           <QueryError error={statsError} />
         ) : statsLoading ? (
-          <div className={'h-40 bg-accent/20 animate-pulse rounded-md'} />
+          <div className={'h-40 bg-accent/20 animate-pulse rounded-lg'} />
         ) : (
           stats && <RoiSummary roi={stats.roi} />
         )}
@@ -88,7 +88,7 @@ function TrackRecordPage() {
                 value={basis ?? ''}
                 onChange={(event) => update({ basis: event.target.value || null, offset: null })}
                 className={
-                  'text-xs bg-accent/60 border border-accent text-ink rounded-sm p-1 md:px-2 cursor-pointer'
+                  'text-xs bg-accent/60 border border-accent text-ink rounded-md py-1 px-2 cursor-pointer'
                 }
               >
                 <option value={''}>Both strategies</option>
@@ -105,7 +105,7 @@ function TrackRecordPage() {
                   update({ competition: event.target.value || null, offset: null })
                 }
                 className={
-                  'text-xs bg-accent/60 border border-accent text-ink rounded-sm p-1 md:px-2 cursor-pointer'
+                  'text-xs bg-accent/60 border border-accent text-ink rounded-md py-1 px-2 cursor-pointer'
                 }
               >
                 <option value={''}>All competitions</option>
@@ -122,7 +122,7 @@ function TrackRecordPage() {
         {ledgerError ? (
           <QueryError error={ledgerError} />
         ) : ledgerLoading ? (
-          <div className={'h-64 bg-accent/20 animate-pulse rounded-md'} />
+          <div className={'h-64 bg-accent/20 animate-pulse rounded-lg'} />
         ) : (
           <LedgerTable
             bets={bets}

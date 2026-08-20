@@ -7,7 +7,7 @@ function ExpandableCard({ title, description }: { title: string; description: st
 
   return (
     <div
-      className={`rounded-md border w-full ${isOpened ? 'bg-accent/20 border-accent/50' : 'bg-accent/10 border-accent/20'}`}
+      className={`rounded-lg border w-full ${isOpened ? 'bg-accent/20 border-accent/50' : 'bg-accent/10 border-accent/20'}`}
     >
       <h3>
         <button

@@ -20,7 +20,7 @@ interface LiveRoiProps {
 function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
   const { stats, loading, error } = useStats()
 
-  if (loading) return <div className={`h-24 bg-accent/20 animate-pulse rounded-md ${className}`} />
+  if (loading) return <div className={`h-24 bg-accent/20 animate-pulse rounded-lg ${className}`} />
   // A marketing surface is not the place to raise an API error; showing nothing
   // is better than showing a number that was never measured.
   if (error || !stats) return null
@@ -33,7 +33,7 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
           return (
             <div
               key={entry.basis}
-              className={'flex flex-col gap-1 bg-accent/20 border border-accent/40 rounded-md p-4'}
+              className={'flex flex-col gap-1 bg-accent/20 border border-accent/40 rounded-lg p-4'}
             >
               <p
                 className={`numeric text-xl font-semibold ${

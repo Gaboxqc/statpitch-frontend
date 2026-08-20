@@ -5,15 +5,11 @@ function Footer() {
   const [isOpened, setIsOpened] = useState(false)
   const detailId = useId()
   return (
-    <footer
-      className={
-        'container mx-auto bg-background text-ink text-center py-2 lg:py-0 h-fit gap-12 justify-between flex flex-col px-2 mt-16'
-      }
-    >
-      <div className={'border-t border-secondary-foreground/10 pt-4 w-screen self-center'}>
+    <footer className={'bg-background text-ink mt-24 border-t border-secondary-foreground/10'}>
+      <div className={'measure'}>
         <div
           className={
-            'container mx-auto flex flex-col justify-between items-center lg:flex-row pb-4'
+            'flex flex-col justify-between items-center gap-4 py-6 text-center lg:flex-row'
           }
         >
           <p

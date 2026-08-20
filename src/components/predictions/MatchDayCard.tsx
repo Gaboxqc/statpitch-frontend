@@ -24,8 +24,8 @@ function MatchDayCard() {
 
   if (loading)
     return (
-      <div className={'mt-4'}>
-        <div className={'h-120 w-10/12 mx-auto bg-secondary animate-pulse rounded-md'}></div>
+      <div>
+        <div className={'h-120 w-full bg-secondary animate-pulse rounded-lg'}></div>
         {slow && (
           <p className={'text-center text-xs text-ink-subtle mt-2'} role={'status'}>
             Waking the prediction service. This can take up to a minute.
@@ -33,21 +33,17 @@ function MatchDayCard() {
         )}
       </div>
     )
-  if (error) return <QueryError error={error} className={'m-2 mt-4 lg:w-2/3 lg:mx-auto'} />
+  if (error) return <QueryError error={error} />
   if (!prediction) return <p className={'text-center mt-8'}>No prediction available.</p>
 
   const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
   const kickoff = describeKickoffLong(prediction)
 
   return (
-    <div
-      className={
-        'border border-emerald-500/20 bg-zinc-900/60 m-2 rounded-md mt-4 lg:w-2/3 mx-2 lg:mx-auto'
-      }
-    >
+    <div className={'border border-emerald-500/20 bg-zinc-900/60 rounded-lg'}>
       <div
         className={
-          'flex flex-col bg-linear-to-br from-emerald-950/30 via-transparent to-blue-950/20 p-4'
+          'flex flex-col bg-linear-to-br from-emerald-950/30 via-transparent to-blue-950/20 p-6'
         }
       >
         <div className={'w-full'}>
@@ -90,7 +86,7 @@ function MatchDayCard() {
               <p className={'eyebrow text-ink-subtle'}>Win</p>
               <div
                 className={
-                  'flex gap-2 mt-2 text-xs bg-accent/40 p-1 rounded-sm border border-accent/80'
+                  'flex gap-2 mt-2 text-xs bg-accent/40 py-1 px-2 rounded-md border border-accent/80'
                 }
               >
                 <p className={'eyebrow text-ink-muted'}>xG</p>
@@ -103,7 +99,7 @@ function MatchDayCard() {
               <p className={'eyebrow text-ink-subtle'}>vs</p>
               <div
                 className={
-                  'flex flex-col items-center bg-accent/40 border border-accent/80 px-4 py-2 rounded-xl'
+                  'flex flex-col items-center bg-accent/40 border border-accent/80 px-4 py-2 rounded-lg'
                 }
               >
                 <p className={'eyebrow text-ink-subtle'}>Draw</p>
@@ -125,7 +121,7 @@ function MatchDayCard() {
               <p className={'eyebrow text-ink-subtle'}>Win</p>
               <div
                 className={
-                  'flex gap-2 mt-2 text-xs bg-accent/40 p-1 rounded-sm border border-accent/80'
+                  'flex gap-2 mt-2 text-xs bg-accent/40 py-1 px-2 rounded-md border border-accent/80'
                 }
               >
                 <p className={'eyebrow text-ink-muted'}>xG</p>
@@ -145,7 +141,7 @@ function MatchDayCard() {
           {bestBet ? (
             <div
               className={
-                'flex justify-between items-center text-xs gap-2 mt-4 border border-primary/20 rounded-md px-2 py-3 bg-primary/10'
+                'flex justify-between items-center text-xs gap-3 mt-6 border border-primary/20 rounded-lg px-4 py-3 bg-primary/10'
               }
             >
               <div className={'flex items-center gap-2'}>
@@ -178,7 +174,7 @@ function MatchDayCard() {
             // things: no market to bet into, versus a market with no edge in it.
             <p
               className={
-                'mt-4 text-xs text-ink-subtle border border-secondary-foreground/15 rounded-md px-2 py-3'
+                'mt-6 text-xs text-ink-subtle border border-secondary-foreground/15 rounded-lg px-4 py-3'
               }
             >
               {prediction.odds_coverage
@@ -208,7 +204,7 @@ function MatchDayCard() {
 
             <button
               className={
-                'mt-4 p-4 max-h-12 lg:justify-self-end bg-accent/40 border border-accent/80 text-ink rounded-md py-2 flex items-center justify-center gap-2 text-sm'
+                'mt-4 px-4 max-h-12 lg:justify-self-end bg-accent/40 border border-accent/80 text-ink rounded-md py-2 flex items-center justify-center gap-2 text-sm'
               }
               onClick={() => setIsOpened((prev) => !prev)}
               type='button'

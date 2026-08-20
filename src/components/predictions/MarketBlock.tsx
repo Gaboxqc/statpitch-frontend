@@ -29,7 +29,7 @@ function getKellyRender(kelly: number | null, ev: number | null, priced: boolean
     )
   }
   return (
-    <p className={'text-xs text-ink-muted p-2 bg-primary/10 border border-primary/20 rounded-sm'}>
+    <p className={'text-xs text-ink-muted p-3 bg-primary/10 border border-primary/20 rounded-md'}>
       <span className={'eyebrow'}>Consider</span>{' '}
       <span className={'text-primary font-semibold tabular-nums'}>
         Stake {formatFraction(kelly)} of bankroll
@@ -43,7 +43,11 @@ function getMarketNameRender(market: string, isBest: boolean) {
     return (
       <div className={'flex items-center gap-2'}>
         <p className={'font-medium'}>{market}</p>
-        <p className={'eyebrow p-1 bg-primary/10 border border-primary/20 rounded-sm text-primary'}>
+        <p
+          className={
+            'eyebrow py-1 px-2 bg-primary/10 border border-primary/20 rounded-md text-primary'
+          }
+        >
           Best bet
         </p>
       </div>

@@ -50,7 +50,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
           <span key={entry.basis} className={'flex items-center gap-2'}>
             <span
               aria-hidden={true}
-              className={'h-0.5 w-4 rounded-sm'}
+              className={'h-0.5 w-4 rounded-full'}
               style={{ background: SERIES_STYLE[entry.basis].stroke }}
             />
             <span className={'text-ink-muted'}>
@@ -200,7 +200,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
         {active !== null && (
           <div
             className={
-              'absolute top-0 -translate-x-1/2 pointer-events-none bg-card border border-secondary-foreground/20 rounded-sm px-2 py-1 text-xs whitespace-nowrap'
+              'absolute top-0 -translate-x-1/2 pointer-events-none bg-card border border-secondary-foreground/20 rounded-md px-3 py-2 text-xs whitespace-nowrap'
             }
             style={{ left: `${(x(active) / WIDTH) * 100}%` }}
           >

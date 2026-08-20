@@ -6,7 +6,9 @@ function Layout() {
   return (
     <>
       <Navbar />
-      <main className={'bg-background min-h-screen'}>
+      {/* The header is fixed at h-14; the offset lives here once rather than in
+          every page's top padding. */}
+      <main className={'bg-background min-h-screen pt-14'}>
         <Outlet />
       </main>
       <Footer />

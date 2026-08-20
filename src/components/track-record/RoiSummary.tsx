@@ -56,7 +56,7 @@ function RoiSummary({ roi }: { roi: BasisRoi[] }) {
         <section
           key={entry.basis}
           className={
-            'border border-secondary-foreground/15 rounded-md p-4 bg-card flex flex-col gap-4'
+            'border border-secondary-foreground/15 rounded-lg p-5 bg-card flex flex-col gap-5'
           }
         >
           <div>

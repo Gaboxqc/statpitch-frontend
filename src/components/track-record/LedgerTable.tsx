@@ -117,7 +117,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
             disabled={offset === 0}
             onClick={() => onOffsetChange(Math.max(0, offset - limit))}
             className={
-              'px-2 py-1 rounded-sm border border-secondary-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
+              'px-3 py-1.5 rounded-md border border-secondary-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
             }
           >
             Previous
@@ -127,7 +127,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
             disabled={to >= total}
             onClick={() => onOffsetChange(offset + limit)}
             className={
-              'px-2 py-1 rounded-sm border border-secondary-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
+              'px-3 py-1.5 rounded-md border border-secondary-foreground/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer'
             }
           >
             Next

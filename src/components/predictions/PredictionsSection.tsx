@@ -40,9 +40,9 @@ function PredictionsSection() {
 
   if (loading)
     return (
-      <div className={'w-full flex flex-col gap-4 mt-12'}>
-        <div className={'h-30 w-11/12 lg:w-8/12 bg-accent mx-auto animate-pulse rounded-sm'}></div>
-        <div className={'h-30 w-11/12 lg:w-8/12 bg-accent mx-auto animate-pulse rounded-sm'}></div>
+      <div className={'w-full flex flex-col gap-4'}>
+        <div className={'h-30 w-full bg-accent animate-pulse rounded-lg'}></div>
+        <div className={'h-30 w-full bg-accent animate-pulse rounded-lg'}></div>
         {slow && (
           <p className={'text-center text-xs text-ink-subtle'} role={'status'}>
             Waking the prediction service. This can take up to a minute.
@@ -50,15 +50,15 @@ function PredictionsSection() {
         )}
       </div>
     )
-  if (error) return <QueryError error={error} className={'mx-2 mt-12 lg:w-2/3 lg:mx-auto'} />
+  if (error) return <QueryError error={error} />
 
   // An empty day and an over-narrow filter are different problems, and only one
   // of them is the user's to fix.
   const narrowed = onThisDay.length > 0 && visible.length === 0
 
   return (
-    <div className={'mt-12 flex flex-col gap-4 mx-2 lg:w-2/3 lg:mx-auto'}>
-      <h2 className={'text-ink text-lg font-semibold ml-2'}>
+    <div className={'flex flex-col gap-4'}>
+      <h2 className={'text-ink text-lg font-semibold'}>
         <span className={'numeric text-ink-muted'}>{visible.length}</span>{' '}
         {filters.valueBetsOnly ? 'Value bets' : 'Predictions'}
         <span className={'text-ink-subtle font-normal text-sm'}>
@@ -82,7 +82,7 @@ function PredictionsSection() {
 
       <div
         className={
-          'flex flex-col gap-4 lg:flex-row lg:justify-between border-t border-secondary-foreground/10 pt-4 text-start mt-8'
+          'flex flex-col gap-4 lg:flex-row lg:justify-between border-t border-secondary-foreground/10 pt-6 text-start mt-8'
         }
       >
         <p className={'text-xs text-ink-subtle'}>
