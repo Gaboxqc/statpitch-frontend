@@ -5,9 +5,9 @@ import { Link, NavLink } from 'react-router'
 function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
   const menuId = useId()
-  const linkBase = 'py-1.5 px-3 rounded-md text-sm'
-  const activeClass = 'bg-secondary text-ink'
-  const inactiveClass = 'text-ink-muted'
+  const linkBase = 'py-1.5 text-sm border-b-2 transition-colors'
+  const activeClass = 'border-primary text-ink'
+  const inactiveClass = 'border-transparent text-ink-muted hover:text-ink'
   return (
     <header className={'fixed top-0 right-0 left-0 z-50 bg-background border-b border-line'}>
       <nav className={'measure flex flex-col'}>
@@ -43,7 +43,7 @@ function Navbar() {
           </div>
 
           <div className={'flex gap-4 items-center'}>
-            <Link to={'/login'} className={'text-sm text-ink-muted'}>
+            <Link to={'/login'} className={'text-sm text-ink-muted hover:text-ink'}>
               Sign in
             </Link>
             <button
@@ -57,7 +57,7 @@ function Navbar() {
               <MenuIcon className={'h-6 w-6 text-ink-muted'} />
             </button>
             <Link
-              to={'/login'}
+              to={'/login?new=1'}
               className={
                 'bg-primary text-secondary text-sm font-semibold rounded-md py-1.5 px-3 md:block hidden'
               }
@@ -100,7 +100,7 @@ function Navbar() {
             Pricing
           </NavLink>
           <Link
-            to={'/login'}
+            to={'/login?new=1'}
             key={'login'}
             className={
               'bg-primary w-full p-2 rounded-md text-background text-center text-sm font-semibold'
