@@ -3,39 +3,45 @@ import { buildStats } from './buildStats'
 import { emptyStatsFixture, settledStatsFixture } from '../test/fixtures'
 
 const byId = (stats: Parameters<typeof buildStats>[0]) =>
-  Object.fromEntries(buildStats(stats).map((s) => [s.id, s.value]))
+  Object.fromEntries(buildStats(stats).map((s) => [s.id, s]))
 
 describe('buildStats', () => {
-  it('shows a placeholder while nothing has settled, never a break-even zero', () => {
-    const values = byId(emptyStatsFixture)
-    expect(values.roi1x2).toBe('—')
-    expect(values.roiOverall).toBe('—')
-    expect(values.fixturesToday).toBe('0')
-  })
-
-  it('explains the empty ROI rather than leaving a bare dash', () => {
-    const item = buildStats(emptyStatsFixture).find((s) => s.id === 'roi1x2')
-    expect(item?.hint).toMatch(/no bets settled yet/i)
-  })
-
-  // roi_pct arrives already on a 0-100 scale, unlike every other rate the API returns.
-  it('treats roi_pct as a percentage, not a fraction', () => {
-    expect(byId(settledStatsFixture).roiOverall).toBe('+12.7%')
-  })
-
-  it('keeps the sign on a losing series', () => {
-    expect(byId(settledStatsFixture).roi1x2.startsWith('-')).toBe(true)
-  })
-
-  // The two bases measure different strategies, so both must survive to the bar.
-  it('reports both bases separately', () => {
-    const values = byId(settledStatsFixture)
-    expect(values.roi1x2).not.toBe(values.roiOverall)
+  // The 30-day ROI pair used to live here and moved to the track record, which
+  // is a whole page about exactly that. RoiSummary.test covers the 0-100 scale
+  // and the empty-window placeholder that used to be asserted here.
+  it('carries only the two figures nothing else on the page shows', () => {
+    expect(buildStats(emptyStatsFixture).map((item) => item.id)).toEqual([
+      'highConfidence',
+      'valueBets',
+    ])
   })
 
   it('reads the confidence threshold out of the payload', () => {
-    const item = buildStats(emptyStatsFixture).find((s) => s.id === 'highConfidence')
-    expect(item?.label).toContain('70%')
+    expect(byId(emptyStatsFixture).highConfidence.label).toContain('70%')
+  })
+
+  // The label says "70%+" and the filter has to ask for the same number, or the
+  // count and the list it opens disagree.
+  it('filters on the threshold it names', () => {
+    expect(byId(emptyStatsFixture).highConfidence.filter).toEqual({
+      day: 'today',
+      confidence: emptyStatsFixture.high_confidence_threshold,
+    })
+  })
+
+  it('sends the value-bet stat to today, since that is what it counted', () => {
+    expect(byId(settledStatsFixture).valueBets.filter).toEqual({
+      day: 'today',
+      valueBetsOnly: true,
+    })
+  })
+
+  // A formatted "0" and a formatted "—" both read as falsy strings, so the raw
+  // count rides along to let the bar tell an empty day from a missing payload.
+  it('keeps the raw count beside the formatted one', () => {
+    const item = byId(emptyStatsFixture).highConfidence
+    expect(item.value).toBe('0')
+    expect(item.count).toBe(0)
   })
 
   it('survives a missing payload', () => {

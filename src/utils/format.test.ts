@@ -6,6 +6,7 @@ import {
   formatPercent,
   formatSignedFraction,
   formatSignedPercent,
+  shortModelVersion,
   toPercentValue,
 } from './format'
 
@@ -87,5 +88,21 @@ describe('formatCount and formatDecimal', () => {
   it('does not throw on undefined input', () => {
     expect(formatDecimal(undefined)).toBe('—')
     expect(formatDecimal(1.8734)).toBe('1.87')
+  })
+})
+
+describe('shortModelVersion', () => {
+  it('drops the commit hash and keeps the family and fit date', () => {
+    expect(shortModelVersion('goals-20260813-bb07c99e')).toBe('goals-20260813')
+  })
+
+  it('leaves a version that carries no hash alone', () => {
+    expect(shortModelVersion('goals-20260813')).toBe('goals-20260813')
+    expect(shortModelVersion('baseline')).toBe('baseline')
+  })
+
+  it('does not invent a version from an empty payload', () => {
+    expect(shortModelVersion(null)).toBe('—')
+    expect(shortModelVersion('')).toBe('—')
   })
 })

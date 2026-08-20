@@ -1,95 +1,152 @@
-import {
-  ArrowIcon,
-  ChartIcon,
-  ClockIcon,
-  InfoIcon,
-  TargetIcon,
-  ThunderIcon,
-  TrophyIcon,
-} from '../../assets/icons/index'
-import { useStats } from '../../hooks/queries'
+import { ArrowIcon, ChartIcon, InfoIcon, TrophyIcon } from '../../assets/icons/index'
+import { useFixtures, useStats } from '../../hooks/queries'
+import { useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { buildStats } from '../../utils/buildStats'
+import { shortModelVersion } from '../../utils/format'
+import { formatRelativeTime } from '../../utils/datetime'
 import { DISCLAIMER } from '../../constants/content'
 import type { StatItemData } from '../../utils/buildStats'
+import type { Fixture } from '../../types/api'
 import type { FunctionComponent, SVGProps } from 'react'
 
 const STAT_ICONS: Record<string, FunctionComponent<SVGProps<SVGSVGElement>>> = {
-  fixturesToday: ChartIcon,
-  fixturesTomorrow: ClockIcon,
   highConfidence: ArrowIcon,
   valueBets: TrophyIcon,
-  roi1x2: TargetIcon,
-  roiOverall: ThunderIcon,
 }
 
-function StatItem({ id, label, value, color, hint }: StatItemData) {
-  const Icon = STAT_ICONS[id] ?? ChartIcon
+const SHELL = 'flex items-center gap-2 shrink-0 rounded-md border py-1 px-2 text-xs'
+const ON = 'bg-primary/10 border-primary/40 text-primary'
+const OFF = 'border-transparent text-ink-muted hover:border-line-strong cursor-pointer'
+const EMPTY = 'border-transparent text-ink-subtle'
+
+/**
+ * A count you cannot act on is decoration, so each of these is the control for
+ * the view it describes. A count of zero is the exception: it stays readable but
+ * stops being a button, because the only place it could take you is an empty
+ * list.
+ */
+function Stat({
+  item,
+  pressed,
+  onSelect,
+}: {
+  item: StatItemData
+  pressed: boolean
+  onSelect: () => void
+}) {
+  const Icon = STAT_ICONS[item.id] ?? ChartIcon
+
+  if (item.count === 0) {
+    return (
+      <li className={`${SHELL} ${EMPTY}`} title={item.hint}>
+        <Icon className={'h-4 w-4 text-ink-subtle'} />
+        {item.label}
+        <span className={'numeric text-sm font-semibold text-ink-subtle'}>{item.value}</span>
+      </li>
+    )
+  }
+
   return (
-    <li className={'flex items-center gap-2 shrink-0'} title={hint}>
-      <Icon className={'text-ink-subtle'} />
-      <p className={'text-xs'}>{label}</p>
-      <p className={`numeric text-sm font-semibold ${color}`}>{value}</p>
+    <li className={'shrink-0'}>
+      <button
+        type={'button'}
+        aria-pressed={pressed}
+        title={item.hint}
+        onClick={onSelect}
+        className={`${SHELL} ${pressed ? ON : OFF}`}
+      >
+        <Icon className={`h-4 w-4 ${pressed ? 'text-primary' : 'text-ink-subtle'}`} />
+        {item.label}
+        <span className={`numeric text-sm font-semibold ${item.color}`}>{item.value}</span>
+      </button>
     </li>
+  )
+}
+
+/** The most recent sync across the window, which is what "how fresh is this" means. */
+function latestSync(fixtures: Fixture[]): string | null {
+  return fixtures.reduce<string | null>(
+    (latest, fixture) =>
+      latest === null || fixture.synced_at > latest ? fixture.synced_at : latest,
+    null,
   )
 }
 
 function SummaryBar() {
   const { stats, loading } = useStats()
+  const { filters, setFilters } = useFixtureFilters()
+  // Same query key as the list below, so this reads from cache rather than refetching.
+  const { fixtures } = useFixtures({ competition_id: filters.competitionId ?? undefined })
   const items = buildStats(stats)
+
+  const isPressed = (item: StatItemData) =>
+    (item.filter.confidence === undefined || filters.confidence === item.filter.confidence) &&
+    (item.filter.valueBetsOnly === undefined ||
+      filters.valueBetsOnly === item.filter.valueBetsOnly) &&
+    filters.day === (item.filter.day ?? filters.day)
+
+  // Pressing an active stat puts the view back, so the pair reads as a toggle
+  // rather than a one-way trip into a filter you then have to go and undo.
+  const toggle = (item: StatItemData) =>
+    setFilters(
+      isPressed(item)
+        ? { confidence: null, valueBetsOnly: false }
+        : { ...item.filter, confidence: item.filter.confidence ?? null },
+    )
+
+  const version = fixtures[0]?.model_version ?? null
+  const synced = latestSync(fixtures)
 
   if (loading) return <div className={'h-11 bg-secondary border-b border-line animate-pulse'}></div>
 
   return (
     <div className={'bg-secondary border-b border-line'}>
-      <div
-        className={
-          'measure flex w-full items-center gap-x-6 gap-y-2 py-3 lg:flex-wrap lg:justify-between'
-        }
-      >
-        {/* The marquee needs two identical copies to loop seamlessly. */}
-        <div className={'flex w-full overflow-hidden lg:hidden'}>
-          {[0, 1].map((copy) => (
-            <ul
-              key={copy}
-              className={'flex shrink-0 animate-marquee gap-6 text-sm text-ink-muted pr-6'}
-              aria-hidden={copy === 1}
-            >
-              {items.map((item) => (
-                <StatItem key={item.id} {...item} />
-              ))}
-            </ul>
-          ))}
-        </div>
-
-        {/* The strip takes the room the disclaimer button leaves and wraps inside
-            it, so a sixth stat costs a line of the strip rather than a row of the
-            whole band. */}
-        <ul
-          className={
-            'hidden lg:flex lg:min-w-0 lg:flex-1 lg:flex-wrap text-ink-muted gap-x-6 gap-y-2 text-sm'
-          }
-        >
+      <div className={'measure flex items-center justify-between gap-4 py-2'}>
+        <ul className={'flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 lg:flex-nowrap'}>
           {items.map((item) => (
-            <StatItem key={item.id} {...item} />
+            <Stat
+              key={item.id}
+              item={item}
+              pressed={isPressed(item)}
+              onSelect={() => toggle(item)}
+            />
           ))}
         </ul>
 
-        <div className={'relative flex items-center gap-2 group'}>
-          <button
-            className={
-              'hidden lg:flex items-center gap-2 text-ink-subtle bg-secondary py-1 px-2 rounded-md shrink-0 cursor-pointer'
-            }
-          >
-            <InfoIcon className={'h-4 w-4'} />
-            <span className={'eyebrow'}>Disclaimer</span>
-          </button>
-          <div
-            className={
-              'text-xs bg-secondary p-4 w-100 rounded-lg absolute top-9 right-0 border border-line hidden group-hover:block'
-            }
-          >
-            <p>{DISCLAIMER.short}</p>
-            <p className={'text-xs text-ink-subtle mt-2'}>{DISCLAIMER.body}</p>
+        <div className={'flex shrink-0 items-center gap-3'}>
+          {/* What the whole page is a claim from, rather than a per-card footnote. */}
+          {version && (
+            <p className={'hidden items-center gap-2 text-xs text-ink-subtle md:flex'}>
+              <span className={'numeric'} title={version}>
+                {shortModelVersion(version)}
+              </span>
+              {synced && (
+                <>
+                  <span aria-hidden={true}>·</span>
+                  <span>synced {formatRelativeTime(synced)}</span>
+                </>
+              )}
+            </p>
+          )}
+
+          {/* Hover alone would leave this unreachable by keyboard and on touch. */}
+          <div className={'group relative flex items-center'}>
+            <button
+              type={'button'}
+              aria-label={'Disclaimer'}
+              className={'rounded-md p-1 text-ink-subtle hover:text-ink-muted cursor-pointer'}
+            >
+              <InfoIcon className={'h-4 w-4'} />
+            </button>
+            <div
+              role={'note'}
+              className={
+                'absolute top-8 right-0 z-10 hidden w-80 rounded-lg border border-line bg-card p-4 text-xs group-hover:block group-focus-within:block'
+              }
+            >
+              <p>{DISCLAIMER.short}</p>
+              <p className={'mt-2 text-ink-subtle'}>{DISCLAIMER.body}</p>
+            </div>
           </div>
         </div>
       </div>
