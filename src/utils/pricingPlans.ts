@@ -1,4 +1,8 @@
+import type { Tier } from '../types/account'
+
 export interface PricingPlan {
+  /** Which tier this card sells, so the CTA can be decided from the account. */
+  id: Tier
   name: string
   description: string
   price: string
@@ -12,6 +16,7 @@ export interface PricingPlan {
 
 export const pricingPlans: PricingPlan[] = [
   {
+    id: 'free',
     name: 'Free',
     description: 'Get a feel for the model',
     price: 'Free',
@@ -34,6 +39,7 @@ export const pricingPlans: PricingPlan[] = [
     ],
   },
   {
+    id: 'pro',
     name: 'Pro',
     description: 'For serious bettors',
     price: '$29',
@@ -54,6 +60,7 @@ export const pricingPlans: PricingPlan[] = [
     notAvailableFeatures: ['API access'],
   },
   {
+    id: 'elite',
     name: 'Elite',
     description: 'Maximum edge, raw access',
     price: '$79',

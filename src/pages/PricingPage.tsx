@@ -1,5 +1,6 @@
 import { BrainIcon } from '../assets/icons/index'
 import PricingCard from '../components/pricing/PricingCard'
+import PlanAction from '../components/pricing/PlanAction'
 import { pricingPlans } from '../utils/pricingPlans'
 import ExpandableCard from '../components/ui/ExpandableCard'
 import { Link } from 'react-router'
@@ -36,7 +37,11 @@ function PricingPage() {
         <p className={'eyebrow my-12 text-center text-ink-muted'}>Monthly</p>
         <div className={'grid grid-cols-1 gap-4 md:grid-cols-3'}>
           {pricingPlans.map((plan) => (
-            <PricingCard key={plan.name} {...plan} />
+            <PricingCard
+              key={plan.name}
+              {...plan}
+              action={<PlanAction plan={plan.id} isPopular={plan.isPopular} />}
+            />
           ))}
         </div>
       </div>

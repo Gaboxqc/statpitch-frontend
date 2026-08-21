@@ -56,9 +56,15 @@ function Navbar() {
               </Link>
             )}
             {isSignedIn && (
-              <span className={'hidden md:inline text-sm text-ink-muted'} title={account?.email}>
+              <NavLink
+                to={'/account'}
+                title={account?.email}
+                className={({ isActive }) =>
+                  `hidden md:inline text-sm ${isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'}`
+                }
+              >
                 {TIER_LABELS[tier]}
-              </span>
+              </NavLink>
             )}
             <button
               className={'border border-line-strong rounded-md p-1 bg-secondary md:hidden'}
@@ -127,6 +133,17 @@ function Navbar() {
           >
             Pricing
           </NavLink>
+          {isSignedIn && (
+            <NavLink
+              to={'/account'}
+              className={({ isActive }) =>
+                `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : 'text-ink-muted'}`
+              }
+              onClick={() => setIsOpened(false)}
+            >
+              Account
+            </NavLink>
+          )}
           {!loading &&
             (isSignedIn ? (
               <button

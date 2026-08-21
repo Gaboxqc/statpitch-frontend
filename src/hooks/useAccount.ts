@@ -1,8 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
-import { getMe, login, logout, register } from '../services/accounts'
+import {
+  changePassword,
+  getMe,
+  login,
+  logout,
+  register,
+  revokeAllSessions,
+  startTrial,
+} from '../services/accounts'
 import { clearQuota } from '../services/quota'
-import type { Account, Credentials, Tier } from '../types/account'
+import type { Account, Credentials, PasswordChange, Tier } from '../types/account'
 
 /**
  * The session lives in the query cache rather than in a context. There is one
@@ -85,6 +93,44 @@ export function useLogout() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => logout(),
+    onSuccess: () => resetEntitledData(queryClient, null),
+  })
+}
+
+/**
+ * Fourteen days of Pro, once per account ever. The response is the account at
+ * its new tier, so the cache is written from it and everything gated refetched
+ * — the fixture list the reader was just looking at is a tier out of date the
+ * moment this succeeds.
+ */
+export function useStartTrial() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => startTrial(),
+    onSuccess: (account) => resetEntitledData(queryClient, account),
+  })
+}
+
+/**
+ * Closes every other session and returns a fresh one for this tab, so the
+ * reader stays signed in here. The new CSRF token rides in on the response and
+ * is adopted by the service.
+ */
+export function useChangePassword() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (change: PasswordChange) => changePassword(change),
+    onSuccess: (account) => {
+      queryClient.setQueryData(ACCOUNT_KEY, account)
+    },
+  })
+}
+
+/** Signs out everywhere, this tab included — so it is a logout, not a setting. */
+export function useRevokeAllSessions() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => revokeAllSessions(),
     onSuccess: () => resetEntitledData(queryClient, null),
   })
 }

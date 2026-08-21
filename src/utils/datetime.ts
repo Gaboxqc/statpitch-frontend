@@ -54,6 +54,20 @@ export function formatMatchDateTime(value: string | null | undefined): string {
   }).format(date)
 }
 
+/**
+ * A date to put in a sentence, e.g. "3 March 2027" — for a subscription
+ * expiry, where the day is the whole point and the minute is noise.
+ */
+export function formatLongDate(value: string | null | undefined): string {
+  const date = parseInstant(value)
+  if (!date) return FALLBACK
+  return new Intl.DateTimeFormat(LOCALE, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date)
+}
+
 /** A calendar day with no time attached, e.g. "Wed 19 Aug". */
 export function formatMatchDay(value: string | null | undefined): string {
   const date = parseDateOnly(value)
