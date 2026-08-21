@@ -1,0 +1,86 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
+import { getMe, login, logout, register } from '../services/accounts'
+import type { Account, Credentials, Tier } from '../types/account'
+
+/**
+ * The session lives in the query cache rather than in a context. There is one
+ * source of truth either way, and this one already deduplicates the request,
+ * survives remounting, and can be invalidated from anywhere.
+ */
+export const ACCOUNT_KEY = ['account'] as const
+
+/**
+ * Signing in or out changes the shape of every gated payload already cached —
+ * a fixture list fetched anonymously holds teasers, and holding onto it would
+ * show a paying subscriber the wall they just paid to clear. So everything
+ * except the account itself is dropped; the account was just written from the
+ * response and needs no round trip to confirm.
+ */
+function resetEntitledData(queryClient: QueryClient, account: Account | null): void {
+  queryClient.setQueryData(ACCOUNT_KEY, account)
+  void queryClient.invalidateQueries({
+    predicate: (query) => query.queryKey[0] !== ACCOUNT_KEY[0],
+  })
+}
+
+export interface AccountState {
+  account: Account | null
+  /** The effective tier. Anonymous and free are both `free` — see `isSignedIn`. */
+  tier: Tier
+  isSignedIn: boolean
+  isPro: boolean
+  isElite: boolean
+  /** True until the first `/me` settles. Chrome that would flicker should wait. */
+  loading: boolean
+  error: unknown
+}
+
+export function useAccount(): AccountState {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ACCOUNT_KEY,
+    queryFn: ({ signal }) => getMe(signal),
+    /**
+     * This is where an expiry, a started trial, or a tier granted by hand
+     * becomes visible, so it is never served stale.
+     */
+    staleTime: 0,
+  })
+
+  const account = data ?? null
+  const tier = account?.tier ?? 'free'
+
+  return {
+    account,
+    tier,
+    isSignedIn: account !== null,
+    isPro: tier === 'pro' || tier === 'elite',
+    isElite: tier === 'elite',
+    loading: isLoading,
+    error,
+  }
+}
+
+export function useLogin() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (credentials: Credentials) => login(credentials),
+    onSuccess: (account) => resetEntitledData(queryClient, account),
+  })
+}
+
+export function useRegister() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (credentials: Credentials) => register(credentials),
+    onSuccess: (account) => resetEntitledData(queryClient, account),
+  })
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => logout(),
+    onSuccess: () => resetEntitledData(queryClient, null),
+  })
+}

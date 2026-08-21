@@ -1,6 +1,10 @@
+import { useEffect, useId, useState } from 'react'
 import { BrainIcon, GithubIcon, GoogleIcon, LogoIcon } from '../assets/icons/index'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { useAccount, useLogin, useRegister } from '../hooks/useAccount'
+import { describeError } from '../services/api'
+import { MIN_PASSWORD_LENGTH } from '../types/account'
 import LiveRoi from '../components/track-record/LiveRoi'
 
 function LoginPage() {
@@ -10,9 +14,52 @@ function LoginPage() {
   // survives a reload, and the URL never disagrees with what is on screen.
   const [searchParams, setSearchParams] = useSearchParams()
   const isNewAccount = searchParams.get('new') === '1'
-  const setIsNewAccount = (next: boolean) =>
+  const setIsNewAccount = (next: boolean) => {
+    setLocalError(null)
+    signIn.reset()
+    signUp.reset()
     setSearchParams(next ? { new: '1' } : {}, { replace: true })
+  }
   useDocumentTitle(isNewAccount ? 'Create account' : 'Sign in')
+
+  const navigate = useNavigate()
+  const { isSignedIn } = useAccount()
+  const signIn = useLogin()
+  const signUp = useRegister()
+  const submitting = isNewAccount ? signUp : signIn
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  // The API's own rejection, held apart from the mutation's, so switching
+  // sides of the toggle does not carry a stale complaint across.
+  const [localError, setLocalError] = useState<string | null>(null)
+  const hintId = useId()
+
+  // Nothing here applies to somebody who already has a session — including
+  // arriving back on this route with the back button after signing in.
+  useEffect(() => {
+    if (isSignedIn) void navigate('/', { replace: true })
+  }, [isSignedIn, navigate])
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setLocalError(null)
+
+    // Worth catching here: the API answers a short password with a 422, and
+    // the round trip tells the reader nothing they could not be told now.
+    if (isNewAccount && password.length < MIN_PASSWORD_LENGTH) {
+      setLocalError(`Passwords must be at least ${MIN_PASSWORD_LENGTH} characters.`)
+      return
+    }
+
+    submitting.mutate(
+      { email, password },
+      { onSuccess: () => void navigate('/', { replace: true }) },
+    )
+  }
+
+  const error = localError ?? (submitting.error !== null ? describeError(submitting.error) : null)
+
   return (
     <div className={'flex items-center w-full'}>
       <div className={'border-r border-line bg-card min-h-screen w-2/6 hidden lg:block'}>
@@ -98,27 +145,14 @@ function LoginPage() {
             </p>
           </div>
 
-          {/* Authentication is not wired up yet; the submit handler only stops the page reloading. */}
-          <form className={'flex flex-col gap-8'} onSubmit={(event) => event.preventDefault()}>
+          {error !== null && (
+            <p role='alert' className={'text-sm text-negative'}>
+              {error}
+            </p>
+          )}
+
+          <form className={'flex flex-col gap-8'} onSubmit={onSubmit}>
             <div className={'flex flex-col gap-4'}>
-              {isNewAccount && (
-                <div className={'flex flex-col gap-1'}>
-                  <label htmlFor='name' className={'eyebrow text-ink-subtle'}>
-                    Full name
-                  </label>
-                  <input
-                    id='name'
-                    name='name'
-                    type='text'
-                    autoComplete='name'
-                    required
-                    className={
-                      'w-full p-3 rounded-md bg-secondary border border-line-strong text-sm'
-                    }
-                    placeholder={'Your name'}
-                  />
-                </div>
-              )}
               <div className={'flex flex-col gap-1'}>
                 <label htmlFor='email' className={'eyebrow text-ink-subtle'}>
                   Email
@@ -129,6 +163,8 @@ function LoginPage() {
                   type='email'
                   autoComplete='email'
                   required
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   className={'w-full p-3 rounded-md bg-secondary border border-line-strong text-sm'}
                   placeholder={'you@example.com'}
                 />
@@ -143,25 +179,43 @@ function LoginPage() {
                   type='password'
                   autoComplete={isNewAccount ? 'new-password' : 'current-password'}
                   required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  aria-describedby={isNewAccount ? hintId : undefined}
                   className={'w-full p-3 rounded-md bg-secondary border border-line-strong text-sm'}
                   placeholder={'•••••••••'}
                 />
+                {isNewAccount && (
+                  <p id={hintId} className={'text-xs text-ink-subtle'}>
+                    At least {MIN_PASSWORD_LENGTH} characters.
+                  </p>
+                )}
               </div>
+              {/* Resetting by email needs a mail provider the backend does not
+                  have yet. The space is held rather than promising a link that
+                  would go nowhere. */}
               {!isNewAccount && (
-                <a href='#reset' className={'text-xs self-end text-ink-subtle'}>
-                  Forgot password?
-                </a>
+                <p className={'text-xs self-end text-ink-subtle'}>
+                  Password reset is not available yet.
+                </p>
               )}
             </div>
 
             <button
               type='submit'
+              disabled={submitting.isPending}
               className={
-                'flex items-center justify-center gap-2 bg-primary text-background p-3 rounded-md text-sm font-semibold cursor-pointer'
+                'flex items-center justify-center gap-2 bg-primary text-background p-3 rounded-md text-sm font-semibold cursor-pointer disabled:cursor-progress disabled:opacity-70'
               }
             >
               <BrainIcon className={'h-4 w-4'} />
-              {isNewAccount ? 'Create account' : 'Sign in'}
+              {submitting.isPending
+                ? isNewAccount
+                  ? 'Creating account…'
+                  : 'Signing in…'
+                : isNewAccount
+                  ? 'Create account'
+                  : 'Sign in'}
             </button>
           </form>
 
@@ -170,11 +224,14 @@ function LoginPage() {
             <p className={'text-xs text-ink-subtle shrink-0'}>or continue with</p>
             <div className={'h-0.5 w-full bg-secondary'}></div>
           </div>
+          {/* There is no OAuth on this backend. A disabled control says that;
+              an enabled one that quietly does nothing reads as a bug. */}
           <div className={'flex gap-2'}>
             <button
               type='button'
+              disabled
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-secondary p-2 rounded-md text-sm font-medium border border-line cursor-pointer'
+                'flex w-1/2 items-center justify-center gap-2 bg-secondary p-2 rounded-md text-sm font-medium border border-line text-ink-subtle cursor-not-allowed'
               }
             >
               <GoogleIcon className={'h-4 w-4'} />
@@ -182,14 +239,18 @@ function LoginPage() {
             </button>
             <button
               type='button'
+              disabled
               className={
-                'flex w-1/2 items-center justify-center gap-2 bg-secondary p-2 rounded-md text-sm font-medium border border-line cursor-pointer'
+                'flex w-1/2 items-center justify-center gap-2 bg-secondary p-2 rounded-md text-sm font-medium border border-line text-ink-subtle cursor-not-allowed'
               }
             >
               <GithubIcon className={'h-4 w-4'} />
               Github
             </button>
           </div>
+          <p className={'text-xs text-center text-ink-subtle -mt-6'}>
+            Social sign-in is coming soon.
+          </p>
           <p className={'flex items-center gap-2 self-center text-sm text-ink-subtle'}>
             {isNewAccount ? 'Already have an account?' : "Don't have an account?"}
             <button
