@@ -1,4 +1,5 @@
 import { eloSource } from './humanise'
+import { hasFullDetail } from './entitlement'
 import type { Fixture } from '../types/api'
 
 export type ReliabilityLevel = 'measured' | 'partial' | 'fallback'
@@ -20,8 +21,12 @@ export interface Reliability {
  * The weakest link decides: a fixture is only as well founded as its worst
  * input, so a fallback model outranks everything and an unrated side outranks a
  * clean run.
+ *
+ * Null when the payload cannot answer. Which model ran is published on every
+ * shape, but the Elo evidence behind it is not, and silence is the honest
+ * result there — a teaser is not a clean bill of health.
  */
-export function reliability(fixture: Fixture): Reliability {
+export function reliability(fixture: Fixture): Reliability | null {
   if (fixture.prediction_source === 'elo-poisson') {
     return {
       level: 'fallback',
@@ -29,6 +34,8 @@ export function reliability(fixture: Fixture): Reliability {
       hint: 'This fixture missed the last precompute run, so the numbers come from the measurably weaker Elo-Poisson estimate rather than the fitted goal model.',
     }
   }
+
+  if (!hasFullDetail(fixture)) return null
 
   const tiers = [fixture.home_elo_source, fixture.away_elo_source]
     .map((source) => eloSource(source)?.tier ?? 4)

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { buildPredictionView, certainty, fixtureState } from './predictionView'
-import { fixtureFixture, pickedFixtureFixture } from '../test/fixtures'
+import {
+  fixtureFixture,
+  freeFixtureFixture,
+  pickedFixtureFixture,
+  settledTeaserFixture,
+  teaserFixtureFixture,
+} from '../test/fixtures'
 
 describe('buildPredictionView', () => {
   it('builds every published market', () => {
@@ -45,6 +51,24 @@ describe('buildPredictionView', () => {
     expect(winner.isHome).toBe(false)
     expect(winner.name).toBe('Málaga CF')
   })
+
+  // A free payload has a leader but nothing to bet into, and the two are
+  // separate questions.
+  it('names a winner without a market when only probabilities arrived', () => {
+    const { winner, markets, bestBet } = buildPredictionView(freeFixtureFixture)
+
+    expect(winner?.name).toBe('Club Atlético de Madrid')
+    expect(markets).toEqual([])
+    expect(bestBet).toBeNull()
+  })
+
+  it('has nothing to say about a withheld prediction', () => {
+    const { winner, markets, bestMarket } = buildPredictionView(teaserFixtureFixture)
+
+    expect(winner).toBeNull()
+    expect(markets).toEqual([])
+    expect(bestMarket).toBeUndefined()
+  })
 })
 
 describe('fixtureState', () => {
@@ -64,6 +88,22 @@ describe('fixtureState', () => {
   it('calls a played fixture settled, pick or no pick', () => {
     expect(fixtureState({ ...pickedFixtureFixture, home_score: 3, away_score: 1 })).toBe('settled')
     expect(fixtureState({ ...fixtureFixture, home_score: 0, away_score: 0 })).toBe('settled')
+  })
+
+  it('calls a withheld prediction locked', () => {
+    expect(fixtureState(teaserFixtureFixture)).toBe('locked')
+  })
+
+  // The score is on every shape, so a played fixture has a real result to show
+  // whether or not its prediction was ever visible.
+  it('lets a result outrank the lock', () => {
+    expect(fixtureState(settledTeaserFixture)).toBe('settled')
+  })
+
+  // A free payload has a prediction and no market: nothing to place, which is
+  // exactly what a forecast is.
+  it('calls an unlocked free fixture a forecast', () => {
+    expect(fixtureState(freeFixtureFixture)).toBe('forecast')
   })
 })
 

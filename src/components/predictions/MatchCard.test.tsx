@@ -4,8 +4,11 @@ import MatchCard from './MatchCard'
 import { renderWithQuery } from '../../test/renderWithQuery'
 import {
   fixtureFixture,
+  freeFixtureFixture,
   pickedFixtureFixture,
   settledFixtureFixture,
+  settledTeaserFixture,
+  teaserFixtureFixture,
   unpricedFixtureFixture,
 } from '../../test/fixtures'
 
@@ -54,5 +57,70 @@ describe('MatchCard states', () => {
     renderWithQuery(<MatchCard prediction={unpricedFixtureFixture} />)
 
     expect(within(card()).getAllByText(/home|draw|away/i).length).toBeGreaterThan(0)
+  })
+})
+
+/**
+ * The same card, at the three depths the API will actually hand it over. What
+ * matters here is that the missing parts are absent rather than rendered as
+ * blanks, dashes or zeroes — a withheld number and a measured zero must never
+ * look alike.
+ */
+describe('MatchCard across the payload shapes', () => {
+  it('still names both clubs when the prediction is withheld', () => {
+    renderWithQuery(<MatchCard prediction={teaserFixtureFixture} />)
+
+    expect(within(card()).getByText('Atlético de Madrid')).toBeInTheDocument()
+    expect(within(card()).getByText('Málaga')).toBeInTheDocument()
+  })
+
+  it('shows no probability and no xG on a teaser', () => {
+    renderWithQuery(<MatchCard prediction={teaserFixtureFixture} />)
+
+    expect(within(card()).queryByText(/xG/)).not.toBeInTheDocument()
+    expect(within(card()).queryByText(/%$/)).not.toBeInTheDocument()
+  })
+
+  // The slot has to say something, or the card reads as one that failed to load.
+  it('says the prediction is locked rather than leaving the verdict empty', () => {
+    renderWithQuery(<MatchCard prediction={teaserFixtureFixture} />)
+
+    expect(within(card()).getByText('Locked')).toBeInTheDocument()
+  })
+
+  // Both answers are about the market, and a teaser has no market to describe.
+  it('offers no explanation for a missing pick it cannot see', () => {
+    renderWithQuery(<MatchCard prediction={teaserFixtureFixture} />)
+
+    expect(within(card()).queryByText(/^No pick$|^No odds$/)).not.toBeInTheDocument()
+  })
+
+  it('shows the 1X2 call on a free fixture but still no xG', () => {
+    renderWithQuery(<MatchCard prediction={freeFixtureFixture} />)
+
+    expect(within(card()).getAllByText(/%$/).length).toBeGreaterThan(0)
+    expect(within(card()).queryByText(/xG/)).not.toBeInTheDocument()
+    expect(within(card()).queryByText('Locked')).not.toBeInTheDocument()
+  })
+
+  // The result is public on every shape; the pick published against it is not.
+  it('gives a played teaser its score and no verdict on the pick', () => {
+    renderWithQuery(<MatchCard prediction={settledTeaserFixture} />)
+
+    expect(within(card()).getByText('2–0')).toBeInTheDocument()
+    expect(within(card()).getByText('FT')).toBeInTheDocument()
+    expect(within(card()).queryByText(/^Won$|^Lost$/)).not.toBeInTheDocument()
+  })
+
+  it('does settle the pick when the payload carried one', () => {
+    renderWithQuery(<MatchCard prediction={settledFixtureFixture} />)
+
+    expect(within(card()).getByText(/^Won$|^Lost$/)).toBeInTheDocument()
+  })
+
+  it('keeps the full card intact', () => {
+    renderWithQuery(<MatchCard prediction={fixtureFixture} />)
+
+    expect(within(card()).getAllByText(/xG/).length).toBe(2)
   })
 })

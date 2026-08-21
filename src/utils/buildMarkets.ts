@@ -1,5 +1,5 @@
 import { displayName } from './teamName'
-import type { Fixture, Market, MarketKey } from '../types/api'
+import type { FullFixture, Market, MarketKey } from '../types/api'
 
 /**
  * Team-independent market names, for places that name a selection without a
@@ -24,7 +24,7 @@ export const MARKET_LABELS: Record<MarketKey, string> = {
  * complement — but it does quote odds, EV and Kelly for both sides. So the
  * under rows carry a derived probability against a real price.
  */
-export function buildMarkets(prediction: Fixture): Market[] {
+export function buildMarkets(prediction: FullFixture): Market[] {
   return [
     {
       key: 'home_win',

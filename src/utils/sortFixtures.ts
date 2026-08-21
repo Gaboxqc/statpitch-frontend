@@ -1,4 +1,5 @@
 import { topOutcomeProb } from './filterFixtures'
+import { hasFullDetail } from './entitlement'
 import type { Fixture } from '../types/api'
 
 export const SORTS = ['kickoff', 'stake', 'edge', 'confidence'] as const
@@ -46,10 +47,15 @@ function compare(a: number | null, b: number | null, direction: 'asc' | 'desc'):
   return direction === 'asc' ? a - b : b - a
 }
 
+/**
+ * A withheld figure reads as null here, which is already the right answer: the
+ * rule below sorts nulls to the end rather than coercing them to zero, so a
+ * locked fixture files with the unpriced ones instead of among the worst edges.
+ */
 const KEYS: Record<SortKey, (fixture: Fixture) => number | null> = {
   kickoff: kickoffAt,
-  stake: (fixture) => fixture.best_overall_kelly,
-  edge: (fixture) => fixture.best_overall_ev,
+  stake: (fixture) => (hasFullDetail(fixture) ? fixture.best_overall_kelly : null),
+  edge: (fixture) => (hasFullDetail(fixture) ? fixture.best_overall_ev : null),
   confidence: topOutcomeProb,
 }
 

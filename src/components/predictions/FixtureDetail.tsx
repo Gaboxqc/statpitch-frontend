@@ -3,6 +3,7 @@ import CorrectScores from './CorrectScores'
 import ExplanationBreakdown from './ExplanationBreakdown'
 import FixtureMeta from './FixtureMeta'
 import FinalScore from './FinalScore'
+import { hasFullDetail } from '../../utils/entitlement'
 import type { Fixture, Market, MarketKey } from '../../types/api'
 
 interface FixtureDetailProps {
@@ -17,8 +18,14 @@ interface FixtureDetailProps {
  * Everything behind a card's disclosure. The market table used to be the only
  * thing here, which left the scoreline distribution and the model's own feature
  * attributions unused despite arriving on every fixture.
+ *
+ * Most of that arrives only on a full payload. What survives a teaser is the
+ * result and the fixture's own provenance, so the panel narrows rather than
+ * emptying — a second column of blanks would read as a loading failure.
  */
 function FixtureDetail({ fixture, markets, bestBet, isOpened, id }: FixtureDetailProps) {
+  const full = hasFullDetail(fixture) ? fixture : null
+
   return (
     <div id={id} className={`flex-col gap-8 w-full ${isOpened ? 'flex' : 'hidden'}`}>
       {fixture.home_score !== null && (
@@ -27,22 +34,26 @@ function FixtureDetail({ fixture, markets, bestBet, isOpened, id }: FixtureDetai
         </div>
       )}
 
-      <div className={'grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8'}>
-        <CorrectScores
-          scores={fixture.correct_scores}
-          homeTeam={fixture.home_team}
-          awayTeam={fixture.away_team}
-        />
+      <div className={`grid grid-cols-1 gap-8 mt-8 ${full ? 'lg:grid-cols-2' : ''}`}>
+        {full && (
+          <CorrectScores
+            scores={full.correct_scores}
+            homeTeam={full.home_team}
+            awayTeam={full.away_team}
+          />
+        )}
         <FixtureMeta fixture={fixture} />
       </div>
 
-      <ExplanationBreakdown
-        explanation={fixture.explanation}
-        homeTeam={fixture.home_team}
-        awayTeam={fixture.away_team}
-      />
+      {full && (
+        <ExplanationBreakdown
+          explanation={full.explanation}
+          homeTeam={full.home_team}
+          awayTeam={full.away_team}
+        />
+      )}
 
-      <MarketList markets={markets} bestBet={bestBet} isOpened={true} />
+      {full && <MarketList markets={markets} bestBet={bestBet} isOpened={true} />}
     </div>
   )
 }
