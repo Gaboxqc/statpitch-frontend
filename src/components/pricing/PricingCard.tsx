@@ -2,6 +2,15 @@ import { Link } from 'react-router'
 import { CheckIcon } from '../../assets/icons/index'
 import type { PricingPlan } from '../../utils/pricingPlans'
 
+interface PricingCardProps extends PricingPlan {
+  /**
+   * What this card's button should be for the reader looking at it, decided by
+   * the page — starting a trial is an action rather than a destination, and
+   * "Current plan" is neither.
+   */
+  action?: React.ReactNode
+}
+
 function PricingCard({
   name,
   description,
@@ -12,7 +21,8 @@ function PricingCard({
   isPopular,
   buttonText,
   buttonLink,
-}: PricingPlan) {
+  action,
+}: PricingCardProps) {
   return (
     <div
       className={`flex flex-col p-5 border rounded-lg gap-5 relative ${
@@ -35,12 +45,14 @@ function PricingCard({
         {period && <span className={'text-sm font-normal text-ink-muted'}>{period}</span>}
       </p>
 
-      <Link
-        to={buttonLink}
-        className={`w-full p-2.5 rounded-md text-sm text-center font-semibold my-2 ${isPopular ? 'bg-primary text-background' : 'bg-secondary text-ink border border-line'}`}
-      >
-        {buttonText}
-      </Link>
+      {action ?? (
+        <Link
+          to={buttonLink}
+          className={`w-full p-2.5 rounded-md text-sm text-center font-semibold my-2 ${isPopular ? 'bg-primary text-background' : 'bg-secondary text-ink border border-line'}`}
+        >
+          {buttonText}
+        </Link>
+      )}
 
       <ul className={'flex flex-col gap-2'}>
         {availableFeatures.map((feature: string) => (

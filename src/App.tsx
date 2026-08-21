@@ -13,6 +13,7 @@ const PricingPage = lazy(() => import('./pages/PricingPage'))
 const TrackRecordPage = lazy(() => import('./pages/TrackRecordPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const FixturePage = lazy(() => import('./pages/FixturePage'))
+const AccountPage = lazy(() => import('./pages/AccountPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +48,7 @@ const router = createBrowserRouter(
         { path: 'fixture/:id', element: withFallback(<FixturePage />) },
         { path: 'track-record', element: withFallback(<TrackRecordPage />) },
         { path: 'pricing', element: withFallback(<PricingPage />) },
+        { path: 'account', element: withFallback(<AccountPage />) },
       ],
     },
     { path: '/login', element: withFallback(<LoginPage />) },
