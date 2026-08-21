@@ -5,6 +5,7 @@ import { useBestToday } from '../../hooks/queries'
 import { useElapsed } from '../../hooks/useElapsed'
 import { COLD_START_HINT_MS } from '../../services/api'
 import { buildPredictionView, certainty } from '../../utils/predictionView'
+import { hasFullDetail, hasProbabilities } from '../../utils/entitlement'
 import { useId, useState } from 'react'
 import FixtureDetail from './FixtureDetail'
 import QueryError from '../ui/QueryError'
@@ -42,9 +43,17 @@ function MatchDayCard() {
   if (error) return <QueryError error={error} />
   if (!prediction) return <p className={'text-center mt-8'}>No prediction available.</p>
 
+  // Match of the Day is always returned unlocked, on every tier and to anonymous
+  // visitors — it is the one real prediction the logged-out page can show. The
+  // guard is here because the type cannot know that, not because it is expected.
+  if (!hasProbabilities(prediction))
+    return <p className={'text-center mt-8'}>No prediction available.</p>
+
   const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
   const matchCertainty = certainty(prediction)
   const kickoff = describeKickoffLong(prediction)
+  // Everything the market paid for: xG, the pick, and why there is not one.
+  const full = hasFullDetail(prediction) ? prediction : null
 
   return (
     <div className={'border border-line bg-card rounded-lg'}>
@@ -89,16 +98,18 @@ function MatchDayCard() {
                 {formatFraction(prediction.home_win_prob)}
               </p>
               <p className={'eyebrow text-ink-subtle'}>Win</p>
-              <div
-                className={
-                  'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
-                }
-              >
-                <p className={'text-xs text-ink-subtle'}>xG</p>
-                <p className={'numeric text-primary font-semibold'}>
-                  {formatDecimal(prediction.home_xg)}
-                </p>
-              </div>
+              {full && (
+                <div
+                  className={
+                    'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
+                  }
+                >
+                  <p className={'text-xs text-ink-subtle'}>xG</p>
+                  <p className={'numeric text-primary font-semibold'}>
+                    {formatDecimal(full.home_xg)}
+                  </p>
+                </div>
+              )}
             </div>
             <div className={'flex flex-col items-center justify-center gap-4 mx-4'}>
               <p className={'eyebrow text-ink-subtle'}>vs</p>
@@ -126,16 +137,18 @@ function MatchDayCard() {
                 {formatFraction(prediction.away_win_prob)}
               </p>
               <p className={'eyebrow text-ink-subtle'}>Win</p>
-              <div
-                className={
-                  'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
-                }
-              >
-                <p className={'text-xs text-ink-subtle'}>xG</p>
-                <p className={'numeric text-chart-2 font-semibold'}>
-                  {formatDecimal(prediction.away_xg)}
-                </p>
-              </div>
+              {full && (
+                <div
+                  className={
+                    'flex gap-2 mt-2 text-xs bg-secondary py-1 px-2 rounded-md border border-line'
+                  }
+                >
+                  <p className={'text-xs text-ink-subtle'}>xG</p>
+                  <p className={'numeric text-chart-2 font-semibold'}>
+                    {formatDecimal(full.away_xg)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -177,13 +190,16 @@ function MatchDayCard() {
               </div>
             </div>
           ) : (
-            // Two different reasons produce no pick, and they mean different
-            // things: no market to bet into, versus a market with no edge in it.
-            <p className={'mt-6 text-xs text-ink-subtle border border-line rounded-lg px-4 py-3'}>
-              {prediction.odds_coverage
-                ? 'Priced, but no selection cleared the minimum stake. Prediction only.'
-                : 'No odds matched this fixture, so nothing can be priced. Prediction only.'}
-            </p>
+            full && (
+              // Two different reasons produce no pick, and they mean different
+              // things: no market to bet into, versus a market with no edge in
+              // it. Neither is sayable without the market itself.
+              <p className={'mt-6 text-xs text-ink-subtle border border-line rounded-lg px-4 py-3'}>
+                {full.odds_coverage
+                  ? 'Priced, but no selection cleared the minimum stake. Prediction only.'
+                  : 'No odds matched this fixture, so nothing can be priced. Prediction only.'}
+              </p>
+            )
           )}
 
           <div className={'grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4'}>
@@ -234,7 +250,10 @@ function MatchDayCard() {
               aria-controls={marketsId}
             >
               <ChartIcon className={'h-4 w-4 text-primary'} />
-              <p className={'font-medium'}>Market breakdown</p>
+              {/* The market is a paid line. Without it the panel still holds
+                  the fixture's provenance, so the button opens the same
+                  disclosure under a name that matches what is inside it. */}
+              <p className={'font-medium'}>{full ? 'Market breakdown' : 'Fixture detail'}</p>
               <ShortArrowIcon className={`h-4 w-4 ${isOpened ? 'rotate-180' : ''}`} />
             </button>
           </div>

@@ -1,5 +1,6 @@
 import { eloSource, humanise, predictionSource } from '../../utils/humanise'
 import { formatRelativeTime } from '../../utils/datetime'
+import { hasFullDetail } from '../../utils/entitlement'
 import type { EloSource, Fixture } from '../../types/api'
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
@@ -38,9 +39,12 @@ function EloValue({ rating, source }: { rating: number | null; source: EloSource
  */
 function FixtureMeta({ fixture }: { fixture: Fixture }) {
   const model = predictionSource(fixture.prediction_source)
+  // Ratings are part of what a subscription buys, so the row is absent rather
+  // than empty when they are withheld.
+  const rated = hasFullDetail(fixture) ? fixture : null
   const eloGap =
-    fixture.home_elo !== null && fixture.away_elo !== null
-      ? Math.round(fixture.home_elo - fixture.away_elo)
+    rated && rated.home_elo !== null && rated.away_elo !== null
+      ? Math.round(rated.home_elo - rated.away_elo)
       : null
 
   return (
@@ -48,18 +52,20 @@ function FixtureMeta({ fixture }: { fixture: Fixture }) {
       <h3 className={'eyebrow text-ink-subtle'}>Fixture detail</h3>
 
       <dl className={'flex flex-col gap-1 tabular-nums'}>
-        <Row label={'Elo'}>
-          <EloValue rating={fixture.home_elo} source={fixture.home_elo_source} />
-          <span className={'text-ink-subtle'}> vs </span>
-          <EloValue rating={fixture.away_elo} source={fixture.away_elo_source} />
-          {eloGap !== null && (
-            <span className={'text-ink-subtle'}>
-              {' '}
-              ({eloGap >= 0 ? '+' : ''}
-              {eloGap} home)
-            </span>
-          )}
-        </Row>
+        {rated && (
+          <Row label={'Elo'}>
+            <EloValue rating={rated.home_elo} source={rated.home_elo_source} />
+            <span className={'text-ink-subtle'}> vs </span>
+            <EloValue rating={rated.away_elo} source={rated.away_elo_source} />
+            {eloGap !== null && (
+              <span className={'text-ink-subtle'}>
+                {' '}
+                ({eloGap >= 0 ? '+' : ''}
+                {eloGap} home)
+              </span>
+            )}
+          </Row>
+        )}
 
         {(fixture.stage || fixture.format) && (
           <Row label={'Stage'}>
@@ -85,7 +91,7 @@ function FixtureMeta({ fixture }: { fixture: Fixture }) {
         <Row label={'Updated'}>{formatRelativeTime(fixture.synced_at)}</Row>
       </dl>
 
-      {!fixture.fully_rated && (
+      {rated && !rated.fully_rated && (
         <p className={'text-xs text-ink-subtle'}>
           At least one club had no measured Elo and fell back to a prior. The prediction is still
           well formed, but it is a weaker claim than a fully rated fixture.

@@ -58,16 +58,17 @@ export interface Explanation {
   away: FeatureContribution[]
 }
 
+/** How much weight the API puts on its own numbers. Full payloads only. */
+export type Confidence = 'low' | 'medium' | 'high'
+
 /**
- * One fixture. Everything under Prediction is always present; everything under
- * Pricing and Picks is null whenever the fixture could not be priced.
+ * What every caller sees, whatever they are paying: who is playing, when, and
+ * how it finished. No prediction of any kind.
  *
- * Scale note: `ev_*` and `best_overall_ev` are **0–1 fractions**, not
- * percentages — a live payload carries `ev_away: 0.0617` for a +6.17% edge.
- * So are `kelly_*` and every `*_prob`. Only `roi_pct` and `hit_rate_pct` on the
- * stats payload are already on a 0–100 scale.
+ * This is the whole payload for an anonymous visitor, and for a free account
+ * that has not spent an unlock on this fixture.
  */
-export interface Fixture {
+export interface TeaserFixture {
   // Identity
   id: number
   /** Composite natural key, e.g. `ESP.LALIGA|2026-2027|FC Barcelona|Athletic Club`. */
@@ -95,20 +96,70 @@ export interface Fixture {
   home_team: string
   away_team: string
   neutral_venue: boolean
-  /** Currently always null — StatPitch supplies no crest. */
+  /** Absolute CDN URL, or null — some lower-division sides have no badge anywhere. */
   home_crest_url: string | null
-  /** Currently always null — StatPitch supplies no crest. */
+  /** Null is a normal state. Fall back to a monogram, never a broken image. */
   away_crest_url: string | null
 
   // Provenance
   prediction_source: PredictionSource | null
   model_version: string
-  /** False means at least one club fell back to a prior Elo. A much weaker claim. */
-  fully_rated: boolean
   /** UTC instant, serialised without a `Z` suffix. */
   synced_at: string
+
+  // Result
+  home_score: number | null
+  away_score: number | null
+  /**
+   * Null until the match is settled. The value set is not published in the
+   * schema and no settled fixture existed to sample, so this stays a string.
+   */
+  actual_result: string | null
+
+  /**
+   * Whether the prediction is withheld. True on every teaser, and the signal
+   * the upsell is rendered from — never infer it from a missing field.
+   */
+  locked: boolean
+}
+
+/**
+ * A free account's unlocked fixture: the 1X2 call, and nothing about the
+ * market. Odds are a paid line, so there is no pricing here at all.
+ */
+export interface FreeFixture extends TeaserFixture {
+  home_win_prob: number
+  draw_prob: number
+  away_win_prob: number
+}
+
+/**
+ * Everything the model publishes. Pro and Elite receive byte-identical
+ * payloads — Elite buys API access, not more data.
+ *
+ * Scale note: `ev_*` and `best_overall_ev` are **0–1 fractions**, not
+ * percentages — a live payload carries `ev_away: 0.0617` for a +6.17% edge.
+ * So are `kelly_*` and every `*_prob`. Only `roi_pct` and `hit_rate_pct` on the
+ * stats payload are already on a 0–100 scale.
+ *
+ * Within this shape the old rule still holds: everything under Prediction is
+ * present, and everything under Pricing and Picks is null whenever the fixture
+ * could not be priced.
+ */
+export interface FullFixture extends FreeFixture {
+  // Provenance
+  /** False means at least one club fell back to a prior Elo. A much weaker claim. */
+  fully_rated: boolean
   /** Whether an odds event matched at all. Individual markets can still be null. */
   odds_coverage: boolean
+
+  /**
+   * Data quality vetoes decisiveness: a 0.95 built on a prior bands `low`, not
+   * high. Expect most fixtures to sit at medium until odds land.
+   */
+  confidence: Confidence
+  /** Plain sentences, renderable as-is. */
+  confidence_reasons: string[]
 
   // Prediction
   home_xg: number
@@ -117,9 +168,6 @@ export interface Fixture {
   away_elo: number | null
   home_elo_source: EloSource | null
   away_elo_source: EloSource | null
-  home_win_prob: number
-  draw_prob: number
-  away_win_prob: number
   over_1_5: number
   over_2_5: number
   over_3_5: number
@@ -175,16 +223,17 @@ export interface Fixture {
   best_overall_prob: number | null
   best_overall_ev: number | null
   best_overall_kelly: number | null
-
-  // Result
-  home_score: number | null
-  away_score: number | null
-  /**
-   * Null until the match is settled. The value set is not published in the
-   * schema and no settled fixture existed to sample, so this stays a string.
-   */
-  actual_result: string | null
 }
+
+/**
+ * A fixture in whichever of the three shapes the caller was entitled to.
+ *
+ * Gated fields are **absent from the JSON, never null**, so narrowing is done
+ * with the `in` operator — see `utils/entitlement`. Optional chaining on a
+ * missing key silently yields `undefined` and a blank cell; `null` means
+ * something else entirely, namely that no market was offered.
+ */
+export type Fixture = TeaserFixture | FreeFixture | FullFixture
 
 /** The three dates the API currently considers live. Never derive these client-side. */
 export interface ThreeDayWindow {

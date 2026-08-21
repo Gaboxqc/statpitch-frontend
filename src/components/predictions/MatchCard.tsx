@@ -8,6 +8,7 @@ import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index
 import TeamCrest from '../ui/TeamCrest'
 import ReliabilityBadge from '../ui/ReliabilityBadge'
 import { buildPredictionView } from '../../utils/predictionView'
+import { hasFullDetail, hasProbabilities } from '../../utils/entitlement'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
 import { describeKickoff } from '../../utils/datetime'
 import { competitionName } from '../../constants/competitions'
@@ -24,9 +25,11 @@ const SHELL: Record<PredictionView['state'], string> = {
   actionable: 'border-primary/40',
   settled: 'border-line',
   forecast: 'border-line',
+  locked: 'border-line',
 }
 
-function TeamRow({ name, crest, xg }: { name: string; crest: string | null; xg: number }) {
+/** `xg` is null when the payload withholds it, and then the line is absent. */
+function TeamRow({ name, crest, xg }: { name: string; crest: string | null; xg: number | null }) {
   return (
     <li className={'flex min-w-0 items-center gap-2'}>
       <TeamCrest name={name} url={crest} />
@@ -36,9 +39,11 @@ function TeamRow({ name, crest, xg }: { name: string; crest: string | null; xg: 
         <p className={'text-sm font-medium'} title={name}>
           {displayName(name)}
         </p>
-        <p className={'text-xs text-ink-subtle shrink-0'}>
-          xG <span className={'numeric text-ink-muted'}>{formatDecimal(xg)}</span>
-        </p>
+        {xg !== null && (
+          <p className={'text-xs text-ink-subtle shrink-0'}>
+            xG <span className={'numeric text-ink-muted'}>{formatDecimal(xg)}</span>
+          </p>
+        )}
       </div>
     </li>
   )
@@ -52,6 +57,11 @@ function TeamRow({ name, crest, xg }: { name: string; crest: string | null; xg: 
  */
 function Verdict({ fixture, view }: { fixture: Fixture; view: PredictionView }) {
   if (view.state === 'settled') return <FinalScore fixture={fixture} />
+
+  // The slot still has to say something, or a locked card reads as one that
+  // failed to load.
+  if (view.state === 'locked' || view.winner === null)
+    return <p className={'eyebrow shrink-0 text-ink-subtle'}>Locked</p>
 
   if (view.state === 'actionable') {
     return (
@@ -79,8 +89,13 @@ function Verdict({ fixture, view }: { fixture: Fixture; view: PredictionView }) 
   return <DonutChart value={view.winner.prob} size={44} />
 }
 
-/** Why there is nothing to place, said once, where the pick would have been. */
+/**
+ * Why there is nothing to place, said once, where the pick would have been.
+ * Both answers are about the market, so neither is sayable without it.
+ */
 function ForecastNote({ fixture }: { fixture: Fixture }) {
+  if (!hasFullDetail(fixture)) return null
+
   return fixture.odds_coverage ? (
     <p
       className={'eyebrow shrink-0 text-ink-subtle'}
@@ -101,6 +116,8 @@ function ForecastNote({ fixture }: { fixture: Fixture }) {
 function MatchCard({ prediction }: { prediction: Fixture }) {
   const [isOpened, setIsOpened] = useState(false)
   const view = buildPredictionView(prediction)
+  const predicted = hasProbabilities(prediction) ? prediction : null
+  const full = hasFullDetail(prediction) ? prediction : null
   const kickoff = describeKickoff(prediction)
   const marketsId = useId()
   const toggle = () => setIsOpened((prev) => !prev)
@@ -143,17 +160,19 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
           <TeamRow
             name={prediction.home_team}
             crest={prediction.home_crest_url}
-            xg={prediction.home_xg}
+            xg={full ? full.home_xg : null}
           />
           <TeamRow
             name={prediction.away_team}
             crest={prediction.away_crest_url}
-            xg={prediction.away_xg}
+            xg={full ? full.away_xg : null}
           />
         </ul>
 
         <div className={'flex shrink-0 items-center gap-3'}>
-          <ProbabilityTiles prediction={prediction} winner={view.winner} variant={'compact'} />
+          {predicted && view.winner && (
+            <ProbabilityTiles prediction={predicted} winner={view.winner} variant={'compact'} />
+          )}
           <Verdict fixture={prediction} view={view} />
           <button
             type='button'
@@ -171,7 +190,9 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
         </div>
       </div>
 
-      <ProbabilityTiles prediction={prediction} winner={view.winner} variant={'wide'} />
+      {predicted && view.winner && (
+        <ProbabilityTiles prediction={predicted} winner={view.winner} variant={'wide'} />
+      )}
 
       <FixtureDetail
         id={marketsId}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { defaultSort, sortFixtures } from './sortFixtures'
-import { fixtureFixture } from '../test/fixtures'
+import { fixtureFixture, teaserFixtureFixture } from '../test/fixtures'
 import type { Fixture } from '../types/api'
 
 const make = (id: number, over: Partial<Fixture>): Fixture => ({ ...fixtureFixture, id, ...over })
@@ -99,5 +99,30 @@ describe('defaultSort', () => {
   it('ranks by stake once the list is filtered to value bets', () => {
     expect(defaultSort(true)).toBe('stake')
     expect(defaultSort(false)).toBe('kickoff')
+  })
+})
+
+describe('sorting a list that mixes shapes', () => {
+  /**
+   * A withheld figure is missing, not small. Coercing it to zero would file a
+   * locked fixture among the worst edges in the list, where it would look like
+   * a judgement the model never made.
+   */
+  it('sorts a locked fixture to the end of every ranked order', () => {
+    const locked = { ...teaserFixtureFixture, id: 9, commence_time: '2026-08-19T13:00:00' }
+    const list = [locked, make(1, { best_overall_kelly: 0.04, best_overall_ev: 0.08 })]
+
+    expect(ids(sortFixtures(list, 'stake'))).toEqual([1, 9])
+    expect(ids(sortFixtures(list, 'edge'))).toEqual([1, 9])
+    expect(ids(sortFixtures(list, 'confidence'))).toEqual([1, 9])
+  })
+
+  // Kick-off is published on every shape, so this is the one order in which a
+  // locked fixture competes on equal terms.
+  it('still ranks it on kick-off, which is never withheld', () => {
+    const locked = { ...teaserFixtureFixture, id: 9, commence_time: '2026-08-19T13:00:00' }
+    const list = [make(1, { commence_time: '2026-08-19T21:00:00' }), locked]
+
+    expect(ids(sortFixtures(list, 'kickoff'))).toEqual([9, 1])
   })
 })

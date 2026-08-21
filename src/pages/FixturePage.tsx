@@ -8,22 +8,25 @@ import { ShortArrowIcon } from '../assets/icons/index'
 import { useFixture } from '../hooks/queries'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { buildPredictionView, certainty } from '../utils/predictionView'
+import { hasFullDetail, hasProbabilities } from '../utils/entitlement'
 import { describeKickoffLong } from '../utils/datetime'
 import { competitionName } from '../constants/competitions'
 import { displayName } from '../utils/teamName'
 import { formatDecimal, formatFraction } from '../utils/format'
 import type { Fixture } from '../types/api'
 
-function Side({ name, crest, xg }: { name: string; crest: string | null; xg: number }) {
+function Side({ name, crest, xg }: { name: string; crest: string | null; xg: number | null }) {
   return (
     <div className={'flex min-w-0 flex-1 flex-col items-center gap-2 text-center'}>
       <TeamCrest name={name} url={crest} className={'w-16 h-16'} />
       <p className={'text-sm font-medium'} title={name}>
         {displayName(name)}
       </p>
-      <p className={'text-xs text-ink-subtle'}>
-        xG <span className={'numeric text-ink-muted'}>{formatDecimal(xg)}</span>
-      </p>
+      {xg !== null && (
+        <p className={'text-xs text-ink-subtle'}>
+          xG <span className={'numeric text-ink-muted'}>{formatDecimal(xg)}</span>
+        </p>
+      )}
     </div>
   )
 }
@@ -31,7 +34,9 @@ function Side({ name, crest, xg }: { name: string; crest: string | null; xg: num
 function Loaded({ fixture }: { fixture: Fixture }) {
   const view = buildPredictionView(fixture)
   const kickoff = describeKickoffLong(fixture)
-  const matchCertainty = certainty(fixture)
+  const predicted = hasProbabilities(fixture) ? fixture : null
+  const full = hasFullDetail(fixture) ? fixture : null
+  const matchCertainty = predicted ? certainty(predicted) : null
 
   return (
     <>
@@ -52,21 +57,41 @@ function Loaded({ fixture }: { fixture: Fixture }) {
 
       <section className={'flex flex-col gap-6 rounded-lg border border-line bg-card p-6'}>
         <div className={'flex items-start justify-center gap-4'}>
-          <Side name={fixture.home_team} crest={fixture.home_crest_url} xg={fixture.home_xg} />
+          <Side
+            name={fixture.home_team}
+            crest={fixture.home_crest_url}
+            xg={full ? full.home_xg : null}
+          />
           <p className={'eyebrow pt-6 text-ink-subtle'}>vs</p>
-          <Side name={fixture.away_team} crest={fixture.away_crest_url} xg={fixture.away_xg} />
+          <Side
+            name={fixture.away_team}
+            crest={fixture.away_crest_url}
+            xg={full ? full.away_xg : null}
+          />
         </div>
 
-        <ProbabilityTiles prediction={fixture} winner={view.winner} variant={'wide'} />
+        {predicted && view.winner && (
+          <ProbabilityTiles prediction={predicted} winner={view.winner} variant={'wide'} />
+        )}
 
-        <p className={'text-xs text-ink-muted'}>
-          {matchCertainty.label}
-          <span className={'text-ink-subtle'}>
-            {' · '}
-            <span className={'numeric'}>{formatFraction(matchCertainty.margin, 0)}</span> clear of
-            the next outcome
-          </span>
-        </p>
+        {matchCertainty && (
+          <p className={'text-xs text-ink-muted'}>
+            {matchCertainty.label}
+            <span className={'text-ink-subtle'}>
+              {' · '}
+              <span className={'numeric'}>{formatFraction(matchCertainty.margin, 0)}</span> clear of
+              the next outcome
+            </span>
+          </p>
+        )}
+
+        {/* The prediction itself is what a subscription buys, so its absence is
+            stated plainly here rather than left as a gap on the page. */}
+        {fixture.locked && (
+          <p className={'text-xs text-ink-subtle'}>
+            The prediction for this fixture is not part of your plan.
+          </p>
+        )}
       </section>
 
       {/* Nothing to expand: the page exists to show all of it at once. */}

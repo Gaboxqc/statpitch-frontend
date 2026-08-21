@@ -1,6 +1,7 @@
 import { didMarketWin } from '../../utils/settleMarket'
 import { MARKET_LABELS } from '../../utils/buildMarkets'
 import { displayName } from '../../utils/teamName'
+import { hasFullDetail } from '../../utils/entitlement'
 import type { Fixture } from '../../types/api'
 
 interface FinalScoreProps {
@@ -14,8 +15,12 @@ interface FinalScoreProps {
  * showing yesterday at all, so it is settled from the score rather than hidden.
  */
 function FinalScore({ fixture, variant = 'badge' }: FinalScoreProps) {
-  const { home_score: home, away_score: away, best_overall_bet: pick } = fixture
+  const { home_score: home, away_score: away } = fixture
   if (home === null || away === null) return null
+
+  // The result is public on every shape. Which selection was published against
+  // it is not, so a locked fixture shows the score and stops there.
+  const pick = hasFullDetail(fixture) ? fixture.best_overall_bet : null
 
   const won = pick ? didMarketWin(pick, home, away) : null
 

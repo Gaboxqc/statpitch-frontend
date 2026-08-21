@@ -1,4 +1,4 @@
-import type { Fixture, SettledBet, Stats } from '../types/api'
+import type { FreeFixture, FullFixture, SettledBet, Stats, TeaserFixture } from '../types/api'
 
 /**
  * Modelled on a real `/statpitch/fixtures/tomorrow` payload, then made
@@ -7,7 +7,7 @@ import type { Fixture, SettledBet, Stats } from '../types/api'
  * away side carries a positive EV that still produced no pick because Kelly
  * stayed null, and one EV is exactly zero.
  */
-export const fixtureFixture: Fixture = {
+export const fixtureFixture: FullFixture = {
   id: 2,
   fixture_id: 'ESP.LALIGA|2026-2027|Club Atlético de Madrid|Málaga CF',
   competition_id: 'ESP.LALIGA',
@@ -32,6 +32,15 @@ export const fixtureFixture: Fixture = {
   fully_rated: true,
   synced_at: '2026-08-18T07:42:06.933578',
   odds_coverage: true,
+  locked: false,
+
+  // Both clubs measured, one outcome past 70%, and a price to compare it to.
+  confidence: 'high',
+  confidence_reasons: [
+    'Both clubs carry a measured Elo rating.',
+    'One outcome is at or above 70%.',
+    'A bookmaker price was available to compare against.',
+  ],
 
   home_xg: 2.385954617038303,
   away_xg: 0.7715170310006697,
@@ -142,7 +151,7 @@ export const fixtureFixture: Fixture = {
 }
 
 /** A fixture that did carry a qualifying pick, so the betting UI has something to render. */
-export const pickedFixtureFixture: Fixture = {
+export const pickedFixtureFixture: FullFixture = {
   ...fixtureFixture,
   id: 3,
   fixture_id: 'ENG.PL|2026-2027|Arsenal FC|Everton FC',
@@ -167,7 +176,7 @@ export const pickedFixtureFixture: Fixture = {
  * No odds event matched, so every pricing field is null while the prediction
  * stays fully populated. This is a normal state, not an error.
  */
-export const unpricedFixtureFixture: Fixture = {
+export const unpricedFixtureFixture: FullFixture = {
   ...fixtureFixture,
   id: 4,
   fixture_id: 'UEFA.UCL|2026-2027|Feyenoord|Sparta Praha',
@@ -184,6 +193,12 @@ export const unpricedFixtureFixture: Fixture = {
   away_elo: null,
   away_elo_source: 'pooled_prior',
   prediction_source: 'elo-poisson',
+  // Data quality vetoes decisiveness however lopsided the numbers look.
+  confidence: 'low',
+  confidence_reasons: [
+    'Sparta Praha had no measured Elo rating.',
+    'The weaker fallback model produced these numbers.',
+  ],
   odds_home: null,
   odds_draw: null,
   odds_away: null,
@@ -192,8 +207,95 @@ export const unpricedFixtureFixture: Fixture = {
   ev_away: null,
 }
 
+/**
+ * What an anonymous visitor, or a free account that has not spent an unlock,
+ * actually receives — taken key-for-key from a live `/fixtures/today` call.
+ *
+ * Built by deletion rather than by hand so it cannot drift from the full
+ * payload above, and asserted against the real key count so that a field added
+ * upstream fails here rather than silently widening the teaser.
+ */
+function teaserOf(full: FullFixture): TeaserFixture {
+  const {
+    id,
+    fixture_id,
+    competition_id,
+    season,
+    stage,
+    format,
+    match_date,
+    source_date,
+    kickoff,
+    commence_time,
+    date_confirmed,
+    home_team,
+    away_team,
+    neutral_venue,
+    home_crest_url,
+    away_crest_url,
+    prediction_source,
+    model_version,
+    synced_at,
+    home_score,
+    away_score,
+    actual_result,
+  } = full
+
+  return {
+    id,
+    fixture_id,
+    competition_id,
+    season,
+    stage,
+    format,
+    match_date,
+    source_date,
+    kickoff,
+    commence_time,
+    date_confirmed,
+    home_team,
+    away_team,
+    neutral_venue,
+    home_crest_url,
+    away_crest_url,
+    prediction_source,
+    model_version,
+    synced_at,
+    home_score,
+    away_score,
+    actual_result,
+    locked: true,
+  }
+}
+
+/** 23 keys, `locked: true`, and no prediction of any kind. */
+export const teaserFixtureFixture: TeaserFixture = teaserOf(fixtureFixture)
+
+/**
+ * A free account's unlocked fixture: 26 keys — the teaser plus the 1X2 call,
+ * and nothing about the market. This is also the shape Match of the Day
+ * returns to everyone, including anonymous visitors.
+ */
+export const freeFixtureFixture: FreeFixture = {
+  ...teaserOf(fixtureFixture),
+  locked: false,
+  home_win_prob: fixtureFixture.home_win_prob,
+  draw_prob: fixtureFixture.draw_prob,
+  away_win_prob: fixtureFixture.away_win_prob,
+}
+
+/** A locked fixture that has already been played — the score is never withheld. */
+export const settledTeaserFixture: TeaserFixture = {
+  ...teaserOf(fixtureFixture),
+  id: 6,
+  match_date: '2026-08-17',
+  home_score: 2,
+  away_score: 0,
+  actual_result: 'home_win',
+}
+
 /** A finished match, with the score and result the ledger settled against. */
-export const settledFixtureFixture: Fixture = {
+export const settledFixtureFixture: FullFixture = {
   ...pickedFixtureFixture,
   id: 5,
   match_date: '2026-08-17',

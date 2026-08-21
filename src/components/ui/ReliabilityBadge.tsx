@@ -26,7 +26,9 @@ interface ReliabilityBadgeProps {
  * showing the top outcome's probability, which says nothing about any of them.
  */
 function ReliabilityBadge({ fixture, showWhenClean = false }: ReliabilityBadgeProps) {
-  const { level, label, hint } = reliability(fixture)
+  const rated = reliability(fixture)
+  if (rated === null) return null
+  const { level, label, hint } = rated
   if (level === 'measured' && !showWhenClean) return null
 
   return (
