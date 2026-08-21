@@ -1,10 +1,15 @@
 import { LogoIcon, MenuIcon } from '../../assets/icons/index'
 import { useId, useState } from 'react'
 import { Link, NavLink } from 'react-router'
+import { useAccount, useLogout } from '../../hooks/useAccount'
+
+const TIER_LABELS = { free: 'Free', pro: 'Pro', elite: 'Elite' } as const
 
 function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
   const menuId = useId()
+  const { account, tier, isSignedIn, loading } = useAccount()
+  const signOut = useLogout()
   const linkBase = 'py-1.5 text-sm border-b-2 transition-[color,border-color]'
   const activeClass = 'border-primary text-ink'
   const inactiveClass = 'border-transparent text-ink-muted hover:text-ink'
@@ -43,9 +48,18 @@ function Navbar() {
           </div>
 
           <div className={'flex gap-4 items-center'}>
-            <Link to={'/login'} className={'text-sm text-ink-muted hover:text-ink'}>
-              Sign in
-            </Link>
+            {/* Nothing until the first /me settles: guessing wrong here flashes
+                the wrong identity at somebody who is already signed in. */}
+            {!loading && !isSignedIn && (
+              <Link to={'/login'} className={'text-sm text-ink-muted hover:text-ink'}>
+                Sign in
+              </Link>
+            )}
+            {isSignedIn && (
+              <span className={'hidden md:inline text-sm text-ink-muted'} title={account?.email}>
+                {TIER_LABELS[tier]}
+              </span>
+            )}
             <button
               className={'border border-line-strong rounded-md p-1 bg-secondary md:hidden'}
               onClick={() => setIsOpened((prev) => !prev)}
@@ -56,14 +70,28 @@ function Navbar() {
             >
               <MenuIcon className={'h-6 w-6 text-ink-muted'} />
             </button>
-            <Link
-              to={'/login?new=1'}
-              className={
-                'bg-primary text-secondary text-sm font-semibold rounded-md py-1.5 px-3 md:block hidden'
-              }
-            >
-              Get started
-            </Link>
+            {!loading &&
+              (isSignedIn ? (
+                <button
+                  type='button'
+                  onClick={() => signOut.mutate()}
+                  disabled={signOut.isPending}
+                  className={
+                    'border border-line-strong text-ink-muted hover:text-ink text-sm rounded-md py-1.5 px-3 md:block hidden cursor-pointer disabled:cursor-progress'
+                  }
+                >
+                  Sign out
+                </button>
+              ) : (
+                <Link
+                  to={'/login?new=1'}
+                  className={
+                    'bg-primary text-secondary text-sm font-semibold rounded-md py-1.5 px-3 md:block hidden'
+                  }
+                >
+                  Get started
+                </Link>
+              ))}
           </div>
         </div>
 
@@ -99,16 +127,33 @@ function Navbar() {
           >
             Pricing
           </NavLink>
-          <Link
-            to={'/login?new=1'}
-            key={'login'}
-            className={
-              'bg-primary w-full p-2 rounded-md text-background text-center text-sm font-semibold'
-            }
-            onClick={() => setIsOpened(false)}
-          >
-            Get started free
-          </Link>
+          {!loading &&
+            (isSignedIn ? (
+              <button
+                type='button'
+                onClick={() => {
+                  setIsOpened(false)
+                  signOut.mutate()
+                }}
+                disabled={signOut.isPending}
+                className={
+                  'border border-line-strong text-ink-muted w-full p-2 rounded-md text-center text-sm cursor-pointer disabled:cursor-progress'
+                }
+              >
+                Sign out
+              </button>
+            ) : (
+              <Link
+                to={'/login?new=1'}
+                key={'login'}
+                className={
+                  'bg-primary w-full p-2 rounded-md text-background text-center text-sm font-semibold'
+                }
+                onClick={() => setIsOpened(false)}
+              >
+                Get started free
+              </Link>
+            ))}
         </div>
       </nav>
     </header>
