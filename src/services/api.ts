@@ -1,6 +1,7 @@
 import axios from 'axios'
 import type { InternalAxiosRequestConfig } from 'axios'
 import { getCsrfToken, setCsrfToken } from './session'
+import { setQuota } from './quota'
 
 /**
  * The upstream prediction service runs on an instance that sleeps, and the API
@@ -34,6 +35,17 @@ declare module 'axios' {
     skipCsrfRecovery?: boolean
   }
 }
+
+/**
+ * The quota rides on every fixture response, including the one that spends it.
+ * Recording it here means the counter is current whichever call last ran,
+ * rather than only after the list happens to refetch.
+ */
+api.interceptors.response.use((response) => {
+  const remaining = predictionsRemaining(response.headers)
+  if (remaining !== null) setQuota(remaining)
+  return response
+})
 
 api.interceptors.request.use((config) => {
   const token = getCsrfToken()

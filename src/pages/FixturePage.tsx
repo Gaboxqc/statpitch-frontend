@@ -4,6 +4,7 @@ import ProbabilityTiles from '../components/ui/ProbabilityTiles'
 import ReliabilityBadge from '../components/ui/ReliabilityBadge'
 import FixtureDetail from '../components/predictions/FixtureDetail'
 import QueryError from '../components/ui/QueryError'
+import Upsell from '../components/ui/Upsell'
 import { ShortArrowIcon } from '../assets/icons/index'
 import { useFixture } from '../hooks/queries'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -85,12 +86,15 @@ function Loaded({ fixture }: { fixture: Fixture }) {
           </p>
         )}
 
-        {/* The prediction itself is what a subscription buys, so its absence is
-            stated plainly here rather than left as a gap on the page. */}
+        {/* The prediction itself is what the plan buys, so its absence is
+            stated plainly rather than left as a gap on the page. */}
         {fixture.locked && (
-          <p className={'text-xs text-ink-subtle'}>
-            The prediction for this fixture is not part of your plan.
-          </p>
+          <Upsell
+            title={'The prediction for this fixture is locked.'}
+            detail={
+              'Win, draw and away probabilities, the market breakdown and the model’s own reasoning.'
+            }
+          />
         )}
       </section>
 
@@ -133,11 +137,15 @@ function FixturePage() {
       {loading && <div className={'h-64 animate-pulse rounded-lg bg-secondary'} />}
       {error && <QueryError error={error} />}
 
-      {/* Fixtures are pruned three days after kick-off, so a link that worked
-          last week is gone rather than broken. */}
+      {/* Two different fixtures answer 404 here and the API will not say which:
+          one pruned three days after kick-off, one in a competition outside the
+          reader's plan. That is deliberate — a 403 would confirm the fixture
+          exists, and which fixtures exist in the other seven competitions is
+          part of what Pro is selling. So this states the fact and offers the
+          likely reason without asserting it, and never turns into an upsell. */}
       {!loading && !error && !fixture && (
         <p className={'py-12 text-center text-sm text-ink-muted'}>
-          This fixture is no longer published. The window holds yesterday, today and tomorrow.
+          This fixture is not available. The published window holds yesterday, today and tomorrow.
         </p>
       )}
 
