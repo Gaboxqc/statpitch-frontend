@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import FixtureDetail from './FixtureDetail'
 import { buildPredictionView } from '../../utils/predictionView'
-import { fixtureFixture, settledFixtureFixture, unpricedFixtureFixture } from '../../test/fixtures'
+import {
+  fixtureFixture,
+  settledFixtureFixture,
+  teaserFixtureFixture,
+  unpricedFixtureFixture,
+} from '../../test/fixtures'
 import type { Fixture } from '../../types/api'
 
 const renderDetail = (fixture: Fixture) => {
@@ -50,14 +55,24 @@ describe('FixtureDetail', () => {
     expect(screen.getByText('Matchday 1 · Round robin')).toBeInTheDocument()
   })
 
-  // A prediction from a pooled prior is a much weaker claim than the same
-  // number from a measured rating, and nothing else on the card says so.
+  /**
+   * A prediction from a pooled prior is a much weaker claim than the same
+   * number from a measured rating. This panel used to say so in a sentence of
+   * its own, directly above the API saying it better — naming the club. The
+   * evidence stayed; the duplicate prose did not.
+   */
   it('flags a fixture that fell back to a prior Elo', () => {
     renderDetail(unpricedFixtureFixture)
 
-    expect(screen.getByText(/fell back to a prior/i)).toBeInTheDocument()
     expect(screen.getByText(/pooled prior/i)).toBeInTheDocument()
     expect(screen.getByText(/elo-poisson fallback/i)).toBeInTheDocument()
+    expect(screen.getByText(/had no measured Elo rating/i)).toBeInTheDocument()
+  })
+
+  it('says it once rather than twice', () => {
+    renderDetail(unpricedFixtureFixture)
+
+    expect(screen.queryByText(/fell back to a prior/i)).not.toBeInTheDocument()
   })
 
   it('settles the published pick against the final score', () => {
@@ -72,5 +87,34 @@ describe('FixtureDetail', () => {
   it('says nothing about a result before the match is played', () => {
     renderDetail(fixtureFixture)
     expect(screen.queryByRole('heading', { name: /^result$/i })).not.toBeInTheDocument()
+  })
+})
+
+describe('the confidence panel', () => {
+  /**
+   * The reasons are plain sentences the API wrote to be read. Behind a tooltip
+   * they are out of reach of touch and keyboard both, and the panel has room.
+   */
+  it('reads out the reasons rather than hiding them in a title', () => {
+    renderDetail(unpricedFixtureFixture)
+
+    for (const reason of unpricedFixtureFixture.confidence_reasons) {
+      expect(screen.getByText(reason)).toBeInTheDocument()
+    }
+  })
+
+  it('names the band alongside them', () => {
+    renderDetail(unpricedFixtureFixture)
+
+    const panel = screen.getByRole('heading', { name: /^confidence$/i }).parentElement
+    expect(within(panel as HTMLElement).getByText('Low')).toBeInTheDocument()
+  })
+
+  // The band is part of what a subscription buys, so it is absent rather than
+  // guessed at when the payload does not carry it.
+  it('is absent from a withheld payload', () => {
+    renderDetail(teaserFixtureFixture)
+
+    expect(screen.queryByRole('heading', { name: /^confidence$/i })).not.toBeInTheDocument()
   })
 })

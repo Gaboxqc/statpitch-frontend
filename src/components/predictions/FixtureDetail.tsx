@@ -4,7 +4,37 @@ import ExplanationBreakdown from './ExplanationBreakdown'
 import FixtureMeta from './FixtureMeta'
 import FinalScore from './FinalScore'
 import { hasFullDetail } from '../../utils/entitlement'
-import type { Fixture, Market, MarketKey } from '../../types/api'
+import { BAND_STYLE } from '../../utils/confidence'
+import type { Confidence, Fixture, Market, MarketKey } from '../../types/api'
+
+const BAND_LABELS: Record<Confidence, string> = { low: 'Low', medium: 'Medium', high: 'High' }
+
+/**
+ * The API's own account of how much this prediction is worth, in its own
+ * sentences. They are written to be rendered as they arrive, so they are — a
+ * tooltip would put them out of reach of touch and keyboard both.
+ */
+function ConfidenceReasons({ band, reasons }: { band: Confidence; reasons: string[] }) {
+  return (
+    <section className={'flex w-full flex-col gap-2'}>
+      <h3 className={'eyebrow text-ink-subtle'}>Confidence</h3>
+      <p>
+        <span className={`eyebrow rounded-md border py-0.5 px-2 ${BAND_STYLE[band]}`}>
+          {BAND_LABELS[band]}
+        </span>
+      </p>
+      {reasons.length > 0 && (
+        <ul className={'flex flex-col gap-1'}>
+          {reasons.map((reason) => (
+            <li key={reason} className={'text-xs text-ink-muted'}>
+              {reason}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
 
 interface FixtureDetailProps {
   fixture: Fixture
@@ -44,6 +74,8 @@ function FixtureDetail({ fixture, markets, bestBet, isOpened, id }: FixtureDetai
         )}
         <FixtureMeta fixture={fixture} />
       </div>
+
+      {full && <ConfidenceReasons band={full.confidence} reasons={full.confidence_reasons} />}
 
       {full && (
         <ExplanationBreakdown

@@ -91,12 +91,10 @@ function FixtureMeta({ fixture }: { fixture: Fixture }) {
         <Row label={'Updated'}>{formatRelativeTime(fixture.synced_at)}</Row>
       </dl>
 
-      {rated && !rated.fully_rated && (
-        <p className={'text-xs text-ink-subtle'}>
-          At least one club had no measured Elo and fell back to a prior. The prediction is still
-          well formed, but it is a weaker claim than a fully rated fixture.
-        </p>
-      )}
+      {/* The prior standing in for a measured Elo used to be spelled out here.
+          The API now says the same thing in its confidence reasons, in the same
+          panel, and names the club while doing it — so the row above carries
+          the evidence and the sentence is left to whoever says it better. */}
     </section>
   )
 }

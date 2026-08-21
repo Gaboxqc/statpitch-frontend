@@ -10,7 +10,7 @@ import { useId, useState } from 'react'
 import FixtureDetail from './FixtureDetail'
 import QueryError from '../ui/QueryError'
 import TeamCrest from '../ui/TeamCrest'
-import ReliabilityBadge from '../ui/ReliabilityBadge'
+import ConfidenceBadge from '../ui/ConfidenceBadge'
 import {
   formatDecimal,
   formatFraction,
@@ -232,7 +232,7 @@ function MatchDayCard() {
                   </span>
                 </p>
                 <div className={'flex flex-wrap items-center gap-2 text-xs text-ink-subtle'}>
-                  <ReliabilityBadge fixture={prediction} showWhenClean={true} />
+                  <ConfidenceBadge fixture={prediction} showWhenClean={true} />
                   <span className={'numeric'} title={prediction.model_version}>
                     {shortModelVersion(prediction.model_version)}
                   </span>

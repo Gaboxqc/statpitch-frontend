@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router'
 import TeamCrest from '../components/ui/TeamCrest'
 import ProbabilityTiles from '../components/ui/ProbabilityTiles'
-import ReliabilityBadge from '../components/ui/ReliabilityBadge'
+import ConfidenceBadge from '../components/ui/ConfidenceBadge'
 import FixtureDetail from '../components/predictions/FixtureDetail'
 import QueryError from '../components/ui/QueryError'
 import Upsell from '../components/ui/Upsell'
@@ -48,7 +48,7 @@ function Loaded({ fixture }: { fixture: Fixture }) {
           <time dateTime={kickoff.dateTime} className={'numeric'}>
             {kickoff.text}
           </time>
-          <ReliabilityBadge fixture={fixture} showWhenClean={true} />
+          <ConfidenceBadge fixture={fixture} showWhenClean={true} />
         </div>
         <h1 className={'text-xl font-semibold'}>
           {displayName(fixture.home_team)} <span className={'text-ink-subtle'}>versus</span>{' '}

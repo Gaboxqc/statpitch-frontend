@@ -6,7 +6,7 @@ import FixtureDetail from './FixtureDetail'
 import FinalScore from './FinalScore'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import TeamCrest from '../ui/TeamCrest'
-import ReliabilityBadge from '../ui/ReliabilityBadge'
+import ConfidenceBadge from '../ui/ConfidenceBadge'
 import Upsell from '../ui/Upsell'
 import { buildPredictionView } from '../../utils/predictionView'
 import { hasFullDetail, hasProbabilities } from '../../utils/entitlement'
@@ -133,7 +133,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
         <p className={'truncate'}>{competitionName(prediction.competition_id)}</p>
 
         <div className={'flex shrink-0 items-center gap-3'}>
-          <ReliabilityBadge fixture={prediction} />
+          <ConfidenceBadge fixture={prediction} />
           {view.state === 'forecast' && <ForecastNote fixture={prediction} />}
           <span className={'flex items-center gap-1 text-ink-subtle'}>
             <ClockIcon className={'h-4 w-4'} />
