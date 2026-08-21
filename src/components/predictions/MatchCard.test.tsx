@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { screen, within } from '@testing-library/react'
+import * as accounts from '../../services/accounts'
 import MatchCard from './MatchCard'
 import { renderWithQuery } from '../../test/renderWithQuery'
 import {
@@ -13,6 +14,8 @@ import {
 } from '../../test/fixtures'
 
 const card = () => screen.getByRole('article')
+
+afterEach(() => vi.restoreAllMocks())
 
 /**
  * The three states used to render as near-identical cards separated by a small
@@ -83,9 +86,18 @@ describe('MatchCard across the payload shapes', () => {
 
   // The slot has to say something, or the card reads as one that failed to load.
   it('says the prediction is locked rather than leaving the verdict empty', () => {
+    vi.spyOn(accounts, 'getMe').mockReturnValue(new Promise(() => null))
     renderWithQuery(<MatchCard prediction={teaserFixtureFixture} />)
 
     expect(within(card()).getByText('Locked')).toBeInTheDocument()
+  })
+
+  // Once it is known who is asking, the same slot becomes the way out of it.
+  it('turns the locked slot into the way out once the session is known', async () => {
+    vi.spyOn(accounts, 'getMe').mockResolvedValue(null)
+    renderWithQuery(<MatchCard prediction={teaserFixtureFixture} />)
+
+    expect(await within(card()).findByRole('link', { name: /sign up free/i })).toBeInTheDocument()
   })
 
   // Both answers are about the market, and a teaser has no market to describe.

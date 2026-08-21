@@ -1,5 +1,7 @@
 import { FilterIcon } from '../../assets/icons/index'
+import { Link } from 'react-router'
 import { useFixtures, useWindow } from '../../hooks/queries'
+import { useAccount } from '../../hooks/useAccount'
 import { CONFIDENCE_TIERS, DAYS, useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { countByDay } from '../../utils/filterFixtures'
 import { COMPETITIONS } from '../../constants/competitions'
@@ -41,6 +43,7 @@ function Pill({
 }
 
 function FiltersBar() {
+  const { isPro, loading: accountLoading } = useAccount()
   const { filters, setFilters } = useFixtureFilters()
   const { window } = useWindow()
   // Same query key as the list below, so this reads from cache rather than refetching.
@@ -110,13 +113,27 @@ function FiltersBar() {
           </select>
         </label>
 
-        <Pill
-          active={filters.valueBetsOnly}
-          onClick={() => setFilters({ valueBetsOnly: !filters.valueBetsOnly })}
-          label={'Only fixtures with a qualifying selection'}
-        >
-          Value bets only
-        </Pill>
+        {/* A qualifying selection is a fact about the market, and the market is
+            a paid line — so below Pro this filter could only ever empty the
+            list, and an empty list would read as "no value today" rather than
+            "not included". The control says which. */}
+        {accountLoading ? null : isPro ? (
+          <Pill
+            active={filters.valueBetsOnly}
+            onClick={() => setFilters({ valueBetsOnly: !filters.valueBetsOnly })}
+            label={'Only fixtures with a qualifying selection'}
+          >
+            Value bets only
+          </Pill>
+        ) : (
+          <Link
+            to={'/pricing'}
+            title={'Value bets are part of Pro'}
+            className={`${PILL} border-transparent text-ink-subtle hover:border-line`}
+          >
+            Value bets only · <span className={'text-primary'}>Pro</span>
+          </Link>
+        )}
       </div>
     </div>
   )

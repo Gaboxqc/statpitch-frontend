@@ -7,6 +7,7 @@ import FinalScore from './FinalScore'
 import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import TeamCrest from '../ui/TeamCrest'
 import ReliabilityBadge from '../ui/ReliabilityBadge'
+import Upsell from '../ui/Upsell'
 import { buildPredictionView } from '../../utils/predictionView'
 import { hasFullDetail, hasProbabilities } from '../../utils/entitlement'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
@@ -59,9 +60,8 @@ function Verdict({ fixture, view }: { fixture: Fixture; view: PredictionView }) 
   if (view.state === 'settled') return <FinalScore fixture={fixture} />
 
   // The slot still has to say something, or a locked card reads as one that
-  // failed to load.
-  if (view.state === 'locked' || view.winner === null)
-    return <p className={'eyebrow shrink-0 text-ink-subtle'}>Locked</p>
+  // failed to load. It is also the only place on this card with room to say it.
+  if (view.state === 'locked' || view.winner === null) return <Upsell variant={'inline'} />
 
   if (view.state === 'actionable') {
     return (

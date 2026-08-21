@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { getMe, login, logout, register } from '../services/accounts'
+import { clearQuota } from '../services/quota'
 import type { Account, Credentials, Tier } from '../types/account'
 
 /**
@@ -18,6 +19,9 @@ export const ACCOUNT_KEY = ['account'] as const
  * response and needs no round trip to confirm.
  */
 function resetEntitledData(queryClient: QueryClient, account: Account | null): void {
+  // The old count belonged to the old entitlement, and would otherwise sit
+  // there claiming three unlocks to somebody who just subscribed.
+  clearQuota()
   queryClient.setQueryData(ACCOUNT_KEY, account)
   void queryClient.invalidateQueries({
     predicate: (query) => query.queryKey[0] !== ACCOUNT_KEY[0],

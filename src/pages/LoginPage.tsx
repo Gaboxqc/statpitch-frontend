@@ -87,7 +87,7 @@ function LoginPage() {
           <div className={'flex flex-col gap-4 border-t border-line pt-12'}>
             <p className={'text-sm text-ink-subtle'}>
               Every selection is logged with the price it was taken at and settled against the final
-              result, so the ROI above is measured rather than promotional.
+              result, so the ROI we publish is measured rather than promotional.
             </p>
             <p className={'text-xs text-ink-subtle'}>
               For informational purposes only. StatPitch does not facilitate or endorse gambling.

@@ -1,6 +1,8 @@
 import { ArrowIcon, ChartIcon, InfoIcon, TrophyIcon } from '../../assets/icons/index'
 import { useFixtures, useStats } from '../../hooks/queries'
 import { useFixtureFilters } from '../../hooks/useFixtureFilters'
+import { useQuota } from '../../hooks/useQuota'
+import { useAccount } from '../../hooks/useAccount'
 import { buildStats } from '../../utils/buildStats'
 import { shortModelVersion } from '../../utils/format'
 import { formatRelativeTime } from '../../utils/datetime'
@@ -72,6 +74,31 @@ function latestSync(fixtures: Fixture[]): string | null {
   )
 }
 
+/**
+ * Unlocks left today. Running out is not an error — the fixture still returns,
+ * in teaser shape — so this is a countdown rather than a warning, and it says
+ * nothing at all until the API has reported a figure.
+ *
+ * Nothing for an anonymous visitor either, even though the API honestly reports
+ * zero: they have not spent three, they never had three, and "0 left" would
+ * describe a loss rather than an offer. The locked cards below already say what
+ * signing up is for.
+ */
+function QuotaChip() {
+  const remaining = useQuota()
+  const { isSignedIn } = useAccount()
+
+  if (!isSignedIn) return null
+  if (remaining === null || remaining === 'unlimited') return null
+
+  return (
+    <li className={`${SHELL} ${remaining === 0 ? 'border-line text-ink-muted' : EMPTY}`}>
+      <span className={'numeric text-sm font-semibold text-ink'}>{remaining}</span>
+      {remaining === 1 ? 'prediction left today' : 'predictions left today'}
+    </li>
+  )
+}
+
 function SummaryBar() {
   const { stats, loading } = useStats()
   const { filters, setFilters } = useFixtureFilters()
@@ -97,6 +124,8 @@ function SummaryBar() {
   const version = fixtures[0]?.model_version ?? null
   const synced = latestSync(fixtures)
 
+  // A 402 settles as an error rather than data, so the strip stops waiting and
+  // renders what it does have: the model line, and the quota.
   if (loading) return <div className={'h-11 bg-secondary border-b border-line animate-pulse'}></div>
 
   return (
@@ -111,6 +140,7 @@ function SummaryBar() {
               onSelect={() => toggle(item)}
             />
           ))}
+          <QuotaChip />
         </ul>
 
         <div className={'flex shrink-0 items-center gap-3'}>
