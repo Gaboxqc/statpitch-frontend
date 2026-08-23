@@ -1,33 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  approveTrialRequest,
-  declineTrialRequest,
-  listTrialRequests,
-  probeTrialRequests,
-} from '../services/admin'
-import type { TrialRequest, TrialRequestStatus } from '../types/admin'
+import { approveTrialRequest, declineTrialRequest, listTrialRequests } from '../services/admin'
+import type { TrialRequestStatus } from '../types/account'
+import type { AdminTrialRequest } from '../types/admin'
 
-const EMPTY: TrialRequest[] = []
-
-/**
- * Whether this build of the API serves the trial queue at all.
- *
- * The queue is in the published contract but not in the deployed
- * `/openapi.json`, so the frontend cannot assume either way. A 404 is an answer
- * rather than a failure — it means "not on this build" — and the surface hides
- * itself rather than offering a page that would only ever error.
- */
-export function useTrialRequestsAvailable() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['admin', 'trial-requests', 'available'],
-    queryFn: ({ signal }) => probeTrialRequests(signal),
-    // Endpoints do not appear mid-session; asking once per session is enough.
-    staleTime: Infinity,
-    retry: false,
-  })
-
-  return { available: data === true, loading: isLoading }
-}
+const EMPTY: AdminTrialRequest[] = []
 
 export function useTrialRequests(status?: TrialRequestStatus) {
   const { data, isLoading, error } = useQuery({

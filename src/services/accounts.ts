@@ -1,7 +1,14 @@
 import type { AxiosResponse } from 'axios'
 import { api, isUnauthenticated } from './api'
 import { setCsrfToken } from './session'
-import type { Account, ApiKey, Credentials, IssuedApiKey, PasswordChange } from '../types/account'
+import type {
+  Account,
+  ApiKey,
+  Credentials,
+  IssuedApiKey,
+  PasswordChange,
+  TrialRequest,
+} from '../types/account'
 
 /**
  * Every account route answers with the whole account, including a current CSRF
@@ -40,8 +47,32 @@ export const getMe = (signal?: AbortSignal): Promise<Account | null> =>
       throw error
     })
 
-/** 14 days of Pro, once per account ever. A second attempt is a `409`. */
-export const startTrial = (): Promise<Account> => api.post<Account>('/accounts/trial').then(adopt)
+/**
+ * Asks for the trial. Grants **nothing**.
+ *
+ * There is no self-serve route any more — `POST /accounts/trial`, which granted
+ * Pro outright, is gone — because no paid tier should be grantable by the person
+ * receiving it. An admin approves or declines, so this opens a request and the
+ * answer arrives later.
+ */
+export const requestTrial = (message?: string): Promise<TrialRequest> =>
+  api
+    .post<TrialRequest>('/accounts/trial/request', { message: message?.trim() || null })
+    .then((res) => res.data)
+
+/**
+ * Where the account's request stands, or `null` if it has never asked. Null is a
+ * 200 rather than a 404: never having asked is a state, not a missing resource.
+ */
+export const getTrialRequest = (signal?: AbortSignal): Promise<TrialRequest | null> =>
+  api
+    .get<TrialRequest | null>('/accounts/trial/request', { signal })
+    .then((res) => res.data ?? null)
+    .catch((error: unknown) => {
+      // Anonymous visitors have no request and are not asked to care.
+      if (isUnauthenticated(error)) return null
+      throw error
+    })
 
 /** Closes every other session and returns a fresh one for this tab. */
 export const changePassword = (change: PasswordChange): Promise<Account> =>

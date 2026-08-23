@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
-import { useAccount, useStartTrial } from '../../hooks/useAccount'
+import { useAccount, useRequestTrial, useTrialRequest } from '../../hooks/useAccount'
 import { describeError } from '../../services/api'
+import { describeTrial } from '../../utils/trialState'
 import type { Tier } from '../../types/account'
 
 const BUTTON = 'w-full p-2.5 rounded-md text-sm text-center font-semibold my-2'
@@ -20,7 +21,10 @@ const RANK: Record<Tier, number> = { free: 0, pro: 1, elite: 2 }
  */
 function PlanAction({ plan, isPopular }: { plan: Tier; isPopular: boolean }) {
   const { account, tier, isSignedIn, loading } = useAccount()
-  const trial = useStartTrial()
+  // Only the Pro card can offer the trial, so only it asks where the request stands.
+  const { request } = useTrialRequest(isSignedIn && plan === 'pro')
+  const ask = useRequestTrial()
+  const trial = describeTrial(account, request)
 
   // The chrome shifts once the session is known, so it renders nothing rather
   // than offering the wrong thing first.
@@ -38,20 +42,29 @@ function PlanAction({ plan, isPopular }: { plan: Tier; isPopular: boolean }) {
   // Everything a lower tier sells is already included further up.
   if (RANK[tier] > RANK[plan]) return <p className={STATIC}>Included</p>
 
-  if (plan === 'pro' && account !== null && !account.trial_used)
+  // A request already with an administrator is not a button. Saying so where the
+  // button was is the only place the reader will look for the answer.
+  if (plan === 'pro' && trial.kind === 'pending')
+    return <p className={STATIC}>{trial.label}</p>
+
+  if (plan === 'pro' && (trial.kind === 'request' || trial.kind === 'declined'))
     return (
       <div className={'my-2 flex flex-col gap-1'}>
         <button
           type={'button'}
-          onClick={() => trial.mutate()}
-          disabled={trial.isPending}
+          onClick={() => ask.mutate(undefined)}
+          disabled={ask.isPending}
           className={`${PRIMARY} my-0`}
         >
-          {trial.isPending ? 'Starting…' : 'Start 14-day trial'}
+          {ask.isPending ? 'Requesting…' : trial.label}
         </button>
-        {trial.error !== null && (
+        {/* Why the last one was turned down, in the words it was turned down in. */}
+        {trial.kind === 'declined' && trial.detail !== null && (
+          <p className={'text-xs text-ink-subtle'}>{trial.detail}</p>
+        )}
+        {ask.error !== null && (
           <p role={'alert'} className={'text-xs text-negative'}>
-            {describeError(trial.error)}
+            {describeError(ask.error)}
           </p>
         )}
       </div>

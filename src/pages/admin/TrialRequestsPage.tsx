@@ -5,12 +5,12 @@ import {
   useApproveTrialRequest,
   useDeclineTrialRequest,
   useTrialRequests,
-  useTrialRequestsAvailable,
 } from '../../hooks/useTrialRequests'
 import { useDocumentTitle } from '../../hooks/useDocumentTitle'
 import { describeError } from '../../services/api'
 import { formatLongDate, formatRelativeTime } from '../../utils/datetime'
-import type { TrialRequest, TrialRequestStatus } from '../../types/admin'
+import type { TrialRequestStatus } from '../../types/account'
+import type { AdminTrialRequest } from '../../types/admin'
 
 const FIELD = 'rounded-md border border-line-strong bg-secondary py-1 px-2 text-xs text-ink'
 
@@ -26,7 +26,7 @@ const STATUS_STYLE: Record<TrialRequestStatus, string> = {
  * Declining takes a reason because the account is shown it. Approving does not:
  * fourteen days of Pro needs no explanation to the person receiving it.
  */
-function Request({ request }: { request: TrialRequest }) {
+function Request({ request }: { request: AdminTrialRequest }) {
   const approve = useApproveTrialRequest()
   const decline = useDeclineTrialRequest()
   const [reason, setReason] = useState('')
@@ -39,7 +39,7 @@ function Request({ request }: { request: TrialRequest }) {
       <div className={'flex flex-wrap items-baseline justify-between gap-2'}>
         <p className={'text-sm text-ink'}>
           <Link to={`/admin/accounts/${request.account_id}`} className={'hover:text-primary'}>
-            {request.email}
+            {request.account_email}
           </Link>
         </p>
         <p className={'text-2xs text-ink-subtle'}>
@@ -47,6 +47,11 @@ function Request({ request }: { request: TrialRequest }) {
           {formatRelativeTime(request.requested_at)}
         </p>
       </div>
+
+      {/* What they said when asking, and what they were told after. */}
+      {request.message !== null && (
+        <p className={'text-xs text-ink-muted italic'}>&ldquo;{request.message}&rdquo;</p>
+      )}
 
       {request.decision_reason !== null && (
         <p className={'text-xs text-ink-muted'}>{request.decision_reason}</p>
@@ -121,32 +126,8 @@ function Request({ request }: { request: TrialRequest }) {
 
 function TrialRequestsPage() {
   useDocumentTitle('Trial requests · Admin')
-  const { available, loading: probing } = useTrialRequestsAvailable()
   const [status, setStatus] = useState<TrialRequestStatus | ''>('pending')
   const { requests, loading, error } = useTrialRequests(status === '' ? undefined : status)
-
-  if (probing)
-    return (
-      <div className={'measure pt-10 pb-24'}>
-        <div className={'h-64 animate-pulse rounded-lg bg-secondary'} />
-      </div>
-    )
-
-  // The route exists ahead of the endpoint, so a bookmark can reach it before
-  // the backend serves it. Saying which is more use than an error.
-  if (!available)
-    return (
-      <div className={'measure flex flex-col gap-4 pt-10 pb-24'}>
-        <h1 className={'text-xl font-semibold text-ink'}>Trial requests</h1>
-        <p className={'text-sm text-ink-muted'}>
-          This build of the API does not serve the trial queue yet. Trials are granted from an
-          account&rsquo;s own page in the meantime.
-        </p>
-        <Link to={'/admin'} className={'text-sm text-primary'}>
-          Back to accounts
-        </Link>
-      </div>
-    )
 
   return (
     <div className={'measure flex flex-col gap-6 pt-10 pb-24'}>

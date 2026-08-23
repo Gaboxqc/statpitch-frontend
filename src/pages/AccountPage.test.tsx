@@ -8,7 +8,7 @@ import { renderWithQuery } from '../test/renderWithQuery'
 import * as accounts from '../services/accounts'
 import { setQuota } from '../services/quota'
 import { formatLongDate } from '../utils/datetime'
-import type { Account } from '../types/account'
+import type { Account, TrialRequest } from '../types/account'
 
 const FREE: Account = {
   email: 'reader@example.com',
@@ -36,9 +36,19 @@ function apiError(status: number, detail: string): AxiosError {
 
 const user = userEvent.setup({ delay: null })
 
-function signedInAs(account: Account | null) {
+const REQUEST: TrialRequest = {
+  id: 1,
+  status: 'pending',
+  message: null,
+  requested_at: '2026-08-20T09:00:00',
+  decided_at: null,
+  decision_reason: null,
+}
+
+function signedInAs(account: Account | null, request: TrialRequest | null = null) {
   vi.spyOn(accounts, 'getMe').mockResolvedValue(account)
   vi.spyOn(accounts, 'listApiKeys').mockResolvedValue([])
+  vi.spyOn(accounts, 'getTrialRequest').mockResolvedValue(request)
 }
 
 afterEach(() => {
@@ -67,43 +77,69 @@ describe('the plan', () => {
     expect(screen.queryByText(/free until/i)).not.toBeInTheDocument()
   })
 
-  it('offers the trial to an account that has never used it', async () => {
+  /**
+   * Asking is not taking. The button says "request" because pressing it changes
+   * nothing about what the reader can see until somebody approves it.
+   */
+  it('offers to request the trial for an account that has never had one', async () => {
     signedInAs(FREE)
     renderWithQuery(<AccountPage />)
 
     expect(
-      await screen.findByRole('button', { name: /start 14-day pro trial/i }),
+      await screen.findByRole('button', { name: /request 14-day trial/i }),
     ).toBeInTheDocument()
   })
 
-  // A second attempt is a 409 even after the trial lapses, so the button is
-  // removed rather than left to be refused.
-  it('withdraws the offer once it has been used', async () => {
+  it('withdraws the offer once a trial has been granted', async () => {
     signedInAs({ ...FREE, trial_used: true })
     renderWithQuery(<AccountPage />)
 
     await screen.findByText(/trial has been used/i)
-    expect(screen.queryByRole('button', { name: /start 14-day/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /request 14-day/i })).not.toBeInTheDocument()
   })
 
-  it('starts the trial when asked', async () => {
-    signedInAs(FREE)
-    const start = vi.spyOn(accounts, 'startTrial').mockResolvedValue({ ...FREE, tier: 'pro' })
+  // A request already with an administrator is not something to send again.
+  it('reports a request that is still being reviewed instead of offering another', async () => {
+    signedInAs(FREE, REQUEST)
     renderWithQuery(<AccountPage />)
 
-    await user.click(await screen.findByRole('button', { name: /start 14-day pro trial/i }))
-
-    await waitFor(() => expect(start).toHaveBeenCalledTimes(1))
+    expect(await screen.findByText(/awaiting review/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /request 14-day/i })).not.toBeInTheDocument()
   })
 
-  it('shows the API’s own refusal if the trial is declined', async () => {
+  // Asking again without knowing why the last one failed is just guessing.
+  it('shows why a request was declined, and lets them ask again', async () => {
+    signedInAs(FREE, {
+      ...REQUEST,
+      status: 'declined',
+      decided_at: '2026-08-21T09:00:00',
+      decision_reason: 'Ask again once the season is under way.',
+    })
+    renderWithQuery(<AccountPage />)
+
+    expect(await screen.findByText(/ask again once the season/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /request again/i })).toBeInTheDocument()
+  })
+
+  it('sends the note along with the request', async () => {
     signedInAs(FREE)
-    vi.spyOn(accounts, 'startTrial').mockRejectedValue(
+    const ask = vi.spyOn(accounts, 'requestTrial').mockResolvedValue(REQUEST)
+    renderWithQuery(<AccountPage />)
+
+    await user.type(await screen.findByRole('textbox', { name: /anything to add/i }), 'Testing it')
+    await user.click(screen.getByRole('button', { name: /request 14-day trial/i }))
+
+    await waitFor(() => expect(ask).toHaveBeenCalledWith('Testing it'))
+  })
+
+  it('shows the API’s own refusal if the request is rejected', async () => {
+    signedInAs(FREE)
+    vi.spyOn(accounts, 'requestTrial').mockRejectedValue(
       apiError(409, 'This account has already used its trial.'),
     )
     renderWithQuery(<AccountPage />)
 
-    await user.click(await screen.findByRole('button', { name: /start 14-day pro trial/i }))
+    await user.click(await screen.findByRole('button', { name: /request 14-day trial/i }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'This account has already used its trial.',
