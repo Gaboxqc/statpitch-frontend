@@ -1,6 +1,7 @@
 import axios from 'axios'
-import type { InternalAxiosRequestConfig } from 'axios'
+import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 import { getCsrfToken, setCsrfToken } from './session'
+import { getAdminCsrfToken, setAdminCsrfToken } from './adminSession'
 import { setQuota } from './quota'
 
 /**
@@ -23,11 +24,34 @@ export const api = axios.create({
   withCredentials: true,
 })
 
+/**
+ * The portfolio's own auth routes live at the API root, outside the `/statpitch`
+ * prefix everything else here shares — so they need their own instance rather
+ * than a relative path climbing out of the base URL. This is the only place the
+ * admin identity is established; the `/statpitch/admin/*` routes themselves ride
+ * the instance above.
+ */
+export const adminAuthApi = axios.create({
+  baseURL: (import.meta.env.VITE_API_URL ?? '').replace(/\/statpitch\/?$/, ''),
+  timeout: REQUEST_TIMEOUT_MS,
+  withCredentials: true,
+})
+
 /** GET and HEAD are exempt from CSRF; everything else must echo the token back. */
 const SAFE_METHODS = new Set(['get', 'head', 'options'])
 
 const isSafe = (config: InternalAxiosRequestConfig): boolean =>
   SAFE_METHODS.has((config.method ?? 'get').toLowerCase())
+
+/**
+ * Which of the two sessions a request belongs to, decided by path because that
+ * is what the server decides it by. `/admin/*` and `/auth/*` are the portfolio
+ * admin; everything else is the StatPitch customer.
+ */
+const isAdminRoute = (config: InternalAxiosRequestConfig): boolean => {
+  const url = config.url ?? ''
+  return url.startsWith('/admin') || url.startsWith('/auth')
+}
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -47,38 +71,61 @@ api.interceptors.response.use((response) => {
   return response
 })
 
-api.interceptors.request.use((config) => {
-  const token = getCsrfToken()
-  if (token !== null && !isSafe(config)) config.headers.set('X-CSRF-Token', token)
+/** The right token for the identity the path belongs to, and never the other one. */
+function attachCsrf(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
+  if (isSafe(config)) return config
+  const token = isAdminRoute(config) ? getAdminCsrfToken() : getCsrfToken()
+  if (token !== null) config.headers.set('X-CSRF-Token', token)
   return config
-})
+}
+
+api.interceptors.request.use(attachCsrf)
+adminAuthApi.interceptors.request.use(attachCsrf)
 
 /**
  * A 403 means the token is missing or stale, not that the session is gone —
- * a password change, for instance, issues a new one. `/accounts/me` reissues
- * it, so the failure is recoverable once, silently, before the caller ever
- * sees it. A 401 is the opposite: the session itself is over, so drop the
- * token rather than replay it against the next session.
+ * a password change, for instance, issues a new one. The identity's own `me`
+ * route reissues it, so the failure is recoverable once, silently, before the
+ * caller ever sees it. A 401 is the opposite: the session itself is over, so
+ * drop the token rather than replay it against the next session.
  */
-api.interceptors.response.use(undefined, async (error: unknown) => {
-  if (!axios.isAxiosError(error)) throw error
-  const status = error.response?.status
-  const config = error.config
+function recoverCsrf(instance: AxiosInstance) {
+  instance.interceptors.response.use(undefined, async (error: unknown) => {
+    if (!axios.isAxiosError(error)) throw error
+    const status = error.response?.status
+    const config = error.config
 
-  if (status === 401) setCsrfToken(null)
+    // Which session ended is decided by the same rule that signed the request,
+    // so a dead admin session never drops the customer's token or the reverse.
+    const admin = config !== undefined && isAdminRoute(config)
 
-  if (status !== 403 || config === undefined || config.skipCsrfRecovery === true) throw error
+    if (status === 401) {
+      if (admin) setAdminCsrfToken(null)
+      else setCsrfToken(null)
+    }
 
-  config.skipCsrfRecovery = true
-  const refreshed = await api
-    .get<{ csrf_token?: string }>('/accounts/me', { skipCsrfRecovery: true })
-    .then((res) => res.data.csrf_token ?? null)
-    .catch(() => null)
+    if (status !== 403 || config === undefined || config.skipCsrfRecovery === true) throw error
 
-  if (refreshed === null) throw error
-  setCsrfToken(refreshed)
-  return api.request(config)
-})
+    config.skipCsrfRecovery = true
+    const refreshed = admin
+      ? await adminAuthApi
+          .get<{ csrf_token?: string }>('/auth/me', { skipCsrfRecovery: true })
+          .then((res) => res.data.csrf_token ?? null)
+          .catch(() => null)
+      : await api
+          .get<{ csrf_token?: string }>('/accounts/me', { skipCsrfRecovery: true })
+          .then((res) => res.data.csrf_token ?? null)
+          .catch(() => null)
+
+    if (refreshed === null) throw error
+    if (admin) setAdminCsrfToken(refreshed)
+    else setCsrfToken(refreshed)
+    return instance.request(config)
+  })
+}
+
+recoverCsrf(api)
+recoverCsrf(adminAuthApi)
 
 const statusOf = (error: unknown): number | undefined =>
   axios.isAxiosError(error) ? error.response?.status : undefined
@@ -172,6 +219,18 @@ export function predictionsRemaining(headers: unknown): number | 'unlimited' | n
   if (String(raw).trim() === 'unlimited') return 'unlimited'
   const parsed = Number(raw)
   return Number.isFinite(parsed) ? parsed : null
+}
+
+/** Drops undefined entries so an unset filter is absent rather than the string "undefined". */
+export function queryString(
+  params: Record<string, string | number | boolean | undefined>,
+): string {
+  const search = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) search.set(key, String(value))
+  }
+  const query = search.toString()
+  return query ? `?${query}` : ''
 }
 
 /** The API sets `X-Total-Count` on `/fixtures` and `/ledger`, but not on the day routes. */
