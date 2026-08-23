@@ -1,10 +1,10 @@
 import { FilterIcon } from '../../assets/icons/index'
 import { Link } from 'react-router'
-import { useFixtures, useWindow } from '../../hooks/queries'
+import { useCompetitions, useFixtures, useWindow } from '../../hooks/queries'
 import { useAccount } from '../../hooks/useAccount'
 import { CONFIDENCE_TIERS, DAYS, useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { countByDay } from '../../utils/filterFixtures'
-import { COMPETITIONS } from '../../constants/competitions'
+import { competition, COMPETITIONS } from '../../constants/competitions'
 import { formatFraction } from '../../utils/format'
 import type { DayKey } from '../../types/api'
 
@@ -51,6 +51,32 @@ function FiltersBar() {
     competition_id: filters.competitionId ?? undefined,
   })
   const counts = countByDay(fixtures, window)
+  const { competitions } = useCompetitions()
+
+  /**
+   * One marker per row, and which one depends on who is reading.
+   *
+   * Below Pro the useful fact is that a competition is not included at all —
+   * selecting it would empty the list, and an empty list reads as "nothing on
+   * today" rather than "not yours". At Pro everything is included, and the fact
+   * that matters instead is that the cups carry no odds market, so they can
+   * never produce a selection however good the prediction is.
+   *
+   * The API's list is preferred; the local table stands in until it arrives, and
+   * is still the only thing that knows which competitions are priced.
+   */
+  const options = (
+    competitions.length > 0
+      ? competitions.map((entry) => ({
+          id: entry.competition_id,
+          short: entry.short_name,
+          free: entry.free_tier,
+        }))
+      : COMPETITIONS.map((entry) => ({ id: entry.id, short: entry.short, free: entry.priced }))
+  ).map((entry) => ({
+    ...entry,
+    note: !isPro && !entry.free ? ' · Pro' : competition(entry.id)?.priced ? '' : ' · no odds',
+  }))
 
   return (
     <div className={'border-b border-line'}>
@@ -103,11 +129,10 @@ function FiltersBar() {
             }
           >
             <option value={''}>All competitions</option>
-            {COMPETITIONS.map((entry) => (
+            {options.map((entry) => (
               <option key={entry.id} value={entry.id}>
-                {/* The cups have no odds market, so they can never produce a bet. */}
                 {entry.short}
-                {entry.priced ? '' : ' · no odds'}
+                {entry.note}
               </option>
             ))}
           </select>

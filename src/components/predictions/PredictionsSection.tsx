@@ -1,4 +1,6 @@
 import MatchCard from './MatchCard'
+import CompetitionHeading from './CompetitionHeading'
+import { groupByCompetition } from '../../utils/groupByCompetition'
 import { useFixtures, useWindow } from '../../hooks/queries'
 import { useElapsed } from '../../hooks/useElapsed'
 import { useFixtureFilters } from '../../hooks/useFixtureFilters'
@@ -61,6 +63,15 @@ function PredictionsSection() {
   // of them is the user's to fix.
   const narrowed = onThisDay.length > 0 && visible.length === 0
 
+  /**
+   * Grouping is worth it only when the list is in the order the day happens in.
+   * Every other sort is a ranking, and the question a ranking answers — where is
+   * the strongest bet today — is asked across competitions, not within one. A
+   * single selected competition needs no headings either: they would announce
+   * the same league over and over above a list that cannot contain another.
+   */
+  const grouped = filters.sort === 'kickoff' && filters.competitionId === null
+
   return (
     <div className={'flex flex-col gap-4'}>
       <div className={'flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2'}>
@@ -103,9 +114,19 @@ function PredictionsSection() {
         </p>
       )}
 
-      {visible.map((fixture) => (
-        <MatchCard key={fixture.id} prediction={fixture} />
-      ))}
+      {/* Grouped, the heading carries the competition and the cards below it
+          stop repeating what it just said. Flat, each card has to say it for
+          itself, because its neighbour is from somewhere else. */}
+      {grouped
+        ? groupByCompetition(visible).map((group) => (
+            <section key={group.id} className={'flex flex-col gap-4'}>
+              <CompetitionHeading group={group} />
+              {group.fixtures.map((fixture) => (
+                <MatchCard key={fixture.id} prediction={fixture} showCompetition={false} />
+              ))}
+            </section>
+          ))
+        : visible.map((fixture) => <MatchCard key={fixture.id} prediction={fixture} />)}
 
       <div
         className={

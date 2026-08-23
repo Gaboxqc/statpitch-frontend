@@ -94,12 +94,29 @@ describe('PredictionsSection', () => {
     expect(screen.getByRole('heading', { name: /1 value bets/i })).toBeInTheDocument()
   })
 
-  it('names the competition from the fixture rather than a hardcoded default', async () => {
+  // The payload names its own competition in every shape, so nothing here
+  // depends on a local table being up to date with the API.
+  it('heads each league with the name the payload gives it', async () => {
     mockWindow()
-    mockFixtures([{ ...fixtureFixture, match_date: WINDOW.today }])
+    mockFixtures([
+      { ...fixtureFixture, match_date: WINDOW.today },
+      { ...pickedFixtureFixture, match_date: WINDOW.today },
+    ])
     renderWithQuery(<PredictionsSection />)
 
-    expect(await screen.findByText('La Liga')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'LALIGA' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Premier League' })).toBeInTheDocument()
+  })
+
+  // Ranking across leagues is the whole question a ranked sort asks, so the
+  // headings that would break it up are not drawn.
+  it('does not group when the list is ranked rather than ordered by kick-off', async () => {
+    mockWindow()
+    mockFixtures([{ ...fixtureFixture, match_date: WINDOW.today }])
+    renderWithQuery(<PredictionsSection />, { route: '/?sort=edge' })
+
+    expect(await screen.findAllByText('Atlético de Madrid')).not.toHaveLength(0)
+    expect(screen.queryByRole('heading', { name: 'LALIGA' })).not.toBeInTheDocument()
   })
 
   // Regression: the hook returned a string but the component read `error.message`,

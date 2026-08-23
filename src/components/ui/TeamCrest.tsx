@@ -1,18 +1,30 @@
+import { useState } from 'react'
 import { crestInitials } from '../../utils/crestInitials'
 
 interface TeamCrestProps {
   name: string
-  /** Currently always null from the API. The element is built to accept one later. */
+  /** Absolute CDN URL, or null — some lower-division sides have no badge anywhere. */
   url: string | null
   className?: string
+  /**
+   * A list of forty badges, rather than one hero crest. Swaps to the 512-pixel
+   * art's ~7 KB sibling: forty native-size badges is about a megabyte for
+   * something drawn at 28px.
+   */
+  dense?: boolean
 }
 
+/** The cheap variant lives beside the full-size one, named by its edge. */
+const thumbnail = (url: string): string => url.replace('-512.webp', '-128.webp')
+
 /**
- * StatPitch supplies no crest, and the old country-flag URLs stopped meaning
- * anything once the domain moved from national teams to clubs. Every club is in
- * that position and will be until crests are hosted, so the initials mark is not
- * a fallback waiting to be replaced — it is the identity, and it is drawn like
- * one: an inset square with a hairline, and the initials in full ink.
+ * A club's badge, or its initials when there is no badge to draw.
+ *
+ * Null is a normal state — some lower-division cup sides have no crest
+ * published anywhere — and so is a URL that fails to load, so both land on the
+ * same mark rather than on a broken image. The initials are not a placeholder
+ * waiting for art: they are drawn as identity, an inset square with a hairline
+ * and the initials in full ink.
  *
  * The mark sizes itself from the box rather than from the text around it. It
  * used to be `text-[0.7em]`, which inherited the card's 12px and drew 8px
@@ -21,12 +33,21 @@ interface TeamCrestProps {
  * unit resolves against this element's own width, so the mark is always 44% of
  * the crest and the call sites stop carrying type sizes.
  */
-function TeamCrest({ name, url, className = 'w-7 h-7' }: TeamCrestProps) {
-  if (url) {
+function TeamCrest({ name, url, className = 'w-7 h-7', dense = false }: TeamCrestProps) {
+  const [failed, setFailed] = useState(false)
+
+  if (url && !failed) {
     return (
       <img
-        src={url}
+        src={dense ? thumbnail(url) : url}
         alt={`${name} crest`}
+        // Reserving the box keeps a row from reflowing as badges arrive, and
+        // below the fold there is no reason to fetch one at all until it is.
+        width={128}
+        height={128}
+        loading={'lazy'}
+        decoding={'async'}
+        onError={() => setFailed(true)}
         className={`${className} shrink-0 aspect-square object-contain rounded-md`}
       />
     )

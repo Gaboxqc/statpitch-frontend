@@ -6,9 +6,15 @@ import type { Explanation, FeatureContribution } from '../../types/api'
 /** Bars diverge from a centre line, so each half can use at most half the width. */
 const HALF_WIDTH = 50
 
+/**
+ * A contribution too small to draw is still not nothing, and a bar of zero width
+ * reads as a missing row rather than a negligible one.
+ */
+const MIN_WIDTH = 0.6
+
 function ContributionRow({ row, scale }: { row: FeatureContribution; scale: number }) {
   const positive = row.contribution >= 0
-  const width = (Math.abs(row.contribution) / scale) * HALF_WIDTH
+  const width = Math.max((Math.abs(row.contribution) / scale) * HALF_WIDTH, MIN_WIDTH)
 
   return (
     <li className={'flex items-center gap-2 text-xs'}>
@@ -17,14 +23,19 @@ function ContributionRow({ row, scale }: { row: FeatureContribution; scale: numb
       </span>
 
       <span className={'relative flex-1 h-3 min-w-16'}>
-        {/* The zero line is the competition's own goal environment. */}
-        <span className={'absolute inset-y-0 left-1/2 w-px bg-line-strong'} />
+        {/* Only the outer end is rounded. A pill rounded at both ends pulls away
+            from the zero line it is measured from, which reads as a bar that
+            starts somewhere other than zero — the one thing a divergence chart
+            must not say. It grows out of the line, flush against it. */}
         <span
-          className={`absolute inset-y-0.5 rounded-full ${positive ? 'bg-primary/60' : 'bg-chart-5/60'}`}
+          className={`absolute inset-y-0.5 ${positive ? 'rounded-r-full' : 'rounded-l-full'} ${positive ? 'bg-primary/60' : 'bg-chart-5/60'}`}
           style={
             positive ? { left: '50%', width: `${width}%` } : { right: '50%', width: `${width}%` }
           }
         />
+        {/* The zero line is the competition's own goal environment. Painted last
+            so the flat edge of every bar reads against it. */}
+        <span className={'absolute inset-y-0 left-1/2 w-px bg-line-strong'} />
       </span>
 
       <span

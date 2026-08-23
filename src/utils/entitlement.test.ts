@@ -43,8 +43,8 @@ describe('the shapes themselves', () => {
   // Pinned against a live payload. A field added upstream should land here as
   // a failure rather than quietly widening what a teaser gives away.
   it('carry the key counts the API publishes', () => {
-    expect(Object.keys(teaserFixtureFixture)).toHaveLength(23)
-    expect(Object.keys(freeFixtureFixture)).toHaveLength(26)
+    expect(Object.keys(teaserFixtureFixture)).toHaveLength(26)
+    expect(Object.keys(freeFixtureFixture)).toHaveLength(29)
   })
 
   it('nest, so anything a teaser shows a full payload shows too', () => {
