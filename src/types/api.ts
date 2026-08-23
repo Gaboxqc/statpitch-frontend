@@ -92,6 +92,18 @@ export interface TeaserFixture {
   /** False means a matchday placeholder, not a real kickoff. Render as "date TBC". */
   date_confirmed: boolean
 
+  // Competition
+  /**
+   * Full name, e.g. `English Premier League`. Present on the teaser too — a
+   * heading is not something anyone pays for — so nothing has to hold a local
+   * table of names to render a list of locked fixtures.
+   */
+  competition_name: string
+  /** What a heading should actually say, e.g. `Premier League`. */
+  competition_short_name: string
+  /** Absolute CDN URL at 512×512, or null. */
+  competition_icon_url: string | null
+
   // Teams
   home_team: string
   away_team: string
@@ -234,6 +246,19 @@ export interface FullFixture extends FreeFixture {
  * something else entirely, namely that no market was offered.
  */
 export type Fixture = TeaserFixture | FreeFixture | FullFixture
+
+/**
+ * One competition as the API describes it. `free_tier` is the only thing here
+ * the frontend cannot work out for itself: whether a free account can see this
+ * competition's fixtures at all.
+ */
+export interface CompetitionInfo {
+  competition_id: string
+  name: string
+  short_name: string
+  icon_url: string | null
+  free_tier: boolean
+}
 
 /** The three dates the API currently considers live. Never derive these client-side. */
 export interface ThreeDayWindow {

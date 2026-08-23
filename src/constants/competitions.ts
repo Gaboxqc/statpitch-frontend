@@ -36,3 +36,26 @@ export function competitionName(id: string): string {
 export function competition(id: string): Competition | undefined {
   return BY_ID.get(id)
 }
+
+/**
+ * What to call a fixture's competition, and what to draw beside it.
+ *
+ * The payload carries all three, in every shape, so it is preferred over the
+ * table above: a competition added upstream reads correctly here before anybody
+ * remembers to add a row. The table remains the fallback, and is still the only
+ * place that knows which competitions have an odds market at all.
+ */
+export function fixtureCompetition(fixture: {
+  competition_id: string
+  competition_name?: string | null
+  competition_short_name?: string | null
+  competition_icon_url?: string | null
+}): { id: string; name: string; short: string; icon: string | null } {
+  const known = BY_ID.get(fixture.competition_id)
+  return {
+    id: fixture.competition_id,
+    name: fixture.competition_name || known?.name || fixture.competition_id,
+    short: fixture.competition_short_name || known?.short || fixture.competition_id,
+    icon: fixture.competition_icon_url ?? null,
+  }
+}

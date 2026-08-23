@@ -12,7 +12,7 @@ import { buildPredictionView } from '../../utils/predictionView'
 import { hasFullDetail, hasProbabilities } from '../../utils/entitlement'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
 import { describeKickoff } from '../../utils/datetime'
-import { competitionName } from '../../constants/competitions'
+import { fixtureCompetition } from '../../constants/competitions'
 import { displayName } from '../../utils/teamName'
 import type { PredictionView } from '../../utils/predictionView'
 import type { Fixture } from '../../types/api'
@@ -33,7 +33,7 @@ const SHELL: Record<PredictionView['state'], string> = {
 function TeamRow({ name, crest, xg }: { name: string; crest: string | null; xg: number | null }) {
   return (
     <li className={'flex min-w-0 items-center gap-2'}>
-      <TeamCrest name={name} url={crest} />
+      <TeamCrest name={name} url={crest} dense={true} />
       {/* Narrow enough and the club name and its xG cannot share a line without
           one of them being clipped, and a clipped club name is not a name. */}
       <div className={'flex min-w-0 flex-col sm:flex-row sm:items-center sm:gap-2'}>
@@ -113,7 +113,18 @@ function ForecastNote({ fixture }: { fixture: Fixture }) {
   )
 }
 
-function MatchCard({ prediction }: { prediction: Fixture }) {
+/**
+ * `showCompetition` is false inside a grouped list, where the heading above the
+ * card has already said which league this is. Repeating it on every card cost
+ * the header a third of its width and clipped the name to "Premier Leag…".
+ */
+function MatchCard({
+  prediction,
+  showCompetition = true,
+}: {
+  prediction: Fixture
+  showCompetition?: boolean
+}) {
   const [isOpened, setIsOpened] = useState(false)
   const view = buildPredictionView(prediction)
   const predicted = hasProbabilities(prediction) ? prediction : null
@@ -129,10 +140,19 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
       className={`flex flex-col gap-3 rounded-lg border bg-card p-4 text-ink text-xs ${SHELL[view.state]}`}
       onClick={toggle}
     >
-      <header className={'flex items-center justify-between gap-3 text-ink-muted'}>
-        <p className={'truncate'}>{competitionName(prediction.competition_id)}</p>
+      {/* Five things used to share one line, which at 375px left the league
+          clipped and the kick-off pressed against the link. They wrap now, and
+          the league — when it is here at all — takes the first row to itself. */}
+      <header
+        className={'flex flex-wrap items-center justify-between gap-x-3 gap-y-2 text-ink-muted'}
+      >
+        {showCompetition && (
+          <p className={'min-w-0 basis-full truncate sm:basis-auto'}>
+            {fixtureCompetition(prediction).short}
+          </p>
+        )}
 
-        <div className={'flex shrink-0 items-center gap-3'}>
+        <div className={'flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1'}>
           <ConfidenceBadge fixture={prediction} />
           {view.state === 'forecast' && <ForecastNote fixture={prediction} />}
           <span className={'flex items-center gap-1 text-ink-subtle'}>
@@ -144,18 +164,27 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
               {kickoff.text}
             </time>
           </span>
-          <Link
-            to={`/fixture/${prediction.id}`}
-            onClick={(event) => event.stopPropagation()}
-            aria-label={`Open ${prediction.home_team} versus ${prediction.away_team}`}
-            className={'eyebrow rounded-md px-1 text-ink-subtle hover:text-ink'}
-          >
-            Open
-          </Link>
         </div>
+
+        {/* This was 37×16 of muted grey with no edge — the one control that
+            opens the fixture, and the least visible thing on the card. It is
+            outlined rather than filled so it still sits below the upsell. */}
+        <Link
+          to={`/fixture/${prediction.id}`}
+          onClick={(event) => event.stopPropagation()}
+          aria-label={`Open ${prediction.home_team} versus ${prediction.away_team}`}
+          className={
+            'flex min-h-9 shrink-0 items-center gap-1 rounded-md border border-line-strong bg-secondary px-2.5 text-2xs font-medium text-ink transition-colors hover:border-primary/40 hover:text-primary pointer-coarse:min-h-11'
+          }
+        >
+          Open
+          <ShortArrowIcon className={'h-3.5 w-3.5 -rotate-90'} />
+        </Link>
       </header>
 
-      <div className={'flex items-center justify-between gap-4'}>
+      {/* Below `sm` the verdict drops under the teams instead of competing with
+          them for the same row, which is what clipped "Internazionale". */}
+      <div className={'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4'}>
         <ul className={'flex min-w-0 flex-col gap-2'}>
           <TeamRow
             name={prediction.home_team}
@@ -169,7 +198,7 @@ function MatchCard({ prediction }: { prediction: Fixture }) {
           />
         </ul>
 
-        <div className={'flex shrink-0 items-center gap-3'}>
+        <div className={'flex shrink-0 items-center justify-end gap-3'}>
           {predicted && view.winner && (
             <ProbabilityTiles prediction={predicted} winner={view.winner} variant={'compact'} />
           )}

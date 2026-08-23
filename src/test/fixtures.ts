@@ -11,6 +11,10 @@ export const fixtureFixture: FullFixture = {
   id: 2,
   fixture_id: 'ESP.LALIGA|2026-2027|Club Atlético de Madrid|Málaga CF',
   competition_id: 'ESP.LALIGA',
+  competition_name: 'Spanish LALIGA',
+  competition_short_name: 'LALIGA',
+  competition_icon_url:
+    'https://assets.gabrielmayorga.dev/statpitch/competitions/esp-laliga/4af38ab01c0313ff-512.webp',
   season: '2026-2027',
   stage: 'matchday_1',
   format: 'round_robin',
@@ -156,6 +160,10 @@ export const pickedFixtureFixture: FullFixture = {
   id: 3,
   fixture_id: 'ENG.PL|2026-2027|Arsenal FC|Everton FC',
   competition_id: 'ENG.PL',
+  competition_name: 'English Premier League',
+  competition_short_name: 'Premier League',
+  competition_icon_url:
+    'https://assets.gabrielmayorga.dev/statpitch/competitions/eng-pl/3fbb077c9331046d-512.webp',
   home_team: 'Arsenal FC',
   away_team: 'Everton FC',
   odds_btts_yes: 1.83,
@@ -181,6 +189,10 @@ export const unpricedFixtureFixture: FullFixture = {
   id: 4,
   fixture_id: 'UEFA.UCL|2026-2027|Feyenoord|Sparta Praha',
   competition_id: 'UEFA.UCL',
+  competition_name: 'UEFA Champions League',
+  competition_short_name: 'Champions League',
+  // Null is a normal state: not every competition has published an icon.
+  competition_icon_url: null,
   home_team: 'Feyenoord',
   away_team: 'Sparta Praha',
   odds_coverage: false,
@@ -220,6 +232,9 @@ function teaserOf(full: FullFixture): TeaserFixture {
     id,
     fixture_id,
     competition_id,
+    competition_name,
+    competition_short_name,
+    competition_icon_url,
     season,
     stage,
     format,
@@ -245,6 +260,9 @@ function teaserOf(full: FullFixture): TeaserFixture {
     id,
     fixture_id,
     competition_id,
+    competition_name,
+    competition_short_name,
+    competition_icon_url,
     season,
     stage,
     format,
@@ -268,11 +286,11 @@ function teaserOf(full: FullFixture): TeaserFixture {
   }
 }
 
-/** 23 keys, `locked: true`, and no prediction of any kind. */
+/** 26 keys, `locked: true`, and no prediction of any kind. */
 export const teaserFixtureFixture: TeaserFixture = teaserOf(fixtureFixture)
 
 /**
- * A free account's unlocked fixture: 26 keys — the teaser plus the 1X2 call,
+ * A free account's unlocked fixture: 29 keys — the teaser plus the 1X2 call,
  * and nothing about the market. This is also the shape Match of the Day
  * returns to everyone, including anonymous visitors.
  */

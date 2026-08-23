@@ -1,7 +1,8 @@
 import DonutChart from '../ui/DonutChart'
 import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import OutcomeBar from '../ui/OutcomeBar'
-import { useBestToday } from '../../hooks/queries'
+import { useMatchOfTheDay } from '../../hooks/queries'
+import { useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { useElapsed } from '../../hooks/useElapsed'
 import { COLD_START_HINT_MS } from '../../services/api'
 import { buildPredictionView, certainty } from '../../utils/predictionView'
@@ -17,14 +18,23 @@ import {
   formatSignedFraction,
   shortModelVersion,
 } from '../../utils/format'
-import { competitionName } from '../../constants/competitions'
+import { fixtureCompetition } from '../../constants/competitions'
 import { displayName } from '../../utils/teamName'
 import { describeKickoffLong } from '../../utils/datetime'
+import type { DayKey } from '../../types/api'
+
+/** The card is a claim about a specific day, so its heading has to say which. */
+const HEADINGS: Record<DayKey, string> = {
+  yesterday: "Yesterday's match",
+  today: 'Match of the day',
+  tomorrow: "Tomorrow's pick",
+}
 
 function MatchDayCard() {
-  // Highest win probability today, which is not the same as the best bet —
-  // this fixture can be unpriced and carry no selection at all.
-  const { fixture: prediction, loading, error } = useBestToday()
+  // The strongest call on the day being viewed, which is not the same as the
+  // best bet — this fixture can be unpriced and carry no selection at all.
+  const { filters } = useFixtureFilters()
+  const { fixture: prediction, loading, error } = useMatchOfTheDay(filters.day)
   const [isOpened, setIsOpened] = useState(false)
   const slow = useElapsed(COLD_START_HINT_MS)
   const marketsId = useId()
@@ -41,13 +51,20 @@ function MatchDayCard() {
       </div>
     )
   if (error) return <QueryError error={error} />
-  if (!prediction) return <p className={'text-center mt-8'}>No prediction available.</p>
 
-  // Match of the Day is always returned unlocked, on every tier and to anonymous
-  // visitors — it is the one real prediction the logged-out page can show. The
-  // guard is here because the type cannot know that, not because it is expected.
-  if (!hasProbabilities(prediction))
-    return <p className={'text-center mt-8'}>No prediction available.</p>
+  /**
+   * No pick is a state, not a failure, and the honest response to it is to take
+   * the card away. A day with no fixtures has nothing to feature; a day whose
+   * fixtures are all teasers — every day but today, for a reader who is not
+   * paying — has nothing to say about the one it would pick. The list below is
+   * where those days are read anyway.
+   */
+  if (!prediction) return null
+
+  // Today's pick is always returned unlocked, on every tier and to anonymous
+  // visitors, and a derived pick is only ever chosen from fixtures that carry a
+  // prediction. The guard is here because the type cannot know that.
+  if (!hasProbabilities(prediction)) return null
 
   const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
   const matchCertainty = certainty(prediction)
@@ -57,12 +74,12 @@ function MatchDayCard() {
 
   return (
     <div className={'border border-line bg-card rounded-lg'}>
-      <div className={'flex flex-col p-6'}>
+      <div className={'flex flex-col p-4 sm:p-6'}>
         <div className={'w-full'}>
           <div className={'grid grid-cols-1  md:grid-cols-2'}>
             <div className={'flex items-center gap-2 pb-2'}>
               <div className={'h-1 w-1 bg-primary rounded-full animate-pulse'}></div>
-              <h2 className={'eyebrow text-ink-muted'}>Match of the day</h2>
+              <h2 className={'eyebrow text-ink-muted'}>{HEADINGS[filters.day]}</h2>
             </div>
 
             <div
@@ -71,7 +88,7 @@ function MatchDayCard() {
               }
             >
               <div>
-                <p className={'text-xs'}>{competitionName(prediction.competition_id)}</p>
+                <p className={'text-xs'}>{fixtureCompetition(prediction).short}</p>
               </div>
               <div>
                 <time
@@ -84,12 +101,12 @@ function MatchDayCard() {
             </div>
           </div>
 
-          <div className={'flex justify-center gap-4 text-ink mt-4'}>
-            <div className={'flex flex-col items-center'}>
+          <div className={'flex justify-center gap-2 text-ink mt-4 sm:gap-4'}>
+            <div className={'flex min-w-0 flex-col items-center'}>
               <TeamCrest
                 name={prediction.home_team}
                 url={prediction.home_crest_url}
-                className={'w-20 h-20 md:w-40 md:h-40'}
+                className={'w-14 h-14 sm:w-20 sm:h-20 md:w-28 md:h-28'}
               />
               <p className={'text-sm font-medium mt-2 text-center'} title={prediction.home_team}>
                 {displayName(prediction.home_team)}
@@ -111,11 +128,11 @@ function MatchDayCard() {
                 </div>
               )}
             </div>
-            <div className={'flex flex-col items-center justify-center gap-4 mx-4'}>
+            <div className={'flex shrink-0 flex-col items-center justify-center gap-4 mx-1 sm:mx-4'}>
               <p className={'eyebrow text-ink-subtle'}>vs</p>
               <div
                 className={
-                  'flex flex-col items-center bg-secondary border border-line px-4 py-2 rounded-lg'
+                  'flex flex-col items-center bg-secondary border border-line px-3 py-2 rounded-lg sm:px-4'
                 }
               >
                 <p className={'eyebrow text-ink-subtle'}>Draw</p>
@@ -124,11 +141,11 @@ function MatchDayCard() {
                 </p>
               </div>
             </div>
-            <div className={'flex flex-col items-center'}>
+            <div className={'flex min-w-0 flex-col items-center'}>
               <TeamCrest
                 name={prediction.away_team}
                 url={prediction.away_crest_url}
-                className={'w-20 h-20 md:w-40 md:h-40'}
+                className={'w-14 h-14 sm:w-20 sm:h-20 md:w-28 md:h-28'}
               />
               <p className={'text-sm font-medium mt-2 text-center'} title={prediction.away_team}>
                 {displayName(prediction.away_team)}
@@ -242,7 +259,7 @@ function MatchDayCard() {
 
             <button
               className={
-                'mt-4 px-4 max-h-12 lg:justify-self-end bg-secondary border border-line text-ink rounded-md py-2 flex items-center justify-center gap-2 text-sm'
+                'mt-4 w-full px-4 lg:w-auto lg:justify-self-end bg-secondary border border-line text-ink rounded-md py-2.5 flex items-center justify-center gap-2 text-sm'
               }
               onClick={() => setIsOpened((prev) => !prev)}
               type='button'
