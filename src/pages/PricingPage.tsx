@@ -32,40 +32,49 @@ function PricingPage() {
           who already has is asking a different question — what am I missing —
           and answering the first one at them is just asking again for money
           they have already paid. */}
-      <div className={'mt-12 flex flex-col items-center gap-4 text-center'}>
-        <div
-          className={
-            'eyebrow flex w-fit items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-primary'
-          }
-        >
-          <BrainIcon className={'h-4 w-4 text-primary'} />
-          <p>{isSignedIn ? `You are on ${TIER_LABELS[tier]}` : 'ML-powered predictions'}</p>
+      {/* Neither hero until `/me` settles. Guessing wrong here pitches the price
+          list at somebody who has already paid, for as long as the first request
+          takes — and on a cold start that is seconds, not a flicker. */}
+      {loading ? (
+        <div className={'mt-12 flex flex-col items-center gap-4'}>
+          <div className={'h-8 w-56 animate-pulse rounded-full bg-secondary'} />
+          <div className={'h-16 w-full max-w-md animate-pulse rounded-lg bg-secondary'} />
+          <div className={'h-12 w-full max-w-xl animate-pulse rounded-lg bg-secondary'} />
         </div>
-        <div>
-          <h1 className={'text-2xl font-semibold md:text-3xl'}>
-            {isSignedIn ? (
-              <>
-                Your plan
-                <span className={'block text-primary'}>
-                  {tier === 'elite' ? 'Nothing above this one' : 'And what is above it'}
-                </span>
-              </>
-            ) : (
-              <>
-                Transparent Pricing
-                <span className={'block text-primary'}>No dark patterns</span>
-              </>
-            )}
-          </h1>
-        </div>
-        <p className={'max-w-xl text-base text-ink-subtle'}>
-          {loading
-            ? ''
-            : isSignedIn
+      ) : (
+        <div className={'mt-12 flex flex-col items-center gap-4 text-center'}>
+          <div
+            className={
+              'eyebrow flex w-fit items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-primary'
+            }
+          >
+            <BrainIcon className={'h-4 w-4 text-primary'} />
+            <p>{isSignedIn ? `You are on ${TIER_LABELS[tier]}` : 'ML-powered predictions'}</p>
+          </div>
+          <div>
+            <h1 className={'text-2xl font-semibold md:text-3xl'}>
+              {isSignedIn ? (
+                <>
+                  Your plan
+                  <span className={'block text-primary'}>
+                    {tier === 'elite' ? 'Nothing above this one' : 'And what is above it'}
+                  </span>
+                </>
+              ) : (
+                <>
+                  Transparent Pricing
+                  <span className={'block text-primary'}>No dark patterns</span>
+                </>
+              )}
+            </h1>
+          </div>
+          <p className={'max-w-xl text-base text-ink-subtle'}>
+            {isSignedIn
               ? WHAT_IS_MISSING[tier]
               : 'Choose the plan that matches your edge. Every tier includes a confidence score and probability breakdown — no black boxes.'}
-        </p>
-      </div>
+          </p>
+        </div>
+      )}
       <div>
         <p className={'eyebrow my-12 text-center text-ink-muted'}>Monthly</p>
         <div className={'grid grid-cols-1 gap-4 md:grid-cols-3'}>
