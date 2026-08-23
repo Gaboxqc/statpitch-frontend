@@ -7,9 +7,8 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useQuota } from '../hooks/useQuota'
 import { describeError } from '../services/api'
 import { formatLongDate } from '../utils/datetime'
-import type { Account, Tier } from '../types/account'
-
-const TIER_LABELS: Record<Tier, string> = { free: 'Free', pro: 'Pro', elite: 'Elite' }
+import { TIER_LABELS } from '../constants/tiers'
+import type { Account } from '../types/account'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

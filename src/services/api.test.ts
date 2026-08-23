@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { AxiosError, AxiosHeaders } from 'axios'
 import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import {
+  adminAuthApi,
   api,
   describeError,
   detailOf,
@@ -14,6 +15,7 @@ import {
   retryAfterSeconds,
 } from './api'
 import { getCsrfToken, setCsrfToken } from './session'
+import { getAdminCsrfToken, setAdminCsrfToken } from './adminSession'
 
 /** An error shaped the way axios shapes one, without going near the network. */
 function apiError(
@@ -216,5 +218,99 @@ describe('the CSRF interceptors', () => {
 
     await expect(api.get('/accounts/me')).rejects.toMatchObject({ code: '401' })
     expect(getCsrfToken()).toBe(null)
+  })
+})
+
+/**
+ * Two identities share this transport, and the whole point of separating them is
+ * that neither can sign for the other. Types cannot catch a swap here — both
+ * tokens are strings — so it is asserted.
+ */
+describe('the two sessions', () => {
+  afterEach(() => {
+    setCsrfToken(null)
+    setAdminCsrfToken(null)
+    api.defaults.adapter = undefined
+    adminAuthApi.defaults.adapter = undefined
+  })
+
+  const ok = (config: InternalAxiosRequestConfig, data: unknown = {}): Promise<AxiosResponse> =>
+    Promise.resolve({ status: 200, statusText: 'OK', data, headers: {}, config } as AxiosResponse)
+
+  const failWith = (status: number, config: InternalAxiosRequestConfig): Promise<AxiosResponse> =>
+    Promise.reject(
+      new AxiosError('Request failed', String(status), config, {}, {
+        status,
+        statusText: '',
+        data: {},
+        headers: {},
+        config,
+      } as AxiosResponse),
+    )
+
+  function record(instance: typeof api) {
+    const seen: InternalAxiosRequestConfig[] = []
+    instance.defaults.adapter = (config) => {
+      seen.push(config)
+      return ok(config)
+    }
+    return seen
+  }
+
+  it('signs an admin route with the admin token and a customer route with the customer one', async () => {
+    setCsrfToken('customer')
+    setAdminCsrfToken('admin')
+    const seen = record(api)
+
+    await api.patch('/admin/accounts/1/tier', {})
+    await api.post('/accounts/password', {})
+
+    expect(seen[0].headers.get('X-CSRF-Token')).toBe('admin')
+    expect(seen[1].headers.get('X-CSRF-Token')).toBe('customer')
+  })
+
+  // A customer with no admin session must not have their own token borrowed to
+  // sign an admin write — it would be refused, and the 403 would say nothing.
+  it('sends no token on an admin route when only a customer session exists', async () => {
+    setCsrfToken('customer')
+    const seen = record(api)
+
+    await api.post('/admin/accounts', {})
+
+    expect(seen[0].headers.get('X-CSRF-Token')).toBeUndefined()
+  })
+
+  it('drops only the session that ended', async () => {
+    setCsrfToken('customer')
+    setAdminCsrfToken('admin')
+    api.defaults.adapter = (config) => failWith(401, config)
+
+    await expect(api.get('/admin/accounts')).rejects.toMatchObject({ code: '401' })
+
+    expect(getAdminCsrfToken()).toBe(null)
+    expect(getCsrfToken()).toBe('customer')
+  })
+
+  it('refreshes a stale admin token from /auth/me rather than /accounts/me', async () => {
+    setAdminCsrfToken('stale')
+    let attempts = 0
+    const seen: InternalAxiosRequestConfig[] = []
+    api.defaults.adapter = (config) => {
+      seen.push(config)
+      attempts += 1
+      return attempts === 1 ? failWith(403, config) : ok(config, { granted: true })
+    }
+    const auth = record(adminAuthApi)
+    adminAuthApi.defaults.adapter = (config) => {
+      auth.push(config)
+      return ok(config, { csrf_token: 'fresh' })
+    }
+
+    const res = await api.patch('/admin/accounts/1/tier', {})
+
+    expect(res.data).toEqual({ granted: true })
+    expect(auth.map((config) => config.url)).toEqual(['/auth/me'])
+    expect(getAdminCsrfToken()).toBe('fresh')
+    expect(seen[1].headers.get('X-CSRF-Token')).toBe('fresh')
   })
 })

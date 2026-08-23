@@ -2,13 +2,20 @@ import { LogoIcon, MenuIcon } from '../../assets/icons/index'
 import { useId, useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import { useAccount, useLogout } from '../../hooks/useAccount'
-
-const TIER_LABELS = { free: 'Free', pro: 'Pro', elite: 'Elite' } as const
+import { useAdminSession } from '../../hooks/useAdminSession'
+import { TIER_LABELS } from '../../constants/tiers'
 
 function Navbar() {
   const [isOpened, setIsOpened] = useState(false)
   const menuId = useId()
   const { account, tier, isSignedIn, loading } = useAccount()
+  /**
+   * One `/auth/me` per session decides whether the administration entry exists
+   * at all. It is asked unconditionally because the alternative is an admin who
+   * cannot reach `/admin` without typing it — and the answer for everybody else
+   * is a single fast 401 that reads as "no", not as a failure.
+   */
+  const { isAdmin } = useAdminSession()
   const signOut = useLogout()
   const linkBase = 'py-1.5 text-sm border-b-2 transition-[color,border-color]'
   const activeClass = 'border-primary text-ink'
@@ -39,12 +46,38 @@ function Navbar() {
             >
               Track record
             </NavLink>
-            <NavLink
-              to={'/pricing'}
-              className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
-            >
-              Pricing
-            </NavLink>
+            {/* Anonymous readers are choosing whether to buy; signed-in ones
+                are choosing whether to move up, and Elite has nowhere to move
+                up to — so it gets no entry rather than an invitation that
+                cannot be accepted. */}
+            {!isSignedIn && (
+              <NavLink
+                to={'/pricing'}
+                className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
+              >
+                Pricing
+              </NavLink>
+            )}
+            {isSignedIn && tier !== 'elite' && (
+              <NavLink
+                to={'/pricing'}
+                className={({ isActive }) =>
+                  `${linkBase} ${isActive ? 'border-primary text-ink' : 'border-transparent text-primary hover:text-ink'}`
+                }
+              >
+                Upgrade
+              </NavLink>
+            )}
+            {isAdmin && (
+              <NavLink
+                to={'/admin'}
+                className={({ isActive }) =>
+                  `${linkBase} ${isActive ? 'border-chart-3 text-ink' : 'border-transparent text-chart-3 hover:text-ink'}`
+                }
+              >
+                Admin
+              </NavLink>
+            )}
           </div>
 
           <div className={'flex gap-4 items-center'}>
@@ -124,15 +157,17 @@ function Navbar() {
           >
             Track record
           </NavLink>
-          <NavLink
-            to={'/pricing'}
-            className={({ isActive }) =>
-              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : 'text-ink-muted'}`
-            }
-            onClick={() => setIsOpened(false)}
-          >
-            Pricing
-          </NavLink>
+          {(!isSignedIn || tier !== 'elite') && (
+            <NavLink
+              to={'/pricing'}
+              className={({ isActive }) =>
+                `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : isSignedIn ? 'text-primary' : 'text-ink-muted'}`
+              }
+              onClick={() => setIsOpened(false)}
+            >
+              {isSignedIn ? 'Upgrade' : 'Pricing'}
+            </NavLink>
+          )}
           {isSignedIn && (
             <NavLink
               to={'/account'}
@@ -142,6 +177,17 @@ function Navbar() {
               onClick={() => setIsOpened(false)}
             >
               Account
+            </NavLink>
+          )}
+          {isAdmin && (
+            <NavLink
+              to={'/admin'}
+              className={({ isActive }) =>
+                `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : 'text-chart-3'}`
+              }
+              onClick={() => setIsOpened(false)}
+            >
+              Admin
             </NavLink>
           )}
           {!loading &&

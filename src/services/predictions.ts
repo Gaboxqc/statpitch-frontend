@@ -1,5 +1,6 @@
-import { api, isNotFound, totalFromHeaders } from './api'
+import { api, isNotFound, queryString, totalFromHeaders } from './api'
 import type {
+  CompetitionInfo,
   DayKey,
   Fixture,
   FixtureQuery,
@@ -10,15 +11,13 @@ import type {
   ThreeDayWindow,
 } from '../types/api'
 
-/** Drops undefined entries so an unset filter is absent rather than the string "undefined". */
-function queryString(params: Record<string, string | number | boolean | undefined>): string {
-  const search = new URLSearchParams()
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined) search.set(key, String(value))
-  }
-  const query = search.toString()
-  return query ? `?${query}` : ''
-}
+/**
+ * All twelve, with the names and icons the filter strip renders — and
+ * `free_tier` per row, so the cups can read as something to upgrade for rather
+ * than as a selection that quietly returns nothing.
+ */
+export const getCompetitions = (signal?: AbortSignal): Promise<CompetitionInfo[]> =>
+  api.get<CompetitionInfo[]>('/competitions', { signal }).then((res) => res.data)
 
 /**
  * The whole three-day window in one call, ordered by date then kickoff.
