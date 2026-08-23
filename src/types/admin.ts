@@ -8,7 +8,7 @@
  * the tier.
  */
 
-import type { Tier } from './account'
+import type { Tier, TrialRequest } from './account'
 
 /** Whoever runs the portfolio. The only credential the admin routes accept from a browser. */
 export interface AdminUser {
@@ -111,18 +111,16 @@ export interface AdminAccountQuery {
 }
 
 /**
- * A trial request awaiting a decision. Documented in the backend contract but
- * not yet served — see `probeTrialRequests` in `services/admin.ts`.
+ * A trial request as the queue shows it: the customer's own record plus the
+ * account it belongs to, which is the part they cannot see and the admin needs.
  */
-export type TrialRequestStatus = 'pending' | 'approved' | 'declined'
-
-export interface TrialRequest {
-  id: number
+export interface AdminTrialRequest extends TrialRequest {
   account_id: number
-  email: string
-  status: TrialRequestStatus
-  requested_at: string
-  decided_at: string | null
+  account_email: string
   decided_by: string | null
-  decision_reason: string | null
+}
+
+/** Both decisions take the same optional note. On a decline it is shown to the account. */
+export interface TrialDecision {
+  reason?: string | null
 }

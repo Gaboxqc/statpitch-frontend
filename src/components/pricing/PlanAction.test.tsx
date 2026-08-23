@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react'
 import PlanAction from './PlanAction'
 import { renderWithQuery } from '../../test/renderWithQuery'
 import * as accounts from '../../services/accounts'
-import type { Account } from '../../types/account'
+import type { Account, TrialRequest } from '../../types/account'
 
 const FREE: Account = {
   email: 'reader@example.com',
@@ -15,7 +15,19 @@ const FREE: Account = {
   csrf_token: 'issued-token',
 }
 
-const as = (account: Account | null) => vi.spyOn(accounts, 'getMe').mockResolvedValue(account)
+const REQUEST: TrialRequest = {
+  id: 1,
+  status: 'pending',
+  message: null,
+  requested_at: '2026-08-20T09:00:00',
+  decided_at: null,
+  decision_reason: null,
+}
+
+const as = (account: Account | null, request: TrialRequest | null = null) => {
+  vi.spyOn(accounts, 'getTrialRequest').mockResolvedValue(request)
+  return vi.spyOn(accounts, 'getMe').mockResolvedValue(account)
+}
 
 afterEach(() => vi.restoreAllMocks())
 
@@ -46,11 +58,28 @@ describe('PlanAction', () => {
     expect(await screen.findByText('Included')).toBeInTheDocument()
   })
 
-  it('offers the trial on Pro to a free account that has not used it', async () => {
+  // Asking is not taking: an admin decides, so the button cannot promise Pro.
+  it('offers to request the trial on Pro for an account that has never had one', async () => {
     as(FREE)
     renderWithQuery(<PlanAction plan={'pro'} isPopular={true} />)
 
-    expect(await screen.findByRole('button', { name: /start 14-day trial/i })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /request 14-day trial/i })).toBeInTheDocument()
+  })
+
+  it('reports a request under review where the button was', async () => {
+    as(FREE, REQUEST)
+    renderWithQuery(<PlanAction plan={'pro'} isPopular={true} />)
+
+    expect(await screen.findByText(/awaiting review/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('lets a declined account ask again', async () => {
+    as(FREE, { ...REQUEST, status: 'declined', decision_reason: 'Not this season.' })
+    renderWithQuery(<PlanAction plan={'pro'} isPopular={true} />)
+
+    expect(await screen.findByRole('button', { name: /request again/i })).toBeInTheDocument()
+    expect(screen.getByText('Not this season.')).toBeInTheDocument()
   })
 
   /**

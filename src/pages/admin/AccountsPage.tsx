@@ -4,7 +4,6 @@ import QueryError from '../../components/ui/QueryError'
 import TierBadge from '../../components/admin/TierBadge'
 import { useAdminAccounts, useCreateAccount } from '../../hooks/useAdminAccounts'
 import { useAdminLogout, useAdminSession } from '../../hooks/useAdminSession'
-import { useTrialRequestsAvailable } from '../../hooks/useTrialRequests'
 import { useDocumentTitle } from '../../hooks/useDocumentTitle'
 import { describeError } from '../../services/api'
 import { formatLongDate, formatRelativeTime } from '../../utils/datetime'
@@ -136,7 +135,6 @@ function NewAccount() {
 function AccountsPage() {
   useDocumentTitle('Accounts · Admin')
   const { admin } = useAdminSession()
-  const { available: trialQueue } = useTrialRequestsAvailable()
   const signOut = useAdminLogout()
 
   const [email, setEmail] = useState('')
@@ -172,13 +170,9 @@ function AccountsPage() {
           </p>
         </div>
         <div className={'flex shrink-0 items-center gap-3'}>
-          {/* Offered only when the API serves it — the queue is in the contract
-              ahead of the deployment. */}
-          {trialQueue && (
-            <Link to={'/admin/trial-requests'} className={'text-xs text-primary'}>
-              Trial requests
-            </Link>
-          )}
+          <Link to={'/admin/trial-requests'} className={'text-xs text-primary'}>
+            Trial requests
+          </Link>
           {admin && <p className={'text-xs text-ink-subtle'}>{admin.username}</p>}
           <button
             type={'button'}

@@ -1,7 +1,7 @@
 import type { AxiosResponse } from 'axios'
-import { adminAuthApi, api, isNotFound, isUnauthenticated, queryString, totalFromHeaders } from './api'
+import { adminAuthApi, api, isUnauthenticated, queryString, totalFromHeaders } from './api'
 import { setAdminCsrfToken } from './adminSession'
-import type { ApiKey } from '../types/account'
+import type { ApiKey, TrialRequestStatus } from '../types/account'
 import type { Page } from '../types/api'
 import type {
   AdminAccount,
@@ -9,11 +9,10 @@ import type {
   AdminAccountQuery,
   AdminCredentials,
   AdminSession,
+  AdminTrialRequest,
   AdminUser,
   TierGrant,
   TierGrantRequest,
-  TrialRequest,
-  TrialRequestStatus,
 } from '../types/admin'
 
 /**
@@ -116,38 +115,26 @@ export const revokeKey = async (keyId: number): Promise<void> => {
   await api.delete(`/admin/keys/${keyId}`)
 }
 
-/**
- * The trial queue.
- *
- * Documented in the backend contract and not yet served — it is absent from
- * `/openapi.json` on the deployed API. So the surface is written against the
- * contract and gated on a probe: a 404 means this build of the API does not have
- * it, and the page is simply not offered. Anything else is a real error and is
- * reported as one.
- */
-export const probeTrialRequests = (signal?: AbortSignal): Promise<boolean> =>
-  api
-    .get('/admin/trial-requests', { params: { limit: 1 }, signal })
-    .then(() => true)
-    .catch((error: unknown) => {
-      if (isNotFound(error)) return false
-      throw error
-    })
-
+/** The queue, oldest first. Nobody is granted a trial without passing through it. */
 export const listTrialRequests = (
   status?: TrialRequestStatus,
   signal?: AbortSignal,
-): Promise<TrialRequest[]> =>
+): Promise<AdminTrialRequest[]> =>
   api
-    .get<TrialRequest[]>(`/admin/trial-requests${queryString({ status })}`, { signal })
+    .get<AdminTrialRequest[]>(`/admin/trial-requests${queryString({ status })}`, { signal })
     .then((res) => res.data)
 
-/** Grants Pro for 14 days. */
-export const approveTrialRequest = (id: number): Promise<TrialRequest> =>
-  api.post<TrialRequest>(`/admin/trial-requests/${id}/approve`).then((res) => res.data)
-
-/** Grants nothing. The reason is shown to the account, so it is written for them. */
-export const declineTrialRequest = (id: number, decision_reason: string): Promise<TrialRequest> =>
+/**
+ * Both decisions take the same body, and the API requires one — so a decision
+ * with nothing to say still sends `{}` rather than no body at all.
+ */
+export const approveTrialRequest = (id: number, reason?: string): Promise<AdminTrialRequest> =>
   api
-    .post<TrialRequest>(`/admin/trial-requests/${id}/decline`, { decision_reason })
+    .post<AdminTrialRequest>(`/admin/trial-requests/${id}/approve`, { reason: reason ?? null })
+    .then((res) => res.data)
+
+/** Grants nothing. The reason reaches the account, so it is written for them to read. */
+export const declineTrialRequest = (id: number, reason: string): Promise<AdminTrialRequest> =>
+  api
+    .post<AdminTrialRequest>(`/admin/trial-requests/${id}/decline`, { reason })
     .then((res) => res.data)

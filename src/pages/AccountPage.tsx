@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import ApiKeys from '../components/account/ApiKeys'
 import PasswordForm from '../components/account/PasswordForm'
-import { useAccount, useRevokeAllSessions, useStartTrial } from '../hooks/useAccount'
+import { useAccount, useRequestTrial, useRevokeAllSessions, useTrialRequest } from '../hooks/useAccount'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useQuota } from '../hooks/useQuota'
 import { describeError } from '../services/api'
-import { formatLongDate } from '../utils/datetime'
+import { formatLongDate, formatRelativeTime } from '../utils/datetime'
 import { TIER_LABELS } from '../constants/tiers'
+import { describeTrial } from '../utils/trialState'
+import { MAX_TRIAL_MESSAGE_LENGTH } from '../types/account'
 import type { Account } from '../types/account'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -27,9 +29,96 @@ function Section({ title, children }: { title: string; children: React.ReactNode
  * what someone is entitled to. The expiry is shown because "Pro until 3 March"
  * is worth knowing, not because anything is computed from it.
  */
+/**
+ * Asking for the trial, and what came of asking.
+ *
+ * The button used to say "Start 14-day Pro trial" and grant it outright. There
+ * is no such route any more, by design: no paid tier should be grantable by the
+ * person receiving it. So this asks, and then reports where the asking got to.
+ */
+function Trial({ account }: { account: Account }) {
+  const { request } = useTrialRequest()
+  const ask = useRequestTrial()
+  const [message, setMessage] = useState('')
+  const trial = describeTrial(account, request)
+
+  if (trial.kind === 'none') return null
+
+  if (trial.kind === 'used')
+    return (
+      <p className={'text-xs text-ink-subtle'}>
+        {trial.detail} <Link to={'/pricing'}>See plans</Link> for what Pro carries.
+      </p>
+    )
+
+  if (trial.kind === 'pending')
+    return (
+      <div className={'flex flex-col gap-1 rounded-md border border-line bg-secondary p-3'}>
+        <p className={'text-sm text-ink'}>{trial.label}</p>
+        <p className={'text-xs text-ink-subtle'}>{trial.detail}</p>
+        {request !== null && (
+          <p className={'text-2xs text-ink-subtle'}>
+            Asked {formatRelativeTime(request.requested_at)}
+          </p>
+        )}
+      </div>
+    )
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        ask.mutate(message, { onSuccess: () => setMessage('') })
+      }}
+      className={'flex flex-col items-start gap-2'}
+    >
+      {/* A declined request is worth showing above the one replacing it: asking
+          again without knowing why the last one failed is just guessing. */}
+      {trial.kind === 'declined' && trial.detail !== null && (
+        <p className={'text-xs text-ink-muted'}>
+          Your last request was declined: <span className={'text-ink'}>{trial.detail}</span>
+        </p>
+      )}
+
+      <label className={'flex w-full max-w-md flex-col gap-1'}>
+        <span className={'eyebrow text-ink-subtle'}>Anything to add? (optional)</span>
+        <textarea
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          maxLength={MAX_TRIAL_MESSAGE_LENGTH}
+          rows={2}
+          placeholder={'What you would use it for.'}
+          className={'rounded-md border border-line-strong bg-secondary p-2 text-sm text-ink'}
+        />
+      </label>
+
+      <button
+        type={'submit'}
+        disabled={ask.isPending}
+        className={
+          'rounded-md bg-primary py-2 px-4 text-sm font-semibold text-background cursor-pointer disabled:cursor-progress disabled:opacity-70'
+        }
+      >
+        {ask.isPending ? 'Requesting…' : trial.label}
+      </button>
+
+      <p className={'text-xs text-ink-subtle'}>
+        {trial.kind === 'request'
+          ? trial.detail
+          : 'An administrator reviews every request. Asking grants nothing on its own.'}
+      </p>
+
+      {ask.error !== null && (
+        <p role={'alert'} className={'text-xs text-negative'}>
+          {describeError(ask.error)}
+        </p>
+      )}
+    </form>
+  )
+}
+
 function Plan({ account }: { account: Account }) {
   const quota = useQuota()
-  const trial = useStartTrial()
   const isFree = account.tier === 'free'
   const lapsed = isFree && account.tier_expires_at !== null
 
@@ -55,38 +144,7 @@ function Plan({ account }: { account: Account }) {
         </p>
       )}
 
-      {/* Once used the offer is gone for good — a second attempt is a 409 even
-          after the trial has lapsed — so the button goes with it rather than
-          standing there to be refused. */}
-      {isFree && !account.trial_used && (
-        <div className={'flex flex-col items-start gap-2'}>
-          <button
-            type={'button'}
-            onClick={() => trial.mutate()}
-            disabled={trial.isPending}
-            className={
-              'rounded-md bg-primary py-2 px-4 text-sm font-semibold text-background cursor-pointer disabled:cursor-progress disabled:opacity-70'
-            }
-          >
-            {trial.isPending ? 'Starting…' : 'Start 14-day Pro trial'}
-          </button>
-          <p className={'text-xs text-ink-subtle'}>
-            No payment details. Once per account, so it is worth starting when you will use it.
-          </p>
-          {trial.error !== null && (
-            <p role={'alert'} className={'text-xs text-negative'}>
-              {describeError(trial.error)}
-            </p>
-          )}
-        </div>
-      )}
-
-      {isFree && account.trial_used && (
-        <p className={'text-xs text-ink-subtle'}>
-          The trial has been used on this account. <Link to={'/pricing'}>See plans</Link> for what
-          Pro carries.
-        </p>
-      )}
+      <Trial account={account} />
     </div>
   )
 }

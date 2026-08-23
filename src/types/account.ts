@@ -19,7 +19,10 @@ export interface Account {
   tier: Tier
   /** Still sent once lapsed, so "Pro until 3 March" remains renderable. */
   tier_expires_at: string | null
-  /** False means the trial button is worth showing. Once true, never false again. */
+  /**
+   * Whether a trial has ever been granted on this account. Once true, never
+   * false again — an admin reset is what clears it.
+   */
   trial_used: boolean
   /** Always false today — email verification is not built. */
   email_verified: boolean
@@ -30,6 +33,33 @@ export interface Account {
    */
   csrf_token: string
 }
+
+/**
+ * Where an account's trial request stands. `null` from the API means it has
+ * never asked, which is a fourth state and the only one that offers the button.
+ */
+export type TrialRequestStatus = 'pending' | 'approved' | 'declined'
+
+/**
+ * A request for the trial, as its owner sees it.
+ *
+ * Asking grants nothing. An admin approves or declines, so the account holds a
+ * request rather than a trial — and the honest button says "request", not
+ * "start", because pressing it changes nothing about what they can read.
+ */
+export interface TrialRequest {
+  id: number
+  status: TrialRequestStatus
+  /** What the account said when asking. Up to 500 characters, and optional. */
+  message: string | null
+  requested_at: string
+  decided_at: string | null
+  /** Written for the account to read, so it is rendered as it arrives. */
+  decision_reason: string | null
+}
+
+/** The API caps the note at 500 characters and answers 422 above it. */
+export const MAX_TRIAL_MESSAGE_LENGTH = 500
 
 export interface Credentials {
   email: string

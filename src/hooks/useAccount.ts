@@ -6,11 +6,12 @@ import {
   login,
   logout,
   register,
+  getTrialRequest,
+  requestTrial,
   revokeAllSessions,
-  startTrial,
 } from '../services/accounts'
 import { clearQuota } from '../services/quota'
-import type { Account, Credentials, PasswordChange, Tier } from '../types/account'
+import type { Account, Credentials, PasswordChange, Tier, TrialRequest } from '../types/account'
 
 /**
  * The session lives in the query cache rather than in a context. There is one
@@ -97,17 +98,40 @@ export function useLogout() {
   })
 }
 
+/** The key is separate from the account: a decision changes one without the other. */
+export const TRIAL_REQUEST_KEY = ['trialRequest'] as const
+
 /**
- * Fourteen days of Pro, once per account ever. The response is the account at
- * its new tier, so the cache is written from it and everything gated refetched
- * — the fixture list the reader was just looking at is a tier out of date the
- * moment this succeeds.
+ * Where this account's trial request stands, or `null` if it has never asked.
+ *
+ * Read alongside the account rather than folded into it, because they answer
+ * different questions — `trial_used` says a trial was once granted, this says
+ * whether one is currently being considered.
  */
-export function useStartTrial() {
+export function useTrialRequest(enabled = true) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: TRIAL_REQUEST_KEY,
+    queryFn: ({ signal }) => getTrialRequest(signal),
+    enabled,
+    // An admin decision lands here without anything on this side happening.
+    staleTime: 0,
+  })
+
+  return { request: (data ?? null) as TrialRequest | null, loading: enabled && isLoading, error }
+}
+
+/**
+ * Asks for the trial. Grants **nothing** — an admin decides, so nothing about
+ * this reader's entitlement changes on success and the fixture cache is left
+ * alone. Only the request itself is written.
+ */
+export function useRequestTrial() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: () => startTrial(),
-    onSuccess: (account) => resetEntitledData(queryClient, account),
+    mutationFn: (message?: string) => requestTrial(message),
+    onSuccess: (request) => {
+      queryClient.setQueryData(TRIAL_REQUEST_KEY, request)
+    },
   })
 }
 
