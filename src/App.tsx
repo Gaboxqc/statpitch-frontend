@@ -11,6 +11,7 @@ import RouteFallback from './components/ui/RouteFallback'
 // the others are split out and fetched on demand.
 const PricingPage = lazy(() => import('./pages/PricingPage'))
 const TrackRecordPage = lazy(() => import('./pages/TrackRecordPage'))
+const BetsPage = lazy(() => import('./pages/BetsPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const FixturePage = lazy(() => import('./pages/FixturePage'))
 const AccountPage = lazy(() => import('./pages/AccountPage'))
@@ -53,6 +54,7 @@ const router = createBrowserRouter(
         { index: true, element: <HomePage /> },
         { path: 'fixture/:id', element: withFallback(<FixturePage />) },
         { path: 'track-record', element: withFallback(<TrackRecordPage />) },
+        { path: 'bets', element: withFallback(<BetsPage />) },
         { path: 'pricing', element: withFallback(<PricingPage />) },
         { path: 'account', element: withFallback(<AccountPage />) },
         {

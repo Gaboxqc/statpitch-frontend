@@ -41,6 +41,12 @@ function Navbar() {
               Home
             </NavLink>
             <NavLink
+              to={'/bets'}
+              className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
+            >
+              Today&apos;s picks
+            </NavLink>
+            <NavLink
               to={'/track-record'}
               className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
             >
@@ -149,6 +155,15 @@ function Navbar() {
             onClick={() => setIsOpened(false)}
           >
             Home
+          </NavLink>
+          <NavLink
+            to={'/bets'}
+            className={({ isActive }) =>
+              `w-full p-2 rounded-md ${isActive ? 'text-ink bg-secondary' : 'text-ink-muted'}`
+            }
+            onClick={() => setIsOpened(false)}
+          >
+            Today&apos;s picks
           </NavLink>
           <NavLink
             to={'/track-record'}

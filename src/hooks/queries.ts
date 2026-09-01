@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   getBestToday,
+  getBetsToday,
   getCompetitions,
   getFixture,
   getFixtures,
@@ -11,6 +12,7 @@ import {
 } from '../services/predictions'
 import { pickMatchOfTheDay } from '../utils/matchOfTheDay'
 import type {
+  BetsToday,
   CompetitionInfo,
   DayKey,
   Fixture,
@@ -123,6 +125,19 @@ export function useMatchOfTheDay(day: DayKey) {
   const error = fixture === null && !loading ? (listError ?? (isToday ? best.error : null)) : null
 
   return { fixture, loading, error }
+}
+
+/**
+ * StatPitch's staked picks for today. The 402 below Pro settles as an error, and
+ * the page renders the upsell from it rather than treating it as a failure.
+ */
+export function useBetsToday() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['betsToday'],
+    queryFn: ({ signal }) => getBetsToday(signal),
+  })
+
+  return { bets: (data ?? null) as BetsToday | null, loading: isLoading, error }
 }
 
 /** Already ordered by Kelly descending. */

@@ -1,5 +1,6 @@
 import { api, isNotFound, queryString, totalFromHeaders } from './api'
 import type {
+  BetsToday,
   CompetitionInfo,
   DayKey,
   Fixture,
@@ -55,6 +56,17 @@ export const getBestToday = (signal?: AbortSignal): Promise<Fixture | null> =>
       if (isNotFound(error)) return null
       throw error
     })
+
+/**
+ * StatPitch's own picks for today, served from its cache rather than proxied.
+ * Pro and above — below that the caller gets a 402, which is a state the page
+ * renders rather than an error it reports.
+ *
+ * An empty day is a `200` carrying a `reason`, never a `404`, so nothing here
+ * catches a not-found: there is no such thing.
+ */
+export const getBetsToday = (signal?: AbortSignal): Promise<BetsToday> =>
+  api.get<BetsToday>('/bets/today', { signal }).then((res) => res.data)
 
 /** Already ordered by Kelly descending, which is the API's deliberate ranking. */
 export const getValueBetsToday = (signal?: AbortSignal): Promise<Fixture[]> =>
