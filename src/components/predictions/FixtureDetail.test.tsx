@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import FixtureDetail from './FixtureDetail'
-import { buildPredictionView } from '../../utils/predictionView'
 import {
   fixtureFixture,
   settledFixtureFixture,
@@ -10,12 +9,7 @@ import {
 } from '../../test/fixtures'
 import type { Fixture } from '../../types/api'
 
-const renderDetail = (fixture: Fixture) => {
-  const { markets, bestBet } = buildPredictionView(fixture)
-  return render(
-    <FixtureDetail fixture={fixture} markets={markets} bestBet={bestBet} isOpened={true} />,
-  )
-}
+const renderDetail = (fixture: Fixture) => render(<FixtureDetail fixture={fixture} isOpened={true} />)
 
 describe('FixtureDetail', () => {
   // A ranked list flattened the distribution; the grid keeps both axes, so a

@@ -66,7 +66,7 @@ function MatchDayCard() {
   // prediction. The guard is here because the type cannot know that.
   if (!hasProbabilities(prediction)) return null
 
-  const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
+  const { bestBet, bestMarket, winner } = buildPredictionView(prediction)
   const matchCertainty = certainty(prediction)
   const kickoff = describeKickoffLong(prediction)
   // Everything the market paid for: xG, the pick, and why there is not one.
@@ -278,8 +278,6 @@ function MatchDayCard() {
         <FixtureDetail
           id={marketsId}
           fixture={prediction}
-          markets={markets}
-          bestBet={bestBet}
           isOpened={isOpened}
         />
       </div>

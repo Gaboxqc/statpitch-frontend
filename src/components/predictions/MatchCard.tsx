@@ -226,8 +226,6 @@ function MatchCard({
       <FixtureDetail
         id={marketsId}
         fixture={prediction}
-        markets={view.markets}
-        bestBet={view.bestBet}
         isOpened={isOpened}
       />
     </article>

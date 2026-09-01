@@ -1,11 +1,12 @@
-import MarketList from './MarketList'
+import SelectionsTable from './SelectionsTable'
+import ForecastMarkets from './ForecastMarkets'
 import CorrectScores from './CorrectScores'
 import ExplanationBreakdown from './ExplanationBreakdown'
 import FixtureMeta from './FixtureMeta'
 import FinalScore from './FinalScore'
 import { hasFullDetail } from '../../utils/entitlement'
 import { BAND_STYLE } from '../../utils/confidence'
-import type { Confidence, Fixture, Market, MarketKey } from '../../types/api'
+import type { Confidence, Fixture } from '../../types/api'
 
 const BAND_LABELS: Record<Confidence, string> = { low: 'Low', medium: 'Medium', high: 'High' }
 
@@ -38,8 +39,6 @@ function ConfidenceReasons({ band, reasons }: { band: Confidence; reasons: strin
 
 interface FixtureDetailProps {
   fixture: Fixture
-  markets: Market[]
-  bestBet: MarketKey | null
   isOpened: boolean
   id?: string
 }
@@ -53,7 +52,7 @@ interface FixtureDetailProps {
  * result and the fixture's own provenance, so the panel narrows rather than
  * emptying — a second column of blanks would read as a loading failure.
  */
-function FixtureDetail({ fixture, markets, bestBet, isOpened, id }: FixtureDetailProps) {
+function FixtureDetail({ fixture, isOpened, id }: FixtureDetailProps) {
   const full = hasFullDetail(fixture) ? fixture : null
 
   return (
@@ -85,7 +84,11 @@ function FixtureDetail({ fixture, markets, bestBet, isOpened, id }: FixtureDetai
         />
       )}
 
-      {full && <MarketList markets={markets} bestBet={bestBet} isOpened={true} />}
+      {/* What StatPitch priced and staked, then the markets it predicts but
+          nobody prices. Two different kinds of claim, kept apart. */}
+      {full && <SelectionsTable selections={full.selections} />}
+
+      {full && <ForecastMarkets fixture={full} />}
     </div>
   )
 }

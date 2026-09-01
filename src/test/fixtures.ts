@@ -1,4 +1,11 @@
-import type { FreeFixture, FullFixture, SettledBet, Stats, TeaserFixture } from '../types/api'
+import type {
+  FreeFixture,
+  FullFixture,
+  Selection,
+  SettledBet,
+  Stats,
+  TeaserFixture,
+} from '../types/api'
 
 /**
  * Modelled on a real `/statpitch/fixtures/tomorrow` payload, then made
@@ -7,6 +14,99 @@ import type { FreeFixture, FullFixture, SettledBet, Stats, TeaserFixture } from 
  * away side carries a positive EV that still produced no pick because Kelly
  * stayed null, and one EV is exactly zero.
  */
+/**
+ * StatPitch's priced rows, taken from a live payload. One outcome is staked and
+ * two are not, because that ratio is the ordinary case and the refusals are what
+ * the table has to explain.
+ *
+ * `model_edge` is 0.0 and `p_used` equals `q_fair` on every row, as they are on
+ * every live row: the market-shrinkage weight fits at zero, so these are price
+ * disagreements rather than the model beating the market.
+ */
+const selection = (over: Partial<Selection> & Pick<Selection, 'selection'>): Selection => ({
+  our_selection: null,
+  market_family: '1x2',
+  line: null,
+  description: null,
+  odds: null,
+  reference_odds: null,
+  consensus_odds: null,
+  fair_odds: null,
+  p_model: null,
+  q_fair: null,
+  p_used: null,
+  expected_value: null,
+  price_edge: null,
+  model_edge: 0,
+  rule_edge: null,
+  rule_qualified: false,
+  grade: null,
+  stake_fraction: 0,
+  reasons: null,
+  config_status: 'experimental',
+  selection_rule_status: 'experimental',
+  selection_rule_reference: 'odds_pinnacle',
+  selection_basis: null,
+  pricing: null,
+  model_odds: null,
+  captured_at: '2026-08-18T07:40:00',
+  ...over,
+})
+
+export const selectionsFixture: Selection[] = [
+  selection({
+    selection: '1x2_home',
+    our_selection: 'home_win',
+    description: 'Home win',
+    odds: 1.75,
+    reference_odds: 1.68,
+    consensus_odds: 1.6522,
+    fair_odds: 1.7295,
+    p_model: 0.7319,
+    q_fair: 0.5782,
+    p_used: 0.5782,
+    expected_value: 0.0118,
+    price_edge: 0.0118,
+    rule_edge: 0.0046,
+    rule_qualified: true,
+    grade: 'C',
+    stake_fraction: 0.00125,
+    reasons: [],
+  }),
+  selection({
+    selection: '1x2_draw',
+    our_selection: 'draw',
+    description: 'Draw',
+    odds: 3.6,
+    reference_odds: 3.75,
+    consensus_odds: 3.5,
+    fair_odds: 3.71,
+    p_model: 0.1841,
+    q_fair: 0.2695,
+    p_used: 0.2695,
+    expected_value: -0.0297,
+    price_edge: -0.0297,
+    rule_edge: -0.004,
+    reasons: ['The best price sits below the benchmark, so there is no edge to take.'],
+  }),
+  selection({
+    selection: '1x2_away',
+    our_selection: 'away_win',
+    description: 'Away win',
+    odds: 5.2,
+    reference_odds: 5.1,
+    consensus_odds: 4.95,
+    fair_odds: 5.19,
+    p_model: 0.084,
+    q_fair: 0.1927,
+    p_used: 0.1927,
+    expected_value: 0.0019,
+    price_edge: 0.0019,
+    rule_edge: 0.0004,
+    reasons: ['The edge is too small to clear the staking threshold.'],
+  }),
+]
+
 export const fixtureFixture: FullFixture = {
   id: 2,
   fixture_id: 'ESP.LALIGA|2026-2027|Club Atlético de Madrid|Málaga CF',
@@ -60,6 +160,8 @@ export const fixtureFixture: FullFixture = {
   over_3_5: 0.3880568133271343,
   btts_yes: 0.4924885428311951,
   btts_no: 0.507511,
+
+  selections: selectionsFixture,
 
   correct_scores: [
     { home: 2, away: 0, probability: 0.12106376111818812 },
@@ -196,6 +298,7 @@ export const unpricedFixtureFixture: FullFixture = {
   home_team: 'Feyenoord',
   away_team: 'Sparta Praha',
   odds_coverage: false,
+  selections: [],
   // A matchday placeholder rather than a real kickoff, so no time can be shown.
   date_confirmed: false,
   kickoff: null,
