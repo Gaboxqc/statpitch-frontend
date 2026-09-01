@@ -17,7 +17,10 @@ function ProbabilityAxis({ model, market }: { model: number | null; market: numb
   const rich = m > q
 
   return (
-    <span aria-hidden={true} className={'relative block h-4 w-24 rounded-full bg-secondary sm:w-32'}>
+    <span
+      aria-hidden={true}
+      className={'relative block h-4 w-24 rounded-full bg-secondary sm:w-32'}
+    >
       <span
         className={`absolute inset-y-1 rounded-full ${rich ? 'bg-primary/30' : 'bg-negative/30'}`}
         style={{ left: `${Math.min(m, q)}%`, width: `${Math.abs(m - q)}%` }}

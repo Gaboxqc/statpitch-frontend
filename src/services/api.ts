@@ -222,9 +222,7 @@ export function predictionsRemaining(headers: unknown): number | 'unlimited' | n
 }
 
 /** Drops undefined entries so an unset filter is absent rather than the string "undefined". */
-export function queryString(
-  params: Record<string, string | number | boolean | undefined>,
-): string {
+export function queryString(params: Record<string, string | number | boolean | undefined>): string {
   const search = new URLSearchParams()
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined) search.set(key, String(value))

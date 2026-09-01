@@ -29,10 +29,7 @@ describe('groupByCompetition', () => {
     ])
 
     expect(groups).toHaveLength(2)
-    expect(groups[0].fixtures.map((fixture) => fixture.id)).toEqual([
-      pickedFixtureFixture.id,
-      99,
-    ])
+    expect(groups[0].fixtures.map((fixture) => fixture.id)).toEqual([pickedFixtureFixture.id, 99])
   })
 
   it('names the group from the payload rather than a local table', () => {

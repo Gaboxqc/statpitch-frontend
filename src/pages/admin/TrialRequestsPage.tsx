@@ -161,7 +161,11 @@ function TrialRequestsPage() {
       )}
 
       {requests.length > 0 && (
-        <ul className={'flex flex-col divide-y divide-line rounded-lg border border-line bg-card px-6'}>
+        <ul
+          className={
+            'flex flex-col divide-y divide-line rounded-lg border border-line bg-card px-6'
+          }
+        >
           {requests.map((request) => (
             <Request key={request.id} request={request} />
           ))}

@@ -2,7 +2,12 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import ApiKeys from '../components/account/ApiKeys'
 import PasswordForm from '../components/account/PasswordForm'
-import { useAccount, useRequestTrial, useRevokeAllSessions, useTrialRequest } from '../hooks/useAccount'
+import {
+  useAccount,
+  useRequestTrial,
+  useRevokeAllSessions,
+  useTrialRequest,
+} from '../hooks/useAccount'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useQuota } from '../hooks/useQuota'
 import { describeError } from '../services/api'

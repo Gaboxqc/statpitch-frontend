@@ -18,8 +18,20 @@ describe('pickMatchOfTheDay', () => {
   // A likely draw is not a confident match, which is the same reasoning the API
   // applies to its own high-confidence count.
   it('ignores the draw when judging how strong a call is', () => {
-    const draw = { ...freeFixtureFixture, id: 12, home_win_prob: 0.2, draw_prob: 0.7, away_win_prob: 0.1 }
-    const home = { ...freeFixtureFixture, id: 13, home_win_prob: 0.5, draw_prob: 0.3, away_win_prob: 0.2 }
+    const draw = {
+      ...freeFixtureFixture,
+      id: 12,
+      home_win_prob: 0.2,
+      draw_prob: 0.7,
+      away_win_prob: 0.1,
+    }
+    const home = {
+      ...freeFixtureFixture,
+      id: 13,
+      home_win_prob: 0.5,
+      draw_prob: 0.3,
+      away_win_prob: 0.2,
+    }
 
     expect(pickMatchOfTheDay([draw, home])?.id).toBe(13)
   })

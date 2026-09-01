@@ -128,7 +128,9 @@ function MatchDayCard() {
                 </div>
               )}
             </div>
-            <div className={'flex shrink-0 flex-col items-center justify-center gap-4 mx-1 sm:mx-4'}>
+            <div
+              className={'flex shrink-0 flex-col items-center justify-center gap-4 mx-1 sm:mx-4'}
+            >
               <p className={'eyebrow text-ink-subtle'}>vs</p>
               <div
                 className={
@@ -275,11 +277,7 @@ function MatchDayCard() {
             </button>
           </div>
         </div>
-        <FixtureDetail
-          id={marketsId}
-          fixture={prediction}
-          isOpened={isOpened}
-        />
+        <FixtureDetail id={marketsId} fixture={prediction} isOpened={isOpened} />
       </div>
     </div>
   )

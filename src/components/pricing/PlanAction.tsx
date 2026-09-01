@@ -44,8 +44,7 @@ function PlanAction({ plan, isPopular }: { plan: Tier; isPopular: boolean }) {
 
   // A request already with an administrator is not a button. Saying so where the
   // button was is the only place the reader will look for the answer.
-  if (plan === 'pro' && trial.kind === 'pending')
-    return <p className={STATIC}>{trial.label}</p>
+  if (plan === 'pro' && trial.kind === 'pending') return <p className={STATIC}>{trial.label}</p>
 
   if (plan === 'pro' && (trial.kind === 'request' || trial.kind === 'declined'))
     return (

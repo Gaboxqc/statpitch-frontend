@@ -9,7 +9,8 @@ import {
 } from '../../test/fixtures'
 import type { Fixture } from '../../types/api'
 
-const renderDetail = (fixture: Fixture) => render(<FixtureDetail fixture={fixture} isOpened={true} />)
+const renderDetail = (fixture: Fixture) =>
+  render(<FixtureDetail fixture={fixture} isOpened={true} />)
 
 describe('FixtureDetail', () => {
   // A ranked list flattened the distribution; the grid keeps both axes, so a

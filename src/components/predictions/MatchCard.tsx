@@ -184,7 +184,9 @@ function MatchCard({
 
       {/* Below `sm` the verdict drops under the teams instead of competing with
           them for the same row, which is what clipped "Internazionale". */}
-      <div className={'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4'}>
+      <div
+        className={'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4'}
+      >
         <ul className={'flex min-w-0 flex-col gap-2'}>
           <TeamRow
             name={prediction.home_team}
@@ -223,11 +225,7 @@ function MatchCard({
         <ProbabilityTiles prediction={predicted} winner={view.winner} variant={'wide'} />
       )}
 
-      <FixtureDetail
-        id={marketsId}
-        fixture={prediction}
-        isOpened={isOpened}
-      />
+      <FixtureDetail id={marketsId} fixture={prediction} isOpened={isOpened} />
     </article>
   )
 }
