@@ -21,8 +21,14 @@ export const MARKET_LABELS: Record<MarketKey, string> = {
 
 /**
  * The API publishes only the `over_*` probabilities — the unders are their
- * complement — but it does quote odds, EV and Kelly for both sides. So the
- * under rows carry a derived probability against a real price.
+ * complement — so the under rows carry a derived probability.
+ *
+ * Every totals and both-teams-to-score price here is **null indefinitely**: we
+ * no longer buy bookmaker markets and StatPitch publishes 1X2 only. The rows
+ * stay anyway, because this list exists to resolve `best_overall_bet` by key and
+ * a settled ledger still holds bets taken on those markets when they were
+ * priced. Nothing renders this as a table any more — the fixture page reads
+ * `selections[]`, and the probabilities have their own forecast block.
  */
 export function buildMarkets(prediction: FullFixture): Market[] {
   return [

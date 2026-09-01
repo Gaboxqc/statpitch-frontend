@@ -80,6 +80,24 @@ describe('filterFixtures', () => {
     expect(filterFixtures(fixtures, { ...base, picks: 'rule' }).map((f) => f.id)).toEqual([2])
   })
 
+  /**
+   * The backend states this outright: only the 1X2 family carries a price, so
+   * these two strategies select the same fixture every time and will until
+   * totals ship upstream. Worth pinning — if the predicates ever diverge, the
+   * track record starts inviting a comparison there is no basis for.
+   */
+  it('has 1x2 and overall selecting alike while only 1X2 is priced', () => {
+    const fixtures = [
+      { ...pickedFixtureFixture, id: 1, match_date: '2026-08-18' },
+      { ...fixtureFixture, id: 2, match_date: '2026-08-18' },
+    ]
+
+    const ourBest = filterFixtures(fixtures, { ...base, picks: 'overall' }).map((f) => f.id)
+    const our1x2 = filterFixtures(fixtures, { ...base, picks: '1x2' }).map((f) => f.id)
+
+    expect(ourBest).toEqual(our1x2)
+  })
+
   // Everything in `selections[]` was priced and graded; only a stake above zero
   // is a recommendation.
   it('ignores a StatPitch row that was assessed and refused', () => {

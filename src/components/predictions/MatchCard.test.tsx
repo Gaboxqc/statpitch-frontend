@@ -33,10 +33,32 @@ describe('MatchCard states', () => {
   })
 
   it('says why a priced fixture carries no bet', () => {
-    renderWithQuery(<MatchCard prediction={fixtureFixture} />)
+    // Neither strategy took this one: no pick of ours, and every StatPitch row
+    // was assessed and refused.
+    const refused = {
+      ...fixtureFixture,
+      selections: fixtureFixture.selections.map((row) => ({ ...row, stake_fraction: 0 })),
+    }
+    renderWithQuery(<MatchCard prediction={refused} />)
 
     expect(within(card()).getByText('No pick')).toBeInTheDocument()
     expect(within(card()).queryByText(/%\s*stake$/)).not.toBeInTheDocument()
+  })
+
+  /**
+   * "No pick" only ever meant ours. Now the list can be narrowed to StatPitch's
+   * rule, and a card denying a pick inside that view would contradict the reason
+   * it is on screen.
+   */
+  it('names a StatPitch pick rather than denying one', () => {
+    renderWithQuery(<MatchCard prediction={fixtureFixture} />)
+
+    // The detail panel below also marks the staked row, so this keys on the
+    // header note's own explanation rather than the shared words.
+    expect(within(card()).getByTitle(/StatPitch staked a selection here/i)).toHaveTextContent(
+      'Value pick',
+    )
+    expect(within(card()).queryByText('No pick')).not.toBeInTheDocument()
   })
 
   // Never priced and priced-but-no-edge are both forecasts, and the reason is
