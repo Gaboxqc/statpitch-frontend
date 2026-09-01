@@ -4,11 +4,23 @@ import RoiSummary from './RoiSummary'
 import { emptyStatsFixture, settledStatsFixture } from '../../test/fixtures'
 
 describe('RoiSummary', () => {
-  it('shows both strategies rather than one blended figure', () => {
+  it('shows every strategy rather than one blended figure', () => {
     render(<RoiSummary roi={settledStatsFixture.roi} />)
 
     expect(screen.getByRole('heading', { name: '1X2 only' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'All markets' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'StatPitch rule' })).toBeInTheDocument()
+  })
+
+  /**
+   * Only the 1X2 family carries a price, so those two strategies pick the same
+   * bet and their columns match. Left unexplained it reads as a bug, or invites
+   * a comparison there is no basis for.
+   */
+  it('says why two of the three read identically', () => {
+    render(<RoiSummary roi={settledStatsFixture.roi} />)
+
+    expect(screen.getByText(/will read the same until/i)).toBeInTheDocument()
   })
 
   it('treats roi_pct as an already-scaled percentage', () => {
@@ -23,8 +35,9 @@ describe('RoiSummary', () => {
   it('distinguishes an empty window from break-even', () => {
     render(<RoiSummary roi={emptyStatsFixture.roi} />)
 
-    expect(screen.getAllByText('—')).toHaveLength(4)
-    expect(screen.getAllByText(/no bets settled yet/i)).toHaveLength(4)
+    // Three strategies, two windows each.
+    expect(screen.getAllByText('—')).toHaveLength(6)
+    expect(screen.getAllByText(/no bets settled yet/i)).toHaveLength(6)
     expect(screen.queryByText('+0.0%')).not.toBeInTheDocument()
   })
 

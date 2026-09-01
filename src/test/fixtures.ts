@@ -333,6 +333,7 @@ export const emptyStatsFixture: Stats = {
   high_confidence_today: 0,
   high_confidence_threshold: 0.7,
   value_bets_today: 0,
+  rule_bets_today: 0,
   roi: [
     {
       basis: '1x2',
@@ -376,6 +377,27 @@ export const emptyStatsFixture: Stats = {
         hit_rate_pct: null,
       },
     },
+    {
+      basis: 'rule',
+      week: {
+        bets: 0,
+        wins: 0,
+        staked_units: 0,
+        returned_units: 0,
+        pnl_units: 0,
+        roi_pct: null,
+        hit_rate_pct: null,
+      },
+      month: {
+        bets: 0,
+        wins: 0,
+        staked_units: 0,
+        returned_units: 0,
+        pnl_units: 0,
+        roi_pct: null,
+        hit_rate_pct: null,
+      },
+    },
   ],
 }
 
@@ -386,6 +408,7 @@ export const settledStatsFixture: Stats = {
   date_confirmed_today: 3,
   high_confidence_today: 1,
   value_bets_today: 2,
+  rule_bets_today: 1,
   roi: [
     {
       basis: '1x2',
@@ -427,6 +450,27 @@ export const settledStatsFixture: Stats = {
         pnl_units: 1.4,
         roi_pct: 12.73,
         hit_rate_pct: 54.55,
+      },
+    },
+    {
+      basis: 'rule',
+      week: {
+        bets: 0,
+        wins: 0,
+        staked_units: 0,
+        returned_units: 0,
+        pnl_units: 0,
+        roi_pct: null,
+        hit_rate_pct: null,
+      },
+      month: {
+        bets: 0,
+        wins: 0,
+        staked_units: 0,
+        returned_units: 0,
+        pnl_units: 0,
+        roi_pct: null,
+        hit_rate_pct: null,
       },
     },
   ],

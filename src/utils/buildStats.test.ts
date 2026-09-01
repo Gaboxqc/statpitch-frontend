@@ -9,11 +9,29 @@ describe('buildStats', () => {
   // The 30-day ROI pair used to live here and moved to the track record, which
   // is a whole page about exactly that. RoiSummary.test covers the 0-100 scale
   // and the empty-window placeholder that used to be asserted here.
-  it('carries only the two figures nothing else on the page shows', () => {
+  it('carries only the figures nothing else on the page shows', () => {
     expect(buildStats(emptyStatsFixture).map((item) => item.id)).toEqual([
       'highConfidence',
       'valueBets',
+      'ruleBets',
     ])
+  })
+
+  /**
+   * Two strategies, not a total and a subset: a fixture can carry a value bet
+   * without a StatPitch pick and the other way round, so neither count bounds
+   * the other and the pair must never be added up.
+   */
+  it('counts our selections and theirs separately', () => {
+    const stats = byId(settledStatsFixture)
+    expect(stats.valueBets.count).toBe(settledStatsFixture.value_bets_today)
+    expect(stats.ruleBets.count).toBe(settledStatsFixture.rule_bets_today)
+  })
+
+  // The list below the bar is ours. StatPitch's picks have their own page, so
+  // this count is not a filter and must not pretend to be one.
+  it('leaves the StatPitch count unfiltered', () => {
+    expect(byId(settledStatsFixture).ruleBets.filter).toEqual({})
   })
 
   it('reads the confidence threshold out of the payload', () => {

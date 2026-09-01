@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { buildEquityCurves } from '../../utils/equityCurve'
 import { formatMatchDay } from '../../utils/datetime'
+import { BASIS_LABELS } from '../../constants/bases'
 import type { Basis, SettledBet } from '../../types/api'
 
 const WIDTH = 720
@@ -12,11 +13,12 @@ const PLOT_H = HEIGHT - PAD.top - PAD.bottom
 
 /**
  * Colour follows the strategy, not its rank, so filtering one out never
- * repaints the other. Both are validated against the card surface.
+ * repaints the other.
  */
-const SERIES_STYLE: Record<Basis, { stroke: string; label: string; text: string }> = {
-  '1x2': { stroke: 'var(--series-1x2)', label: '1X2', text: 'text-series-1x2' },
-  overall: { stroke: 'var(--series-overall)', label: 'Overall', text: 'text-series-overall' },
+const SERIES_STYLE: Record<Basis, { stroke: string; text: string }> = {
+  '1x2': { stroke: 'var(--series-1x2)', text: 'text-series-1x2' },
+  overall: { stroke: 'var(--series-overall)', text: 'text-series-overall' },
+  rule: { stroke: 'var(--series-rule)', text: 'text-series-rule' },
 }
 
 const formatUnits = (value: number) => `${value >= 0 ? '+' : ''}${value.toFixed(2)}u`
@@ -54,7 +56,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
               style={{ background: SERIES_STYLE[entry.basis].stroke }}
             />
             <span className={'text-ink-muted'}>
-              {SERIES_STYLE[entry.basis].label}
+              {BASIS_LABELS[entry.basis]}
               <span className={'numeric text-ink-subtle'}>
                 {' '}
                 {formatUnits(entry.final)} · {entry.totalBets} bets
@@ -138,7 +140,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
                 fill={SERIES_STYLE[entry.basis].stroke}
                 fontSize={11}
               >
-                {SERIES_STYLE[entry.basis].label}
+                {BASIS_LABELS[entry.basis]}
               </text>
             </g>
           ))}
@@ -206,7 +208,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             {series.map((entry) => (
               <p key={entry.basis} className={'numeric text-ink'}>
                 <span className={SERIES_STYLE[entry.basis].text}>■</span>{' '}
-                {SERIES_STYLE[entry.basis].label} {formatUnits(entry.cumulative[active])}
+                {BASIS_LABELS[entry.basis]} {formatUnits(entry.cumulative[active])}
                 <span className={'text-ink-subtle'}> · {entry.bets[active]} bets</span>
               </p>
             ))}
@@ -215,7 +217,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
       </div>
 
       <figcaption className={'text-xs text-ink-subtle'}>
-        Cumulative profit and loss at one unit per bet. The two strategies are shown separately and
+        Cumulative profit and loss at one unit per bet. Each strategy is shown separately and
         never combined — they bet the same fixtures on different rules.
       </figcaption>
     </figure>

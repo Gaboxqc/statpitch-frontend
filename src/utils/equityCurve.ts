@@ -1,3 +1,4 @@
+import { BASES } from '../constants/bases'
 import type { Basis, SettledBet } from '../types/api'
 
 export interface EquitySeries {
@@ -11,21 +12,19 @@ export interface EquitySeries {
 }
 
 export interface EquityCurves {
-  /** The union of settlement dates across both strategies, ascending. */
+  /** The union of settlement dates across every strategy, ascending. */
   dates: string[]
   series: EquitySeries[]
   min: number
   max: number
 }
 
-const BASES: Basis[] = ['1x2', 'overall']
-
 /**
  * Cumulative P&L per strategy, on one shared date axis.
  *
- * The two bases stay separate lines and are never summed: they measure
- * different strategies over overlapping fixtures, so a combined total would
- * double-count the same match and answer neither question.
+ * The bases stay separate lines and are never summed: they measure different
+ * strategies over overlapping fixtures, so a combined total would double-count
+ * the same match and answer none of the three questions.
  *
  * Days where a strategy placed no bet carry its previous total forward, so a
  * flat stretch reads as "no bets", not "no data".
