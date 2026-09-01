@@ -360,6 +360,81 @@ export interface CompetitionInfo {
   free_tier: boolean
 }
 
+/**
+ * One of StatPitch's staked picks, with the fixture it belongs to riding along
+ * — clubs, crests, competition and kickoff — so a list of them renders without
+ * a second call.
+ */
+export interface BetPick extends Selection {
+  fixture_id: string
+  competition_id: string
+  competition_name: string
+  competition_short_name: string
+  competition_icon_url: string | null
+  home_team: string
+  away_team: string
+  home_crest_url: string | null
+  away_crest_url: string | null
+  match_date: string
+  commence_time: string | null
+}
+
+/**
+ * A day of StatPitch's own picks. Pro and above; free and anonymous callers get
+ * a 402.
+ *
+ * Most days this is empty, and an empty day is a **200 with a `reason`**, never
+ * a 404. At most three picks a day across every competition, and usually none.
+ */
+export interface BetsToday {
+  match_date: string
+  bets: BetPick[]
+  /** Length of `bets` after tier scoping. */
+  count: number
+
+  /**
+   * The evidence behind these picks, and the reason none of them may be shown
+   * without it: the rule has five seasons of measured closing-line value, but
+   * the 25-book panel it runs on now has none — its calibration is inherited
+   * rather than re-measured.
+   *
+   * The API guarantees this is non-null whenever `bets` is non-empty,
+   * synthesising one from the stored rule status if the upstream string goes
+   * missing. Typed nullable because the wire says so; treated as required.
+   */
+  caveat: string | null
+  /** Always null today — the confidence tier is not deployed. */
+  confidence_caveat: string | null
+  /** Advisory-only notice, for the footer. */
+  disclaimer: string | null
+
+  /** Why the day is empty, in prose. */
+  reason: string | null
+  /** The same, structured. `cause` is the useful key. */
+  empty_because: Record<string, unknown> | null
+  /** Which limit stopped more picks being taken. */
+  binding_constraint: string | null
+
+  /** Selections priced and graded across the whole card. */
+  assessed: number
+  /** How many cleared the rule — not all of them were staked. */
+  qualified_by_rule: number
+  /** Sum of stake fractions. Tiny by design. */
+  total_exposure: number
+
+  /** Reference book, threshold, cap and evidence path. */
+  selection_rule: Record<string, unknown> | null
+  selection_rule_status: string | null
+  config_status: string | null
+  /** Always null today. */
+  by_basis: Record<string, number> | null
+
+  model_version: string | null
+  config_version: string | null
+  generated_at: string | null
+  synced_at: string | null
+}
+
 /** The three dates the API currently considers live. Never derive these client-side. */
 export interface ThreeDayWindow {
   yesterday: string
