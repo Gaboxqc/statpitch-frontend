@@ -1,5 +1,5 @@
 import { hasFullDetail, hasProbabilities } from './entitlement'
-import type { DayKey, Fixture, ThreeDayWindow } from '../types/api'
+import type { Basis, DayKey, Fixture, ThreeDayWindow } from '../types/api'
 
 /**
  * The strongest outcome the model backs, excluding the draw. A likely draw is
@@ -18,7 +18,23 @@ export interface FilterOptions {
   day: DayKey
   window: ThreeDayWindow | null
   confidence: number | null
-  valueBetsOnly: boolean
+  /** Whose selections to keep, or null for every fixture. */
+  picks: Basis | null
+}
+
+/**
+ * What it means for a fixture to carry a selection, per strategy.
+ *
+ * These are not narrower and wider views of one thing — they are three
+ * different strategies over the same fixtures, so a fixture can qualify under
+ * one and not another. `rule` reads StatPitch's own priced rows: above zero is
+ * a recommendation, and everything else on the card was assessed and declined.
+ */
+const CARRIES_A_PICK: Record<Basis, (fixture: Fixture) => boolean> = {
+  '1x2': (fixture) => hasFullDetail(fixture) && fixture.best_bet !== null,
+  overall: (fixture) => hasFullDetail(fixture) && fixture.best_overall_bet !== null,
+  rule: (fixture) =>
+    hasFullDetail(fixture) && fixture.selections.some((row) => row.stake_fraction > 0),
 }
 
 /**
@@ -27,7 +43,7 @@ export interface FilterOptions {
  * than another round trip.
  */
 export function filterFixtures(fixtures: Fixture[], options: FilterOptions): Fixture[] {
-  const { day, window, confidence, valueBetsOnly } = options
+  const { day, window, confidence, picks } = options
 
   // Without the window there is no way to say which date "today" means, and
   // guessing from the browser clock would ask for a day the cache may not hold.
@@ -47,8 +63,8 @@ export function filterFixtures(fixtures: Fixture[], options: FilterOptions): Fix
   // Ordering is no longer decided here. It used to happen only inside this
   // branch, which left the default view — the one everybody lands on — in
   // whatever order the API returned. See sortFixtures.
-  if (valueBetsOnly) {
-    result = result.filter((fixture) => hasFullDetail(fixture) && fixture.best_overall_bet !== null)
+  if (picks !== null) {
+    result = result.filter(CARRIES_A_PICK[picks])
   }
 
   return result

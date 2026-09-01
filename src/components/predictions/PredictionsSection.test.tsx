@@ -83,7 +83,26 @@ describe('PredictionsSection', () => {
     expect(screen.queryByText(/model unknown/i)).not.toBeInTheDocument()
   })
 
-  it('drops fixtures without a selection when value bets are requested', async () => {
+  it('drops fixtures without a selection when one strategy is asked for', async () => {
+    mockWindow()
+    mockFixtures([
+      { ...fixtureFixture, id: 1, match_date: WINDOW.today, home_team: 'No Pick FC' },
+      { ...pickedFixtureFixture, id: 2, match_date: WINDOW.today, home_team: 'Picked FC' },
+    ])
+    renderWithQuery(<PredictionsSection />, { route: '/?picks=overall' })
+
+    expect(await screen.findAllByText('Picked')).not.toHaveLength(0)
+    expect(screen.queryAllByText('No Pick')).toHaveLength(0)
+    // The heading names whose selections these are, not how narrow the filter is.
+    expect(screen.getByRole('heading', { name: /1 all markets/i })).toBeInTheDocument()
+  })
+
+  /**
+   * `value=1` was this filter before there was more than one strategy, and
+   * links carrying it are already out there. It still reads, as what it always
+   * meant: our best pick across every market.
+   */
+  it('still honours the address the filter used to have', async () => {
     mockWindow()
     mockFixtures([
       { ...fixtureFixture, id: 1, match_date: WINDOW.today, home_team: 'No Pick FC' },
@@ -93,7 +112,6 @@ describe('PredictionsSection', () => {
 
     expect(await screen.findAllByText('Picked')).not.toHaveLength(0)
     expect(screen.queryAllByText('No Pick')).toHaveLength(0)
-    expect(screen.getByRole('heading', { name: /1 value bets/i })).toBeInTheDocument()
   })
 
   // The payload names its own competition in every shape, so nothing here

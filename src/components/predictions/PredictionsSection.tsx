@@ -1,6 +1,7 @@
 import MatchCard from './MatchCard'
 import CompetitionHeading from './CompetitionHeading'
 import { groupByCompetition } from '../../utils/groupByCompetition'
+import { BASIS_DETAIL } from '../../constants/bases'
 import { useFixtures, useWindow } from '../../hooks/queries'
 import { useElapsed } from '../../hooks/useElapsed'
 import { useFixtureFilters } from '../../hooks/useFixtureFilters'
@@ -33,14 +34,14 @@ function PredictionsSection() {
     day: filters.day,
     window,
     confidence: null,
-    valueBetsOnly: false,
+    picks: null,
   })
   const visible = sortFixtures(
     filterFixtures(fixtures, {
       day: filters.day,
       window,
       confidence: filters.confidence,
-      valueBetsOnly: filters.valueBetsOnly,
+      picks: filters.picks,
     }),
     filters.sort,
   )
@@ -77,7 +78,7 @@ function PredictionsSection() {
       <div className={'flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2'}>
         <h2 className={'text-ink text-lg font-semibold'}>
           <span className={'numeric text-ink-muted'}>{visible.length}</span>{' '}
-          {filters.valueBetsOnly ? 'Value bets' : 'Predictions'}
+          {filters.picks === null ? 'Predictions' : BASIS_DETAIL[filters.picks].title}
           <span className={'text-ink-subtle font-normal text-sm'}>
             {' · '}
             {window ? formatMatchDay(window[filters.day]) : DAY_LABELS[filters.day]}
