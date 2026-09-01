@@ -53,6 +53,10 @@
      contrast; do not substitute by eye. */
   --series-1x2: #059669;
   --series-overall: #3b82f6;
+  /* StatPitch's own rule. Chosen to sit clear of the two above under the common
+     CVD types, but NOT yet put through the OKLCH lightness/chroma and contrast
+     checks the other two were — treat it as provisional until it has been. */
+  --series-rule: #d97706;
 }
 
 @theme inline {
@@ -77,4 +81,5 @@
   --color-chart-5: var(--chart-5);
   --color-series-1x2: var(--series-1x2);
   --color-series-overall: var(--series-overall);
+  --color-series-rule: var(--series-rule);
 }

@@ -1,5 +1,6 @@
 import { MARKET_LABELS } from '../../utils/buildMarkets'
 import { competitionName } from '../../constants/competitions'
+import { BASIS_LABELS } from '../../constants/bases'
 import { displayName } from '../../utils/teamName'
 import { formatDecimal, formatFraction } from '../../utils/format'
 import { formatMatchDay } from '../../utils/datetime'
@@ -87,9 +88,7 @@ function LedgerTable({ bets, total, offset, limit, onOffsetChange }: LedgerTable
                   </span>
                 </td>
                 <td className={TD}>{MARKET_LABELS[bet.selection] ?? bet.selection}</td>
-                <td className={`${TD} text-ink-subtle`}>
-                  {bet.basis === '1x2' ? '1X2' : 'Overall'}
-                </td>
+                <td className={`${TD} text-ink-subtle`}>{BASIS_LABELS[bet.basis] ?? bet.basis}</td>
                 <td className={`${TD} numeric text-right`}>{formatDecimal(bet.odds_taken)}</td>
                 <td className={`${TD} numeric text-right text-ink-subtle`}>
                   {formatFraction(bet.probability, 1)}

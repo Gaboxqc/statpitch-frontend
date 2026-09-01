@@ -10,13 +10,15 @@ import { useLedger, useStats } from '../hooks/queries'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { COMPETITIONS } from '../constants/competitions'
 import { DISCLAIMER } from '../constants/content'
+import { BASES } from '../constants/bases'
 import type { Basis } from '../types/api'
 
 const PAGE_SIZE = 10
 /** The API caps a page at 100, which is also as much curve as is worth drawing. */
 const CURVE_SIZE = 100
 
-const isBasis = (value: string | null): value is Basis => value === '1x2' || value === 'overall'
+const isBasis = (value: string | null): value is Basis =>
+  value !== null && (BASES as string[]).includes(value)
 
 function TrackRecordPage() {
   useDocumentTitle('Track record')
@@ -77,7 +79,7 @@ function TrackRecordPage() {
         <Upsell
           title={'The settled record is part of Pro.'}
           detail={
-            'Every published selection, the price it was taken at, whether it landed, and the rolling ROI both strategies actually returned.'
+            'Every published selection, the price it was taken at, whether it landed, and the rolling ROI each strategy actually returned.'
           }
         />
       )}
@@ -127,9 +129,10 @@ function TrackRecordPage() {
                     'text-xs bg-secondary border border-line-strong text-ink rounded-md py-1 px-2 cursor-pointer'
                   }
                 >
-                  <option value={''}>Both strategies</option>
+                  <option value={''}>Every strategy</option>
                   <option value={'1x2'}>1X2 only</option>
                   <option value={'overall'}>All markets</option>
+                  <option value={'rule'}>StatPitch rule</option>
                 </select>
               </label>
 

@@ -25,18 +25,22 @@ describe('buildEquityCurves', () => {
   })
 
   /**
-   * The two bases bet the same fixtures under different rules, so a combined
-   * total would double-count the match. They stay separate lines.
+   * The bases bet the same fixtures under different rules, so a combined total
+   * would double-count the match. They stay separate lines — and a strategy that
+   * has never settled a bet still gets a line, flat at zero, rather than
+   * disappearing as though it did not exist.
    */
-  it('keeps the two strategies apart', () => {
+  it('keeps the strategies apart', () => {
     const curves = buildEquityCurves([
       bet(1, '2026-07-01', '1x2', 1),
       bet(2, '2026-07-01', 'overall', -1),
+      bet(3, '2026-07-01', 'rule', 0.62),
     ])
 
-    expect(curves.series).toHaveLength(2)
+    expect(curves.series).toHaveLength(3)
     expect(curves.series.find((s) => s.basis === '1x2')!.final).toBe(1)
     expect(curves.series.find((s) => s.basis === 'overall')!.final).toBe(-1)
+    expect(curves.series.find((s) => s.basis === 'rule')!.final).toBe(0.62)
   })
 
   // A gap means "no bet that day", not "no data", so the total holds flat.

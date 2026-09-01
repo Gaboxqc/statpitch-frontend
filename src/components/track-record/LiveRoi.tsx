@@ -2,9 +2,7 @@ import { Link } from 'react-router'
 import { useStats } from '../../hooks/queries'
 import { formatSignedPercent } from '../../utils/format'
 import { MIN_BETS } from '../../utils/calibration'
-import type { Basis } from '../../types/api'
-
-const LABELS: Record<Basis, string> = { '1x2': '1X2 only', overall: 'All markets' }
+import { BASIS_DETAIL } from '../../constants/bases'
 
 interface LiveRoiProps {
   className?: string
@@ -14,7 +12,7 @@ interface LiveRoiProps {
 
 /**
  * The 30-day ROI, read from `/statpitch/stats` at render time rather than
- * hardcoded. Both strategies are shown because they measure different things
+ * hardcoded. Every strategy is shown because they measure different things
  * and the API never averages them; picking the flattering one would be a claim
  * the endpoint does not make.
  */
@@ -28,7 +26,8 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
 
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
-      <div className={'grid grid-cols-2 gap-4'}>
+      {/* Three strategies now, and the third is narrow — two columns cropped it. */}
+      <div className={'grid grid-cols-1 gap-4 sm:grid-cols-3'}>
         {stats.roi.map((entry) => {
           const settled = entry.month.bets > 0 && entry.month.roi_pct !== null
           const meaningful = settled && entry.month.bets >= MIN_BETS
@@ -50,7 +49,7 @@ function LiveRoi({ className = '', linked = true }: LiveRoiProps) {
               >
                 {settled ? formatSignedPercent(entry.month.roi_pct, 1) : '—'}
               </p>
-              <p className={'text-sm font-medium'}>{LABELS[entry.basis]}</p>
+              <p className={'text-sm font-medium'}>{BASIS_DETAIL[entry.basis].title}</p>
               <p className={'text-xs text-ink-subtle'}>
                 {settled
                   ? `30-day ROI · ${entry.month.bets} bets${meaningful ? '' : ' · provisional'}`

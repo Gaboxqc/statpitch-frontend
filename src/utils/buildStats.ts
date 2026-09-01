@@ -51,8 +51,22 @@ export function buildStats(stats: Stats | null): StatItemData[] {
       value: formatCount(stats.value_bets_today),
       count: stats.value_bets_today,
       color: 'text-primary',
-      hint: 'Selections clearing the minimum fractional Kelly.',
+      hint: 'Our selections, clearing the minimum fractional Kelly.',
       filter: { day: 'today', valueBetsOnly: true },
+    },
+    /**
+     * A different strategy's count, not a subset of the one above it — a fixture
+     * can carry one and not the other. It gets no filter because the list below
+     * is ours; StatPitch's own picks have their own page.
+     */
+    {
+      id: 'ruleBets',
+      label: 'StatPitch picks',
+      value: formatCount(stats.rule_bets_today),
+      count: stats.rule_bets_today,
+      color: 'text-series-rule',
+      hint: "StatPitch's own staked picks, where a book's price disagrees with the benchmark.",
+      filter: {},
     },
   ]
 }

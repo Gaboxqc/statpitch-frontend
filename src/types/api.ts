@@ -27,8 +27,17 @@ export type PredictionSource = 'fitted_goal_model' | 'elo-poisson'
 
 export type DayKey = 'yesterday' | 'today' | 'tomorrow'
 
-/** The two selection strategies the ledger tracks. They are never averaged together. */
-export type Basis = '1x2' | 'overall'
+/**
+ * The three selection strategies the ledger tracks. They are never averaged
+ * together — each answers a different question, and a mean of them answers none.
+ *
+ * `1x2` and `overall` are ours, picked on our own Kelly. `rule` is StatPitch's,
+ * picked on a price disagreement between a book and the benchmark. Until totals
+ * ship upstream only the 1X2 family carries a price, so `1x2` and `overall`
+ * select the same row every time and their figures will match: that is expected,
+ * not a finding, and nothing should invite the reader to interpret the gap.
+ */
+export type Basis = '1x2' | 'overall' | 'rule'
 
 /** One scoreline from the model's top-10 distribution. Shape taken from a live payload. */
 export interface CorrectScore {
@@ -300,7 +309,9 @@ export interface Stats {
   /** A 0–1 fraction, e.g. 0.7. */
   high_confidence_threshold: number
   value_bets_today: number
-  /** Always exactly two entries, one per basis. */
+  /** StatPitch's own staked picks. A fixture can carry one of these and not a value bet. */
+  rule_bets_today: number
+  /** One entry per basis — three of them. Never assume a length. */
   roi: BasisRoi[]
 }
 
