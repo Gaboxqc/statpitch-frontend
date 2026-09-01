@@ -71,6 +71,89 @@ export interface Explanation {
 export type Confidence = 'low' | 'medium' | 'high'
 
 /**
+ * One priced row from StatPitch's own card: an outcome, four prices for it, and
+ * whether any of that added up to a bet.
+ *
+ * These are **price** disagreements, not model calls. `model_edge` is 0.0 on
+ * every live row and `p_used` equals `q_fair`, because the market-shrinkage
+ * weight fits at zero — so a selection means a book differs from the benchmark,
+ * never that the model out-predicted the market. Nothing rendering these may
+ * call them a model pick, an AI pick or a model call.
+ */
+export interface Selection {
+  /** StatPitch's own name for the outcome, e.g. `1x2_home`. */
+  selection: string
+  /** Our name for the same outcome, which is what settles it. */
+  our_selection: string | null
+  /** e.g. `1x2`. Only this family carries a price today. */
+  market_family: string
+  /** The handicap or goal line, where the family has one. */
+  line: number | null
+  /** Prose for the outcome, e.g. `Home win`. Safe to render directly. */
+  description: string | null
+
+  /**
+   * Four prices, and only the first is one anybody can take. Never merge them
+   * into a single "odds" figure — the other three are the reader's only
+   * evidence for whether the first is any good.
+   */
+  /** Best quote across the panel. **Bettable.** */
+  odds: number | null
+  /** The benchmark book the rule measured against. Not bettable. */
+  reference_odds: number | null
+  /** Panel mean. Not bettable. */
+  consensus_odds: number | null
+  /** That consensus, de-vigged. Not bettable. */
+  fair_odds: number | null
+
+  /** What the model thinks. */
+  p_model: number | null
+  /** What the market thinks. */
+  q_fair: number | null
+  /** What was actually staked on — equals `q_fair` while shrinkage fits at zero. */
+  p_used: number | null
+
+  expected_value: number | null
+  price_edge: number | null
+  /** Always 0.0 on live rows. Not worth a column of zeroes. */
+  model_edge: number | null
+  /** The quantity the rule selects on. */
+  rule_edge: number | null
+  rule_qualified: boolean
+
+  grade: string | null
+  /**
+   * Above zero means recommended. This is the line between analysis and advice:
+   * every row here was priced and graded, only these are a recommendation.
+   */
+  stake_fraction: number
+  /** Why a zero-stake row was refused, in plain prose. Null, not always an array. */
+  reasons: string[] | null
+
+  /**
+   * Provenance per row rather than per response, because the rule will later be
+   * promoted to `fitted` — and a pick shown today must still read as whatever it
+   * was recommended under.
+   */
+  config_status: string | null
+  selection_rule_status: string | null
+  selection_rule_reference: string | null
+
+  /**
+   * The two-tier system is not deployed: every live row carries null here. No UI
+   * may depend on these, and `null` must never be read as meaning "rule tier".
+   * When the confidence tier ships it needs a visually distinct treatment — that
+   * shape of selection measured -2.12% ROI, and styling it like a rule pick
+   * would be the most misleading thing this interface could do.
+   */
+  selection_basis: string | null
+  pricing: string | null
+  model_odds: number | null
+
+  captured_at: string | null
+}
+
+/**
  * What every caller sees, whatever they are paying: who is playing, when, and
  * how it finished. No prediction of any kind.
  *
@@ -196,6 +279,14 @@ export interface FullFixture extends FreeFixture {
   btts_no: number
   correct_scores: CorrectScore[] | null
   explanation: Explanation | null
+
+  /**
+   * StatPitch's priced rows, one per outcome. Absent from the free and teaser
+   * shapes rather than null — empty is a different fact, and a normal one: a
+   * fixture days ahead of kickoff has no prices yet because they publish per
+   * matchday block.
+   */
+  selections: Selection[]
 
   // Pricing — all null when unpriced, and individually null per unquoted market
   odds_home: number | null

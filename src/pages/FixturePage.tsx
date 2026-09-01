@@ -99,12 +99,7 @@ function Loaded({ fixture }: { fixture: Fixture }) {
       </section>
 
       {/* Nothing to expand: the page exists to show all of it at once. */}
-      <FixtureDetail
-        fixture={fixture}
-        markets={view.markets}
-        bestBet={view.bestBet}
-        isOpened={true}
-      />
+      <FixtureDetail fixture={fixture} isOpened={true} />
     </>
   )
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildPredictionView, certainty, fixtureState } from './predictionView'
+import { buildMarkets } from './buildMarkets'
 import {
   fixtureFixture,
   freeFixtureFixture,
@@ -9,21 +10,6 @@ import {
 } from '../test/fixtures'
 
 describe('buildPredictionView', () => {
-  it('builds every published market', () => {
-    const { markets } = buildPredictionView(fixtureFixture)
-    expect(markets).toHaveLength(11)
-    expect(markets.map((m) => m.key)).toContain('btts_yes')
-  })
-
-  it('keeps a market whose odds were never quoted, with a null price', () => {
-    const { markets } = buildPredictionView(fixtureFixture)
-    const overs = markets.find((m) => m.key === 'over_2_5')
-    // The model prices every market even when no book did.
-    expect(overs?.prob).toBeGreaterThan(0)
-    expect(overs?.odds).toBeNull()
-    expect(overs?.ev).toBeNull()
-  })
-
   it('resolves the best market from best_overall_bet', () => {
     const { bestMarket, bestBet } = buildPredictionView(pickedFixtureFixture)
     expect(bestBet).toBe('btts_yes')
@@ -55,19 +41,39 @@ describe('buildPredictionView', () => {
   // A free payload has a leader but nothing to bet into, and the two are
   // separate questions.
   it('names a winner without a market when only probabilities arrived', () => {
-    const { winner, markets, bestBet } = buildPredictionView(freeFixtureFixture)
+    const { winner, bestBet, bestMarket } = buildPredictionView(freeFixtureFixture)
 
     expect(winner?.name).toBe('Club Atlético de Madrid')
-    expect(markets).toEqual([])
     expect(bestBet).toBeNull()
+    expect(bestMarket).toBeUndefined()
   })
 
   it('has nothing to say about a withheld prediction', () => {
-    const { winner, markets, bestMarket } = buildPredictionView(teaserFixtureFixture)
+    const { winner, bestMarket } = buildPredictionView(teaserFixtureFixture)
 
     expect(winner).toBeNull()
-    expect(markets).toEqual([])
     expect(bestMarket).toBeUndefined()
+  })
+})
+
+/**
+ * Still built, and still only to name the card's verdict. Totals and BTTS carry
+ * no price any more, so most of these rows are probability-only — which is why
+ * the fixture page reads `selections[]` instead of this.
+ */
+describe('buildMarkets', () => {
+  it('builds every published market', () => {
+    const markets = buildMarkets(fixtureFixture)
+    expect(markets).toHaveLength(11)
+    expect(markets.map((market) => market.key)).toContain('btts_yes')
+  })
+
+  it('keeps a market whose odds were never quoted, with a null price', () => {
+    const overs = buildMarkets(fixtureFixture).find((market) => market.key === 'over_2_5')
+    // The model prices every market even when no book did.
+    expect(overs?.prob).toBeGreaterThan(0)
+    expect(overs?.odds).toBeNull()
+    expect(overs?.ev).toBeNull()
   })
 })
 

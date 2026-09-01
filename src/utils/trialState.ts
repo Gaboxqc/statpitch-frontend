@@ -24,10 +24,7 @@ const ASK = 'No payment details. Once per account, so it is worth asking when yo
  * "can I ask", whatever else is true. Above the free tier there is nothing to
  * ask for at all.
  */
-export function describeTrial(
-  account: Account | null,
-  request: TrialRequest | null,
-): TrialState {
+export function describeTrial(account: Account | null, request: TrialRequest | null): TrialState {
   if (account === null || account.tier !== 'free') return { kind: 'none' }
 
   if (request?.status === 'pending')

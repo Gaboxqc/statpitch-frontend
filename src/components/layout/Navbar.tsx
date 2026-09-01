@@ -53,7 +53,9 @@ function Navbar() {
             {!isSignedIn && (
               <NavLink
                 to={'/pricing'}
-                className={({ isActive }) => `${linkBase} ${isActive ? activeClass : inactiveClass}`}
+                className={({ isActive }) =>
+                  `${linkBase} ${isActive ? activeClass : inactiveClass}`
+                }
               >
                 Pricing
               </NavLink>

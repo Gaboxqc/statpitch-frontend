@@ -100,7 +100,7 @@ function PricingPage() {
         <ExpandableCard
           title={'How is performance measured?'}
           description={
-            'Every selection is published before kick-off, staked at one unit, and settled against the closing result at the price actually available. The rolling 7- and 30-day ROI on the track record page is computed from that ledger, which is append-only. Two figures are always shown — 1X2 alone and all markets — because they are different strategies and averaging them would answer neither. Past performance does not guarantee future results.'
+            'Every selection is published before kick-off, staked at one unit, and settled against the closing result at the price actually available. The rolling 7- and 30-day ROI on the track record page is computed from that ledger, which is append-only. Three figures are always shown — 1X2 alone, all markets, and the StatPitch rule — because they are different strategies and averaging them would answer none of them. Past performance does not guarantee future results.'
           }
         />
         <ExpandableCard

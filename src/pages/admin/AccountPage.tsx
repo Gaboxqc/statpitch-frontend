@@ -284,7 +284,11 @@ function Sessions({ account }: { account: AdminAccount }) {
             </button>
           </div>
         ) : (
-          <button type={'button'} onClick={() => setConfirming(true)} className={`${QUIET} self-start`}>
+          <button
+            type={'button'}
+            onClick={() => setConfirming(true)}
+            className={`${QUIET} self-start`}
+          >
             Sign out everywhere
           </button>
         ))}
@@ -299,7 +303,10 @@ function Keys({ id }: { id: number }) {
   const revoke = useRevokeAccountKey(id)
 
   return (
-    <Panel title={'API keys'} hint={'The prefix only — the key itself is never stored in the clear.'}>
+    <Panel
+      title={'API keys'}
+      hint={'The prefix only — the key itself is never stored in the clear.'}
+    >
       {loading && <div className={'h-16 animate-pulse rounded-md bg-secondary'} />}
       {error !== null && !loading && <QueryError error={error} />}
       {!loading && error === null && keys.length === 0 && (

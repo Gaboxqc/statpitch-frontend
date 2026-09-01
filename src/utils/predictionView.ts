@@ -18,8 +18,6 @@ export interface Winner {
 }
 
 export interface PredictionView {
-  /** Empty unless the caller is entitled to the market breakdown. */
-  markets: Market[]
   bestBet: MarketKey | null
   bestMarket: Market | undefined
   /** Null when the payload carries no probabilities to pick a leader from. */
@@ -62,12 +60,14 @@ function leader(prediction: FreeFixture): Winner {
 export function buildPredictionView(prediction: FreeFixture): PredictionView & { winner: Winner }
 export function buildPredictionView(prediction: Fixture): PredictionView
 export function buildPredictionView(prediction: Fixture): PredictionView {
+  // Still built, and still only for the card's verdict: the best bet has to be
+  // named and priced somewhere, and that remains a 1X2 market with real odds.
   const markets = hasFullDetail(prediction) ? buildMarkets(prediction) : []
   const bestBet = hasFullDetail(prediction) ? prediction.best_overall_bet : null
   const bestMarket = markets.find((market) => market.key === bestBet)
   const winner = hasProbabilities(prediction) ? leader(prediction) : null
 
-  return { markets, bestBet, bestMarket, winner, state: fixtureState(prediction) }
+  return { bestBet, bestMarket, winner, state: fixtureState(prediction) }
 }
 
 /**

@@ -86,8 +86,8 @@ function RoiSummary({ roi }: { roi: BasisRoi[] }) {
       {ours.length === 2 && (
         <p className={'text-xs text-ink-subtle'}>
           {BASIS_DETAIL['1x2'].title} and {BASIS_DETAIL.overall.title} will read the same until
-          over/under and both-teams-to-score carry prices: today every priced market is 1X2, so
-          both pick the same bet.
+          over/under and both-teams-to-score carry prices: today every priced market is 1X2, so both
+          pick the same bet.
         </p>
       )}
     </div>

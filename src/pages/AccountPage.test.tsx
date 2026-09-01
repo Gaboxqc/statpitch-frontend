@@ -85,9 +85,7 @@ describe('the plan', () => {
     signedInAs(FREE)
     renderWithQuery(<AccountPage />)
 
-    expect(
-      await screen.findByRole('button', { name: /request 14-day trial/i }),
-    ).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /request 14-day trial/i })).toBeInTheDocument()
   })
 
   it('withdraws the offer once a trial has been granted', async () => {

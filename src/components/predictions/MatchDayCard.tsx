@@ -66,7 +66,7 @@ function MatchDayCard() {
   // prediction. The guard is here because the type cannot know that.
   if (!hasProbabilities(prediction)) return null
 
-  const { markets, bestBet, bestMarket, winner } = buildPredictionView(prediction)
+  const { bestBet, bestMarket, winner } = buildPredictionView(prediction)
   const matchCertainty = certainty(prediction)
   const kickoff = describeKickoffLong(prediction)
   // Everything the market paid for: xG, the pick, and why there is not one.
@@ -128,7 +128,9 @@ function MatchDayCard() {
                 </div>
               )}
             </div>
-            <div className={'flex shrink-0 flex-col items-center justify-center gap-4 mx-1 sm:mx-4'}>
+            <div
+              className={'flex shrink-0 flex-col items-center justify-center gap-4 mx-1 sm:mx-4'}
+            >
               <p className={'eyebrow text-ink-subtle'}>vs</p>
               <div
                 className={
@@ -275,13 +277,7 @@ function MatchDayCard() {
             </button>
           </div>
         </div>
-        <FixtureDetail
-          id={marketsId}
-          fixture={prediction}
-          markets={markets}
-          bestBet={bestBet}
-          isOpened={isOpened}
-        />
+        <FixtureDetail id={marketsId} fixture={prediction} isOpened={isOpened} />
       </div>
     </div>
   )

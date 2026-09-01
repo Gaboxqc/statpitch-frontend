@@ -8,13 +8,7 @@ const row = (id: number, basis: Basis) => ({ ...settledBetFixture, id, basis })
 
 const renderRows = (bets: ReturnType<typeof row>[]) =>
   render(
-    <LedgerTable
-      bets={bets}
-      total={bets.length}
-      offset={0}
-      limit={10}
-      onOffsetChange={vi.fn()}
-    />,
+    <LedgerTable bets={bets} total={bets.length} offset={0} limit={10} onOffsetChange={vi.fn()} />,
   )
 
 describe('LedgerTable', () => {

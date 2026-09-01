@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
+import { AxiosError } from 'axios'
+import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import PredictionsSection from './PredictionsSection'
 import { renderWithQuery } from '../../test/renderWithQuery'
 import { fixtureFixture, pickedFixtureFixture } from '../../test/fixtures'
@@ -117,6 +119,28 @@ describe('PredictionsSection', () => {
 
     expect(await screen.findAllByText('Atlético de Madrid')).not.toHaveLength(0)
     expect(screen.queryByRole('heading', { name: 'LALIGA' })).not.toBeInTheDocument()
+  })
+
+  /**
+   * A server failure and a day with no matches are opposite claims, and only one
+   * of them is true. Rendering a 500 as "nothing scheduled" tells the reader the
+   * fixtures do not exist when in fact nobody could ask.
+   */
+  it('does not pass a server failure off as an empty day', async () => {
+    mockWindow()
+    vi.spyOn(service, 'getFixtures').mockRejectedValue(
+      new AxiosError('Request failed', '500', {} as InternalAxiosRequestConfig, {}, {
+        status: 500,
+        statusText: '',
+        data: 'Internal Server Error',
+        headers: {},
+        config: {} as InternalAxiosRequestConfig,
+      } as AxiosResponse),
+    )
+    renderWithQuery(<PredictionsSection />)
+
+    expect(await screen.findByRole('alert')).toBeInTheDocument()
+    expect(screen.queryByText(/nothing scheduled/i)).not.toBeInTheDocument()
   })
 
   // Regression: the hook returned a string but the component read `error.message`,

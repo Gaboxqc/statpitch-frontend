@@ -217,8 +217,8 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
       </div>
 
       <figcaption className={'text-xs text-ink-subtle'}>
-        Cumulative profit and loss at one unit per bet. Each strategy is shown separately and
-        never combined — they bet the same fixtures on different rules.
+        Cumulative profit and loss at one unit per bet. Each strategy is shown separately and never
+        combined — they bet the same fixtures on different rules.
       </figcaption>
     </figure>
   )
