@@ -21,7 +21,13 @@ export const BASIS_DETAIL: Record<Basis, { title: string; blurb: string }> = {
   '1x2': { title: '1X2 only', blurb: 'Our best home, draw or away pick.' },
   overall: {
     title: 'All markets',
-    blurb: 'Our best pick across 1X2, over/under and both-teams-to-score.',
+    /**
+     * Every market the model prices — which today means 1X2 and nothing else,
+     * because over/under and both-teams-to-score carry no price to bet into.
+     * So this reads the same as `1x2` until totals ship upstream, and saying it
+     * covers them would promise a reach the strategy does not have.
+     */
+    blurb: 'Our best pick across every priced market. Only 1X2 carries a price today.',
   },
   rule: {
     title: 'StatPitch rule',

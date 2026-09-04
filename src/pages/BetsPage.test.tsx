@@ -150,6 +150,48 @@ describe('BetsPage', () => {
     expect(body).not.toMatch(/model call/i)
   })
 
+  /**
+   * Once a reader knows today produced nothing, the next question is what
+   * stopped it — and the API answers that in a field of its own.
+   */
+  it('names the limit that stopped more picks being taken', async () => {
+    serve(day({ binding_constraint: 'daily_exposure_cap' }))
+    renderWithQuery(<BetsPage />)
+
+    expect(await screen.findByText(/limited by daily exposure cap/i)).toBeInTheDocument()
+  })
+
+  /**
+   * `selection_rule` is an untyped object on the wire. Each field is read for
+   * what it is rather than trusted to be there, so a partial or oddly-shaped
+   * one degrades to less detail instead of a crash.
+   */
+  it('reports the rule parameters it can actually read', async () => {
+    serve({
+      ...withPicks(),
+      selection_rule: { reference: 'odds_pinnacle', threshold: 0.004, max_per_day: 3 },
+    })
+    const { container } = renderWithQuery(<BetsPage />)
+
+    await screen.findByText('Value pick')
+    expect(container.textContent).toMatch(/benchmark odds_pinnacle/)
+    expect(container.textContent).toMatch(/at most 3 a day/)
+  })
+
+  it('skips rule parameters that are not the shape they should be', async () => {
+    serve({
+      ...withPicks(),
+      selection_rule: { reference: { nested: true }, threshold: null, max_per_day: 3 },
+    })
+    const { container } = renderWithQuery(<BetsPage />)
+
+    await screen.findByText('Value pick')
+    // "Benchmark" is also a price column and appears in the page's own copy, so
+    // this keys on the provenance line's phrasing.
+    expect(container.textContent).not.toMatch(/benchmark \w/)
+    expect(container.textContent).toMatch(/at most 3 a day/)
+  })
+
   it('renders the advisory notice', async () => {
     serve(withPicks())
     renderWithQuery(<BetsPage />)

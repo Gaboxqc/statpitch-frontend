@@ -90,16 +90,32 @@ function Verdict({ fixture, view }: { fixture: Fixture; view: PredictionView }) 
 }
 
 /**
- * Why there is nothing to place, said once, where the pick would have been.
- * Both answers are about the market, so neither is sayable without it.
+ * What stands in the pick's place, said once, where the pick would have been.
+ *
+ * "No pick" only ever meant *ours* — no selection of ours cleared the minimum
+ * stake. That was unambiguous while ours were the only selections there were.
+ * Now that the list can be narrowed to StatPitch's rule, a card claiming "no
+ * pick" inside that view contradicts the reason it is on screen, so a staked
+ * StatPitch row is named instead of denied.
  */
 function ForecastNote({ fixture }: { fixture: Fixture }) {
   if (!hasFullDetail(fixture)) return null
 
+  if (fixture.selections.some((row) => row.stake_fraction > 0)) {
+    return (
+      <p
+        className={'eyebrow shrink-0 text-primary'}
+        title={'StatPitch staked a selection here, though none of ours cleared the minimum'}
+      >
+        Value pick
+      </p>
+    )
+  }
+
   return fixture.odds_coverage ? (
     <p
       className={'eyebrow shrink-0 text-ink-subtle'}
-      title={'Priced, but no selection cleared the minimum stake'}
+      title={'Priced, but no selection of ours cleared the minimum stake'}
     >
       No pick
     </p>

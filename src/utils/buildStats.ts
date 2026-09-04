@@ -1,11 +1,11 @@
 import { formatCount, formatFraction } from './format'
-import type { DayKey, Stats } from '../types/api'
+import type { Basis, DayKey, Stats } from '../types/api'
 
 /** The view a stat describes. Selecting the stat is how you get to it. */
 export interface StatFilter {
   day?: DayKey
   confidence?: number | null
-  valueBetsOnly?: boolean
+  picks?: Basis | null
 }
 
 export interface StatItemData {
@@ -52,12 +52,12 @@ export function buildStats(stats: Stats | null): StatItemData[] {
       count: stats.value_bets_today,
       color: 'text-primary',
       hint: 'Our selections, clearing the minimum fractional Kelly.',
-      filter: { day: 'today', valueBetsOnly: true },
+      filter: { day: 'today', picks: 'overall' },
     },
     /**
      * A different strategy's count, not a subset of the one above it — a fixture
-     * can carry one and not the other. It gets no filter because the list below
-     * is ours; StatPitch's own picks have their own page.
+     * can carry one and not the other. Now that the list can be narrowed to
+     * either, this count opens the same view for theirs.
      */
     {
       id: 'ruleBets',
@@ -66,7 +66,7 @@ export function buildStats(stats: Stats | null): StatItemData[] {
       count: stats.rule_bets_today,
       color: 'text-series-rule',
       hint: "StatPitch's own staked picks, where a book's price disagrees with the benchmark.",
-      filter: {},
+      filter: { day: 'today', picks: 'rule' },
     },
   ]
 }

@@ -108,8 +108,7 @@ function SummaryBar() {
 
   const isPressed = (item: StatItemData) =>
     (item.filter.confidence === undefined || filters.confidence === item.filter.confidence) &&
-    (item.filter.valueBetsOnly === undefined ||
-      filters.valueBetsOnly === item.filter.valueBetsOnly) &&
+    (item.filter.picks === undefined || filters.picks === item.filter.picks) &&
     filters.day === (item.filter.day ?? filters.day)
 
   // Pressing an active stat puts the view back, so the pair reads as a toggle
@@ -117,7 +116,7 @@ function SummaryBar() {
   const toggle = (item: StatItemData) =>
     setFilters(
       isPressed(item)
-        ? { confidence: null, valueBetsOnly: false }
+        ? { confidence: null, picks: null }
         : { ...item.filter, confidence: item.filter.confidence ?? null },
     )
 

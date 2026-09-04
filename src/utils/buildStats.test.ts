@@ -28,10 +28,10 @@ describe('buildStats', () => {
     expect(stats.ruleBets.count).toBe(settledStatsFixture.rule_bets_today)
   })
 
-  // The list below the bar is ours. StatPitch's picks have their own page, so
-  // this count is not a filter and must not pretend to be one.
-  it('leaves the StatPitch count unfiltered', () => {
-    expect(byId(settledStatsFixture).ruleBets.filter).toEqual({})
+  // Each chip opens the view it counted, and the two open different strategies
+  // rather than one being a subset of the other.
+  it('sends each count to the strategy it counted', () => {
+    expect(byId(settledStatsFixture).ruleBets.filter).toEqual({ day: 'today', picks: 'rule' })
   })
 
   it('reads the confidence threshold out of the payload', () => {
@@ -50,7 +50,7 @@ describe('buildStats', () => {
   it('sends the value-bet stat to today, since that is what it counted', () => {
     expect(byId(settledStatsFixture).valueBets.filter).toEqual({
       day: 'today',
-      valueBetsOnly: true,
+      picks: 'overall',
     })
   })
 

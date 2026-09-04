@@ -5,8 +5,9 @@ import { useAccount } from '../../hooks/useAccount'
 import { CONFIDENCE_TIERS, DAYS, useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { countByDay } from '../../utils/filterFixtures'
 import { competition, COMPETITIONS } from '../../constants/competitions'
+import { BASES, BASIS_DETAIL } from '../../constants/bases'
 import { formatFraction } from '../../utils/format'
-import type { DayKey } from '../../types/api'
+import type { Basis, DayKey } from '../../types/api'
 
 const DAY_LABELS: Record<DayKey, string> = {
   yesterday: 'Yesterday',
@@ -138,25 +139,43 @@ function FiltersBar() {
           </select>
         </label>
 
-        {/* A qualifying selection is a fact about the market, and the market is
-            a paid line — so below Pro this filter could only ever empty the
-            list, and an empty list would read as "no value today" rather than
-            "not included". The control says which. */}
+        {/* Whose selections, not how narrow a filter. Ours and StatPitch's are
+            different strategies over the same fixtures — a fixture can carry one
+            pick and not the other — so this names the source rather than
+            implying one set contains the other.
+
+            A selection is a fact about the market, and the market is a paid
+            line, so below Pro every option here could only empty the list. An
+            empty list would read as "no value today" rather than "not
+            included", which is why the control becomes the reason instead. */}
         {accountLoading ? null : isPro ? (
-          <Pill
-            active={filters.valueBetsOnly}
-            onClick={() => setFilters({ valueBetsOnly: !filters.valueBetsOnly })}
-            label={'Only fixtures with a qualifying selection'}
-          >
-            Value bets only
-          </Pill>
+          <label className={'flex shrink-0 items-center gap-2 text-xs text-ink-muted'}>
+            <span className={'sr-only'}>Selections</span>
+            <select
+              value={filters.picks ?? ''}
+              onChange={(event) =>
+                setFilters({ picks: (event.target.value || null) as Basis | null })
+              }
+              className={
+                'text-xs bg-secondary border border-line-strong text-ink rounded-md py-1 px-2 cursor-pointer'
+              }
+            >
+              {/* Fixed options only: an unknown basis is a 422 upstream. */}
+              <option value={''}>All predictions</option>
+              {BASES.map((basis) => (
+                <option key={basis} value={basis}>
+                  {BASIS_DETAIL[basis].title}
+                </option>
+              ))}
+            </select>
+          </label>
         ) : (
           <Link
             to={'/pricing'}
-            title={'Value bets are part of Pro'}
+            title={'Selections are part of Pro'}
             className={`${PILL} border-transparent text-ink-subtle hover:border-line`}
           >
-            Value bets only · <span className={'text-primary'}>Pro</span>
+            Selections · <span className={'text-primary'}>Pro</span>
           </Link>
         )}
       </div>
