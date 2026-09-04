@@ -17,31 +17,42 @@ function ContributionRow({ row, scale }: { row: FeatureContribution; scale: numb
   const width = Math.max((Math.abs(row.contribution) / scale) * HALF_WIDTH, MIN_WIDTH)
 
   return (
-    <li className={'flex items-center gap-2 text-xs'}>
-      <span className={'w-32 shrink-0 text-ink-muted truncate'} title={row.feature}>
+    /* Below `sm` the feature name takes its own line. In one row it had 128px
+       to say "Home scoring form, last 10", which needs 187 — and a truncated
+       label falls back to a `title` nobody can hover on a phone. `sm:contents`
+       dissolves the wrapper again above that, so the wide layout is unchanged:
+       three children in one flex row. */
+    <li className={'flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:gap-2'}>
+      {/* 12rem, not 8: the longest labels the model publishes run to ~187px
+          ("Home scoring form, last 10"), and the bar beside this has hundreds of
+          pixels to spare in every layout. `truncate` stays as the backstop for
+          anything longer still. */}
+      <span className={'text-ink-muted sm:w-48 sm:shrink-0 sm:truncate'} title={row.feature}>
         {featureLabel(row.feature)}
       </span>
 
-      <span className={'relative flex-1 h-3 min-w-16'}>
-        {/* Only the outer end is rounded. A pill rounded at both ends pulls away
+      <span className={'flex items-center gap-2 sm:contents'}>
+        <span className={'relative flex-1 h-3 min-w-16'}>
+          {/* Only the outer end is rounded. A pill rounded at both ends pulls away
             from the zero line it is measured from, which reads as a bar that
             starts somewhere other than zero — the one thing a divergence chart
             must not say. It grows out of the line, flush against it. */}
-        <span
-          className={`absolute inset-y-0.5 ${positive ? 'rounded-r-full' : 'rounded-l-full'} ${positive ? 'bg-primary/60' : 'bg-chart-5/60'}`}
-          style={
-            positive ? { left: '50%', width: `${width}%` } : { right: '50%', width: `${width}%` }
-          }
-        />
-        {/* The zero line is the competition's own goal environment. Painted last
+          <span
+            className={`absolute inset-y-0.5 ${positive ? 'rounded-r-full' : 'rounded-l-full'} ${positive ? 'bg-primary/60' : 'bg-chart-5/60'}`}
+            style={
+              positive ? { left: '50%', width: `${width}%` } : { right: '50%', width: `${width}%` }
+            }
+          />
+          {/* The zero line is the competition's own goal environment. Painted last
             so the flat edge of every bar reads against it. */}
-        <span className={'absolute inset-y-0 left-1/2 w-px bg-line-strong'} />
-      </span>
+          <span className={'absolute inset-y-0 left-1/2 w-px bg-line-strong'} />
+        </span>
 
-      <span
-        className={`numeric w-14 shrink-0 text-right ${positive ? 'text-primary' : 'text-negative'}`}
-      >
-        &times;{formatDecimal(row.multiplier)}
+        <span
+          className={`numeric w-14 shrink-0 text-right ${positive ? 'text-primary' : 'text-negative'}`}
+        >
+          &times;{formatDecimal(row.multiplier)}
+        </span>
       </span>
     </li>
   )
