@@ -86,7 +86,7 @@ function FixtureDetail({ fixture, isOpened, id }: FixtureDetailProps) {
 
       {/* What StatPitch priced and staked, then the markets it predicts but
           nobody prices. Two different kinds of claim, kept apart. */}
-      {full && <SelectionsTable selections={full.selections} />}
+      {full && <SelectionsTable selections={full.selections} competitionId={full.competition_id} />}
 
       {full && <ForecastMarkets fixture={full} />}
     </div>

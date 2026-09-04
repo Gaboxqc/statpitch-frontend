@@ -6,9 +6,9 @@ import ExpandableCard from '../components/ui/ExpandableCard'
 import { Link } from 'react-router'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import LiveRoi from '../components/track-record/LiveRoi'
-import { COMPETITIONS } from '../constants/competitions'
 import { TIER_LABELS } from '../constants/tiers'
 import { useAccount } from '../hooks/useAccount'
+import { useCompetitionScope } from '../hooks/queries'
 import type { Tier } from '../types/account'
 
 /**
@@ -24,6 +24,7 @@ const WHAT_IS_MISSING: Record<Tier, string> = {
 
 function PricingPage() {
   const { tier, isSignedIn, loading } = useAccount()
+  const { counts } = useCompetitionScope()
   useDocumentTitle(isSignedIn ? 'Upgrade' : 'Pricing')
 
   return (
@@ -89,10 +90,13 @@ function PricingPage() {
       </div>
       <div className={'mt-24 bg-card p-6 rounded-lg border border-line'}>
         <LiveRoi />
+        {/* Counted from the API rather than from a table here, and three
+            numbers rather than two: "only priced competitions can produce a
+            selection" stopped being the whole truth when two priced leagues
+            turned out to sit outside the rule's measured scope. */}
         <p className={'text-ink-subtle text-xs mt-4'}>
-          {COMPETITIONS.length} competitions covered,{' '}
-          {COMPETITIONS.filter((entry) => entry.priced).length} of them priced against a bookmaker
-          market. Only priced competitions can produce a selection.
+          {counts.total} competitions covered, {counts.priced} of them priced against a bookmaker
+          market, and {counts.stakeable} where a selection is possible at all.
         </p>
       </div>
       <div className={'mt-24 flex flex-col items-center gap-4 text-center'}>

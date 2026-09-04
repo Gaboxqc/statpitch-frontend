@@ -348,9 +348,19 @@ export interface FullFixture extends FreeFixture {
 export type Fixture = TeaserFixture | FreeFixture | FullFixture
 
 /**
- * One competition as the API describes it. `free_tier` is the only thing here
- * the frontend cannot work out for itself: whether a free account can see this
- * competition's fixtures at all.
+ * One competition as the API describes it.
+ *
+ * The three booleans named the same five leagues until the Primeira Liga,
+ * Eredivisie and Süper Lig arrived, and they have come apart since:
+ * `free_tier` is a pricing promise that deliberately did not widen, `priced`
+ * means a market exists to quote against, and `stakeable` means the selection
+ * rule was measured to earn there. Two leagues are priced and never stakeable,
+ * which is a measured result rather than missing coverage.
+ *
+ * None of the three can be worked out from the others, and no reason code
+ * separates an unstakeable league from a quiet day — both come back as
+ * `NO_QUALIFYING_SELECTION`. Read the flag; never infer scope from an empty
+ * slate.
  */
 export interface CompetitionInfo {
   competition_id: string
@@ -358,6 +368,8 @@ export interface CompetitionInfo {
   short_name: string
   icon_url: string | null
   free_tier: boolean
+  priced: boolean
+  stakeable: boolean
 }
 
 /**
@@ -424,6 +436,16 @@ export interface BetsToday {
 
   /** Reference book, threshold, cap and evidence path. */
   selection_rule: Record<string, unknown> | null
+  /**
+   * Which competitions the rule was in scope for on the day these picks were
+   * made — the same set as `stakeable`, delivered here so a bets panel needs
+   * no second call.
+   *
+   * `null` means **not recorded**, which is true of any day synced before the
+   * field shipped. It does not mean a scope of nothing, and the two must not
+   * render alike.
+   */
+  selection_rule_competitions: string[] | null
   selection_rule_status: string | null
   config_status: string | null
   /** Always null today. */

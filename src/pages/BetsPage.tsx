@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import QueryError from '../components/ui/QueryError'
 import Upsell from '../components/ui/Upsell'
 import TeamCrest from '../components/ui/TeamCrest'
-import { useBetsToday } from '../hooks/queries'
+import { useBetsToday, useCompetitionScope } from '../hooks/queries'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { isPaymentRequired } from '../services/api'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../utils/format'
@@ -168,6 +168,27 @@ function Pick({ pick }: { pick: BetPick }) {
 }
 
 /**
+ * Which competitions the rule could have taken a pick in today.
+ *
+ * The scope is re-measured upstream and moves, so it travels with the day's
+ * picks rather than being looked up: a settled day keeps the scope it was
+ * decided under.
+ */
+function ScopeLine({ competitions }: { competitions: string[] | null }) {
+  const { shortName } = useCompetitionScope()
+
+  if (competitions === null) return null
+
+  return (
+    <p className={'text-2xs text-ink-subtle'}>
+      {competitions.length === 0
+        ? 'No competition was in the selection rule’s scope today.'
+        : `In scope: ${competitions.map(shortName).join(' · ')}`}
+    </p>
+  )
+}
+
+/**
  * A day with nothing on it, which is the common case: at most three picks a day
  * across every competition, and most days none.
  *
@@ -271,6 +292,11 @@ function BetsPage() {
             {/* The rule's own parameters. An untyped object on the wire, so each
                 field is read for what it is rather than trusted to be there. */}
             {rule.length > 0 && <p className={'text-2xs text-ink-subtle'}>{rule.join(' · ')}</p>}
+            {/* Three states, not two. `null` means the day was synced before
+                the field shipped and says nothing at all, so it renders
+                nothing; an empty array is a scope of nothing, which is a fact
+                worth stating and reads quite differently. */}
+            <ScopeLine competitions={bets.selection_rule_competitions} />
             <p className={'text-xs text-ink-subtle'}>
               Settled results for every pick live on the{' '}
               <Link to={'/track-record'}>track record</Link>.

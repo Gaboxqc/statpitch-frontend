@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { AxiosError } from 'axios'
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import TrackRecordPage from './TrackRecordPage'
 import { renderWithQuery } from '../test/renderWithQuery'
 import * as accounts from '../services/accounts'
 import * as predictions from '../services/predictions'
-import { settledStatsFixture } from '../test/fixtures'
+import { competitionsFixture, settledStatsFixture } from '../test/fixtures'
 
 function apiError(status: number, detail: string): AxiosError {
   const config = {} as InternalAxiosRequestConfig
@@ -79,5 +79,26 @@ describe('TrackRecordPage on Pro', () => {
 
     expect(await screen.findByText(/return on investment/i)).toBeVisible()
     expect(screen.queryByText(/part of pro/i)).not.toBeInTheDocument()
+  })
+
+  /**
+   * The ledger holds settled bets. A competition the rule was never measured on
+   * cannot put one there, so offering it is a filter guaranteed to come back
+   * empty — which reads as a hole in the record rather than as a league that
+   * was never in it.
+   */
+  it('offers only competitions a settled bet could have come from', async () => {
+    vi.spyOn(accounts, 'getMe').mockResolvedValue(null)
+    vi.spyOn(predictions, 'getStats').mockResolvedValue(settledStatsFixture)
+    vi.spyOn(predictions, 'getLedger').mockResolvedValue({ items: [], total: 0 })
+    vi.spyOn(predictions, 'getCompetitions').mockResolvedValue(competitionsFixture)
+    renderWithQuery(<TrackRecordPage />)
+
+    const select = await screen.findByRole('combobox', { name: /competition/i })
+    expect(await within(select).findByRole('option', { name: 'Süper Lig' })).toBeInTheDocument()
+    expect(within(select).queryByRole('option', { name: 'Eredivisie' })).not.toBeInTheDocument()
+    expect(
+      within(select).queryByRole('option', { name: 'Champions League' }),
+    ).not.toBeInTheDocument()
   })
 })

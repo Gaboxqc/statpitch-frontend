@@ -37,6 +37,7 @@ const day = (over: Partial<BetsToday> = {}): BetsToday => ({
   qualified_by_rule: 0,
   total_exposure: 0,
   selection_rule: null,
+  selection_rule_competitions: null,
   selection_rule_status: 'experimental',
   config_status: 'experimental',
   by_basis: null,
@@ -190,6 +191,38 @@ describe('BetsPage', () => {
     // this keys on the provenance line's phrasing.
     expect(container.textContent).not.toMatch(/benchmark \w/)
     expect(container.textContent).toMatch(/at most 3 a day/)
+  })
+
+  /**
+   * The scope moves — it is re-measured upstream — so it travels with the day
+   * it was decided under rather than being looked up now.
+   */
+  it('names the competitions the rule could have picked in', async () => {
+    serve(day({ selection_rule_competitions: ['ENG.PL', 'NED.EREDIVISIE'] }))
+    const { container } = renderWithQuery(<BetsPage />)
+
+    await screen.findByText(/no fixture today carries a published price/i)
+    expect(container.textContent).toMatch(/In scope: Premier League · Eredivisie/)
+  })
+
+  /**
+   * `null` is any day synced before the field shipped and says nothing at all;
+   * an empty array is a scope of nothing. Rendering them alike would turn the
+   * first into a claim nobody made.
+   */
+  it('says nothing about a scope that was never recorded', async () => {
+    serve(day({ selection_rule_competitions: null }))
+    const { container } = renderWithQuery(<BetsPage />)
+
+    await screen.findByText(/no fixture today carries a published price/i)
+    expect(container.textContent).not.toMatch(/in scope/i)
+  })
+
+  it('states a scope of nothing rather than leaving it blank', async () => {
+    serve(day({ selection_rule_competitions: [] }))
+    renderWithQuery(<BetsPage />)
+
+    expect(await screen.findByText(/no competition was in the selection rule/i)).toBeInTheDocument()
   })
 
   it('renders the advisory notice', async () => {

@@ -1,0 +1,21 @@
+# LF everywhere, in the repository and in the working tree.
+#
+# `text=auto` alone normalises what is committed; `eol=lf` is the half that
+# matters here, because it also checks files out as LF on Windows regardless of
+# core.autocrlf. Without it, prettier — configured `endOfLine: "lf"` — reads a
+# CRLF working tree and reports files CI does not, so `format:check` passing
+# locally says nothing about whether it passes in CI. That gap hid eleven
+# consecutive CI failures.
+#
+# The index is already LF throughout, so this changes what is checked out, not
+# what is stored.
+* text=auto eol=lf
+
+# Binaries, marked so nothing is ever tempted to normalise them.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary

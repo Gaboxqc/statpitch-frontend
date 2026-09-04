@@ -1,7 +1,10 @@
-import { describe, expect, it } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { screen, within } from '@testing-library/react'
 import FixtureDetail from './FixtureDetail'
+import { renderWithQuery } from '../../test/renderWithQuery'
+import * as service from '../../services/predictions'
 import {
+  competitionsFixture,
   fixtureFixture,
   settledFixtureFixture,
   teaserFixtureFixture,
@@ -10,7 +13,10 @@ import {
 import type { Fixture } from '../../types/api'
 
 const renderDetail = (fixture: Fixture) =>
-  render(<FixtureDetail fixture={fixture} isOpened={true} />)
+  renderWithQuery(<FixtureDetail fixture={fixture} isOpened={true} />)
+
+beforeEach(() => vi.spyOn(service, 'getCompetitions').mockResolvedValue(competitionsFixture))
+afterEach(() => vi.restoreAllMocks())
 
 describe('FixtureDetail', () => {
   // A ranked list flattened the distribution; the grid keeps both axes, so a

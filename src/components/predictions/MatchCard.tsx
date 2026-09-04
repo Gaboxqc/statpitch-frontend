@@ -8,6 +8,8 @@ import { ClockIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index
 import TeamCrest from '../ui/TeamCrest'
 import ConfidenceBadge from '../ui/ConfidenceBadge'
 import Upsell from '../ui/Upsell'
+import { useCompetitionScope } from '../../hooks/queries'
+import { OUTSIDE_SCOPE } from '../../constants/content'
 import { buildPredictionView } from '../../utils/predictionView'
 import { hasFullDetail, hasProbabilities } from '../../utils/entitlement'
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
@@ -99,6 +101,8 @@ function Verdict({ fixture, view }: { fixture: Fixture; view: PredictionView }) 
  * StatPitch row is named instead of denied.
  */
 function ForecastNote({ fixture }: { fixture: Fixture }) {
+  const { isPriced, isStakeable } = useCompetitionScope()
+
   if (!hasFullDetail(fixture)) return null
 
   if (fixture.selections.some((row) => row.stake_fraction > 0)) {
@@ -108,6 +112,18 @@ function ForecastNote({ fixture }: { fixture: Fixture }) {
         title={'StatPitch staked a selection here, though none of ours cleared the minimum'}
       >
         Value pick
+      </p>
+    )
+  }
+
+  // Strictly the gap between priced and stakeable, and only once the payload has
+  // been given its say: a staked row above outranks this, because a scope that
+  // says otherwise is a table disagreeing with the day in front of it. A cup has
+  // no market at all and keeps its own, more specific reason below.
+  if (isPriced(fixture.competition_id) && !isStakeable(fixture.competition_id)) {
+    return (
+      <p className={'eyebrow shrink-0 text-ink-subtle'} title={OUTSIDE_SCOPE.title}>
+        {OUTSIDE_SCOPE.short}
       </p>
     )
   }

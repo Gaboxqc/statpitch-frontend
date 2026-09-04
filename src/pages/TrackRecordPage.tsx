@@ -6,9 +6,8 @@ import LedgerTable from '../components/track-record/LedgerTable'
 import QueryError from '../components/ui/QueryError'
 import Upsell from '../components/ui/Upsell'
 import { isPaymentRequired } from '../services/api'
-import { useLedger, useStats } from '../hooks/queries'
+import { useCompetitionScope, useLedger, useStats } from '../hooks/queries'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
-import { COMPETITIONS } from '../constants/competitions'
 import { DISCLAIMER } from '../constants/content'
 import { BASES } from '../constants/bases'
 import type { Basis } from '../types/api'
@@ -45,6 +44,7 @@ function TrackRecordPage() {
   }
 
   const { stats, loading: statsLoading, error: statsError } = useStats()
+  const settleable = useCompetitionScope().list.filter((entry) => entry.stakeable)
   // Unfiltered and unpaginated, so the curve shows the whole record rather than
   // whichever slice the table happens to be showing.
   const { bets: curveBets, error: curveError } = useLedger({ limit: CURVE_SIZE })
@@ -148,7 +148,11 @@ function TrackRecordPage() {
                   }
                 >
                   <option value={''}>All competitions</option>
-                  {COMPETITIONS.filter((entry) => entry.priced).map((entry) => (
+                  {/* Stakeable, not priced. The ledger holds settled bets, and a
+                      competition the rule was never measured on cannot put one
+                      there — offering it is a filter guaranteed to return
+                      nothing, which reads as a gap in the record. */}
+                  {settleable.map((entry) => (
                     <option key={entry.id} value={entry.id}>
                       {entry.short}
                     </option>
