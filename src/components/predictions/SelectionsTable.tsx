@@ -1,5 +1,7 @@
 import { formatDecimal, formatFraction, formatSignedFraction } from '../../utils/format'
 import type { Selection } from '../../types/api'
+import { useCompetitionScope } from '../../hooks/queries'
+import { OUTSIDE_SCOPE } from '../../constants/content'
 
 const TH = 'eyebrow whitespace-nowrap px-2 py-2 text-left font-medium text-ink-subtle'
 const TD = 'whitespace-nowrap px-2 py-2 align-middle'
@@ -70,7 +72,19 @@ function Stake({ row }: { row: Selection }) {
  * model out-predicting the market — and a column of zeroes would invite exactly
  * the reading that is wrong.
  */
-function SelectionsTable({ selections }: { selections: Selection[] }) {
+function SelectionsTable({
+  selections,
+  competitionId,
+}: {
+  selections: Selection[]
+  competitionId: string
+}) {
+  // A competition with no market at all never reaches the table with rows in
+  // it, so the only case this separates is the priced league outside the
+  // rule's scope.
+  const { isStakeable } = useCompetitionScope()
+  const inScope = isStakeable(competitionId)
+
   if (selections.length === 0) {
     return (
       <section className={'flex w-full flex-col gap-2'}>
@@ -92,10 +106,21 @@ function SelectionsTable({ selections }: { selections: Selection[] }) {
     <section className={'flex w-full flex-col gap-3'}>
       <div className={'flex flex-wrap items-baseline justify-between gap-2'}>
         <h3 className={'eyebrow text-ink-subtle'}>Value selections</h3>
-        <p className={'text-xs text-ink-subtle'}>
-          <span className={'numeric'}>{staked}</span> of{' '}
-          <span className={'numeric'}>{selections.length}</span> priced outcomes staked
-        </p>
+        {/* "0 of 3 staked" is a true sentence that reads as a near miss. In a
+            competition the rule was never measured on it is the wrong frame
+            entirely: nothing was ever going to be staked, and the prices below
+            are evidence rather than a shortlist. */}
+        {inScope ? (
+          <p className={'text-xs text-ink-subtle'}>
+            <span className={'numeric'}>{staked}</span> of{' '}
+            <span className={'numeric'}>{selections.length}</span> priced outcomes staked
+          </p>
+        ) : (
+          <p className={'text-xs text-ink-subtle'} title={OUTSIDE_SCOPE.title}>
+            {OUTSIDE_SCOPE.short} — <span className={'numeric'}>{selections.length}</span> priced,
+            none stakeable
+          </p>
+        )}
       </div>
 
       <div className={'overflow-x-auto rounded-lg border border-line'}>

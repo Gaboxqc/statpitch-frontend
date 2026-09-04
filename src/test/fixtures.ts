@@ -1,4 +1,5 @@
 import type {
+  CompetitionInfo,
   FreeFixture,
   FullFixture,
   Selection,
@@ -599,3 +600,31 @@ export const settledBetFixture: SettledBet = {
   away_score: 1,
   model_version: 'goals-20260813-bb07c99e',
 }
+
+function competitionRow(
+  competition_id: string,
+  short_name: string,
+  flags: { free_tier: boolean; priced: boolean; stakeable: boolean },
+): CompetitionInfo {
+  return { competition_id, name: short_name, short_name, icon_url: null, ...flags }
+}
+
+/**
+ * The three flags as the API serves them, trimmed to one competition per set:
+ * a free league, a paid league in scope, one priced but never stakeable, and a
+ * cup with no market at all.
+ */
+export const competitionsFixture: CompetitionInfo[] = [
+  competitionRow('ENG.PL', 'Premier League', { free_tier: true, priced: true, stakeable: true }),
+  competitionRow('TUR.SUPERLIG', 'Süper Lig', { free_tier: false, priced: true, stakeable: true }),
+  competitionRow('NED.EREDIVISIE', 'Eredivisie', {
+    free_tier: false,
+    priced: true,
+    stakeable: false,
+  }),
+  competitionRow('UEFA.UCL', 'Champions League', {
+    free_tier: false,
+    priced: false,
+    stakeable: false,
+  }),
+]

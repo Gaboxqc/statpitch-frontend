@@ -69,6 +69,27 @@ describe('MatchCard states', () => {
     expect(within(card()).getByText('No odds')).toBeInTheDocument()
   })
 
+  /**
+   * The Eredivisie is served, predicted and priced in full, and can never
+   * produce a bet. "No pick" would be a true sentence that reads as a fault, on
+   * a league where no pick was ever possible.
+   */
+  it('never says "no pick" of a league it was never going to bet', async () => {
+    renderWithQuery(
+      <MatchCard
+        prediction={{
+          ...fixtureFixture,
+          competition_id: 'NED.EREDIVISIE',
+          selections: fixtureFixture.selections.map((row) => ({ ...row, stake_fraction: 0 })),
+        }}
+      />,
+    )
+
+    expect(await within(card()).findByText('Predictions only')).toBeInTheDocument()
+    expect(within(card()).queryByText('No pick')).not.toBeInTheDocument()
+    expect(within(card()).queryByText('No odds')).not.toBeInTheDocument()
+  })
+
   it('leads a played fixture with the result', () => {
     renderWithQuery(<MatchCard prediction={settledFixtureFixture} />)
 

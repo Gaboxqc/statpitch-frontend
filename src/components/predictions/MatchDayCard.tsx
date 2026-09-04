@@ -1,7 +1,7 @@
 import DonutChart from '../ui/DonutChart'
 import { BrainIcon, ChartIcon, ShortArrowIcon, ThunderIcon } from '../../assets/icons/index'
 import OutcomeBar from '../ui/OutcomeBar'
-import { useMatchOfTheDay } from '../../hooks/queries'
+import { useCompetitionScope, useMatchOfTheDay } from '../../hooks/queries'
 import { useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { useElapsed } from '../../hooks/useElapsed'
 import { COLD_START_HINT_MS } from '../../services/api'
@@ -19,6 +19,7 @@ import {
   shortModelVersion,
 } from '../../utils/format'
 import { fixtureCompetition } from '../../constants/competitions'
+import { OUTSIDE_SCOPE } from '../../constants/content'
 import { displayName } from '../../utils/teamName'
 import { describeKickoffLong } from '../../utils/datetime'
 import type { DayKey } from '../../types/api'
@@ -35,6 +36,7 @@ function MatchDayCard() {
   // best bet — this fixture can be unpriced and carry no selection at all.
   const { filters } = useFixtureFilters()
   const { fixture: prediction, loading, error } = useMatchOfTheDay(filters.day)
+  const { isPriced, isStakeable } = useCompetitionScope()
   const [isOpened, setIsOpened] = useState(false)
   const slow = useElapsed(COLD_START_HINT_MS)
   const marketsId = useId()
@@ -210,13 +212,18 @@ function MatchDayCard() {
             </div>
           ) : (
             full && (
-              // Two different reasons produce no pick, and they mean different
-              // things: no market to bet into, versus a market with no edge in
-              // it. Neither is sayable without the market itself.
+              // Three different reasons produce no pick, and they mean
+              // different things: the competition is priced but was never in
+              // the rule's scope, or there was no market to bet into, or there
+              // was a market with no edge in it. The first is about the league,
+              // and is checked first only for a competition that is priced —
+              // a cup keeps the more specific reason.
               <p className={'mt-6 text-xs text-ink-subtle border border-line rounded-lg px-4 py-3'}>
-                {full.odds_coverage
-                  ? 'Priced, but no selection cleared the minimum stake. Prediction only.'
-                  : 'No odds matched this fixture, so nothing can be priced. Prediction only.'}
+                {isPriced(full.competition_id) && !isStakeable(full.competition_id)
+                  ? OUTSIDE_SCOPE.body
+                  : full.odds_coverage
+                    ? 'Priced, but no selection cleared the minimum stake. Prediction only.'
+                    : 'No odds matched this fixture, so nothing can be priced. Prediction only.'}
               </p>
             )
           )}

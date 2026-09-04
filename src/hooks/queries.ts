@@ -69,6 +69,8 @@ export interface CompetitionScope {
   isPriced: (id: string) => boolean
   /** Whether the selection rule was measured to earn there. */
   isStakeable: (id: string) => boolean
+  /** The filter-strip label, falling back to the raw id rather than to nothing. */
+  shortName: (id: string) => string
 }
 
 /**
@@ -89,12 +91,14 @@ export function useCompetitionScope(): CompetitionScope {
       competitions.length > 0
         ? competitions.map((entry) => ({
             id: entry.competition_id,
+            short: entry.short_name,
             free: entry.free_tier,
             priced: entry.priced,
             stakeable: entry.stakeable,
           }))
         : COMPETITIONS.map((entry) => ({
             id: entry.id,
+            short: entry.short,
             free: entry.free,
             priced: entry.priced,
             stakeable: entry.stakeable,
@@ -110,6 +114,7 @@ export function useCompetitionScope(): CompetitionScope {
       isFree: (id) => byId.get(id)?.free ?? false,
       isPriced: (id) => byId.get(id)?.priced ?? true,
       isStakeable: (id) => byId.get(id)?.stakeable ?? true,
+      shortName: (id) => byId.get(id)?.short ?? id,
     }
   }, [competitions])
 }
