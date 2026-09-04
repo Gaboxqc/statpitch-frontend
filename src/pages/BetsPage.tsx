@@ -12,6 +12,13 @@ import { describeKickoffLong } from '../utils/datetime'
 import { humanise } from '../utils/humanise'
 import type { BetPick, BetsToday } from '../types/api'
 
+/** Only strings are rendered: these fields ride in untyped objects on the wire. */
+const asText = (value: unknown): string | null => (typeof value === 'string' ? value : null)
+
+/** Numbers reach the screen too, but only when they really are numbers. */
+const asFigure = (value: unknown): string | null =>
+  typeof value === 'number' && Number.isFinite(value) ? String(value) : null
+
 /**
  * The sentence every pick has to be read against.
  *
@@ -170,13 +177,20 @@ function Pick({ pick }: { pick: BetPick }) {
  * should read as one.
  */
 function EmptyDay({ bets }: { bets: BetsToday }) {
-  const cause = typeof bets.empty_because?.cause === 'string' ? bets.empty_because.cause : null
+  const cause = asText(bets.empty_because?.cause)
 
   return (
     <div className={'flex flex-col gap-4'}>
       <div className={'flex flex-col gap-2 rounded-lg border border-line bg-card px-4 py-5'}>
         <p className={'text-sm text-ink'}>{bets.reason ?? 'No picks today.'}</p>
         {cause !== null && <p className={'text-xs text-ink-subtle'}>{humanise(cause)}</p>}
+        {/* Which limit stopped more being taken — the reader's next question
+            once they know today produced nothing. */}
+        {bets.binding_constraint !== null && (
+          <p className={'text-xs text-ink-subtle'}>
+            Limited by {humanise(bets.binding_constraint).toLowerCase()}.
+          </p>
+        )}
       </div>
 
       {/* The counts still matter on an empty day: they are the difference
@@ -191,6 +205,15 @@ function BetsPage() {
   const { bets, loading, error } = useBetsToday()
 
   const paywalled = isPaymentRequired(error)
+
+  const rule = [
+    asText(bets?.selection_rule?.reference) !== null &&
+      `benchmark ${asText(bets?.selection_rule?.reference)}`,
+    asFigure(bets?.selection_rule?.threshold) !== null &&
+      `threshold ${asFigure(bets?.selection_rule?.threshold)}`,
+    asFigure(bets?.selection_rule?.max_per_day) !== null &&
+      `at most ${asFigure(bets?.selection_rule?.max_per_day)} a day`,
+  ].filter((entry): entry is string => typeof entry === 'string')
 
   return (
     <div className={'measure flex flex-col gap-6 pt-10 pb-24'}>
@@ -245,6 +268,9 @@ function BetsPage() {
                 {bets.model_version !== null && ` · model ${bets.model_version}`}
               </p>
             )}
+            {/* The rule's own parameters. An untyped object on the wire, so each
+                field is read for what it is rather than trusted to be there. */}
+            {rule.length > 0 && <p className={'text-2xs text-ink-subtle'}>{rule.join(' · ')}</p>}
             <p className={'text-xs text-ink-subtle'}>
               Settled results for every pick live on the{' '}
               <Link to={'/track-record'}>track record</Link>.

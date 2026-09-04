@@ -14,11 +14,17 @@ const PLOT_H = HEIGHT - PAD.top - PAD.bottom
 /**
  * Colour follows the strategy, not its rank, so filtering one out never
  * repaints the other.
+ *
+ * The rule series is dashed. Green and amber are the pair red-green deficiency
+ * collapses hardest — measured at a third of the separation the other two hold —
+ * and while every line here is already direct-labelled, following one across a
+ * crossing still asks the eye to track a colour. The dash gives it something
+ * else to track.
  */
-const SERIES_STYLE: Record<Basis, { stroke: string; text: string }> = {
+const SERIES_STYLE: Record<Basis, { stroke: string; text: string; dash?: string }> = {
   '1x2': { stroke: 'var(--series-1x2)', text: 'text-series-1x2' },
   overall: { stroke: 'var(--series-overall)', text: 'text-series-overall' },
-  rule: { stroke: 'var(--series-rule)', text: 'text-series-rule' },
+  rule: { stroke: 'var(--series-rule)', text: 'text-series-rule', dash: '5 3' },
 }
 
 const formatUnits = (value: number) => `${value >= 0 ? '+' : ''}${value.toFixed(2)}u`
@@ -53,7 +59,14 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
             <span
               aria-hidden={true}
               className={'h-0.5 w-4 rounded-full'}
-              style={{ background: SERIES_STYLE[entry.basis].stroke }}
+              style={
+                SERIES_STYLE[entry.basis].dash === undefined
+                  ? { background: SERIES_STYLE[entry.basis].stroke }
+                  : {
+                      // The swatch carries the same dash as the line it stands for.
+                      backgroundImage: `repeating-linear-gradient(to right, ${SERIES_STYLE[entry.basis].stroke} 0 5px, transparent 5px 8px)`,
+                    }
+              }
             />
             <span className={'text-ink-muted'}>
               {BASIS_LABELS[entry.basis]}
@@ -128,6 +141,7 @@ function EquityCurve({ bets }: { bets: SettledBet[] }) {
                 fill={'none'}
                 stroke={SERIES_STYLE[entry.basis].stroke}
                 strokeWidth={2}
+                strokeDasharray={SERIES_STYLE[entry.basis].dash}
                 strokeLinejoin={'round'}
                 strokeLinecap={'round'}
                 points={entry.cumulative.map((value, i) => `${x(i)},${y(value)}`).join(' ')}

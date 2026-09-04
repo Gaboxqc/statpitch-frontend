@@ -68,10 +68,6 @@ export const getBestToday = (signal?: AbortSignal): Promise<Fixture | null> =>
 export const getBetsToday = (signal?: AbortSignal): Promise<BetsToday> =>
   api.get<BetsToday>('/bets/today', { signal }).then((res) => res.data)
 
-/** Already ordered by Kelly descending, which is the API's deliberate ranking. */
-export const getValueBetsToday = (signal?: AbortSignal): Promise<Fixture[]> =>
-  api.get<Fixture[]>('/fixtures/today/value-bets', { signal }).then((res) => res.data)
-
 export const getFixture = (id: number, signal?: AbortSignal): Promise<Fixture | null> =>
   api
     .get<Fixture>(`/fixtures/${id}`, { signal })

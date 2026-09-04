@@ -53,10 +53,21 @@
      contrast; do not substitute by eye. */
   --series-1x2: #059669;
   --series-overall: #3b82f6;
-  /* StatPitch's own rule. Chosen to sit clear of the two above under the common
-     CVD types, but NOT yet put through the OKLCH lightness/chroma and contrast
-     checks the other two were — treat it as provisional until it has been. */
-  --series-rule: #d97706;
+  /* StatPitch's own rule. Measured, and the measurement is worth recording
+     because it did not come out clean.
+
+     OKLCH L .695, C .140, contrast 6.93:1 on the card — all comfortably inside
+     the band the two above set (L .596/.623, contrast 5.05/5.17). What it cannot
+     match is their separation. In OKLab ΔE the existing pair holds .223 even
+     under protanopia and deuteranopia; the best any third hue manages against
+     both of them, anywhere in that lightness band, is .148 — and the best in the
+     amber family, which is the one that reads as a third series rather than a
+     second green, is .113. A first attempt at #d97706 scored .090.
+
+     So a third series cannot be carried by hue here, and this colour is not
+     asked to. The equity curve direct-labels every line and dashes this one; the
+     legend swatch is dashed to match. Colour is the last cue, not the only one. */
+  --series-rule: #c4950d;
 }
 
 @theme inline {

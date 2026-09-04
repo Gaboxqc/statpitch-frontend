@@ -7,7 +7,6 @@ import {
   getFixtures,
   getLedger,
   getStats,
-  getValueBetsToday,
   getWindow,
 } from '../services/predictions'
 import { pickMatchOfTheDay } from '../utils/matchOfTheDay'
@@ -138,16 +137,6 @@ export function useBetsToday() {
   })
 
   return { bets: (data ?? null) as BetsToday | null, loading: isLoading, error }
-}
-
-/** Already ordered by Kelly descending. */
-export function useValueBetsToday() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['valueBetsToday'],
-    queryFn: ({ signal }) => getValueBetsToday(signal),
-  })
-
-  return { fixtures: data ?? EMPTY_FIXTURES, loading: isLoading, error }
 }
 
 export function useFixture(id: number | null) {
