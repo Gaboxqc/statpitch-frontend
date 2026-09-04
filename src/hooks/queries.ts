@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   getBestToday,
@@ -9,6 +10,7 @@ import {
   getStats,
   getWindow,
 } from '../services/predictions'
+import { COMPETITIONS } from '../constants/competitions'
 import { pickMatchOfTheDay } from '../utils/matchOfTheDay'
 import type {
   BetsToday,
@@ -56,6 +58,60 @@ export function useCompetitions() {
   })
 
   return { competitions: data ?? EMPTY_COMPETITIONS, loading: isLoading, error }
+}
+
+export interface CompetitionScope {
+  /** How many competitions are served, priced and stakeable, in that order. */
+  counts: { total: number; priced: number; stakeable: number }
+  /** Whether a free account sees this competition at all. */
+  isFree: (id: string) => boolean
+  /** Whether a market exists to quote it against. */
+  isPriced: (id: string) => boolean
+  /** Whether the selection rule was measured to earn there. */
+  isStakeable: (id: string) => boolean
+}
+
+/**
+ * The three flags, for any competition id, from the API where it has answered
+ * and the local table until then.
+ *
+ * An id neither knows is read as **no claim either way**: priced and stakeable
+ * both come back true, so a league added upstream renders the way it always did
+ * rather than being told it is outside a scope nobody has measured it against.
+ * `isFree` is the exception and fails closed, because it gates rather than
+ * describes.
+ */
+export function useCompetitionScope(): CompetitionScope {
+  const { competitions } = useCompetitions()
+
+  return useMemo(() => {
+    const rows =
+      competitions.length > 0
+        ? competitions.map((entry) => ({
+            id: entry.competition_id,
+            free: entry.free_tier,
+            priced: entry.priced,
+            stakeable: entry.stakeable,
+          }))
+        : COMPETITIONS.map((entry) => ({
+            id: entry.id,
+            free: entry.free,
+            priced: entry.priced,
+            stakeable: entry.stakeable,
+          }))
+    const byId = new Map(rows.map((row) => [row.id, row]))
+
+    return {
+      counts: {
+        total: rows.length,
+        priced: rows.filter((row) => row.priced).length,
+        stakeable: rows.filter((row) => row.stakeable).length,
+      },
+      isFree: (id) => byId.get(id)?.free ?? false,
+      isPriced: (id) => byId.get(id)?.priced ?? true,
+      isStakeable: (id) => byId.get(id)?.stakeable ?? true,
+    }
+  }, [competitions])
 }
 
 /** The three live dates, straight from the API's own timezone. */

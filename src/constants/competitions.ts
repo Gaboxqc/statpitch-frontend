@@ -3,27 +3,55 @@ export interface Competition {
   name: string
   /** Shorter label for the filter strip, where horizontal room is scarce. */
   short: string
-  /**
-   * Whether an odds market exists to price this competition against. StatPitch
-   * covers all twelve, but only the five leagues can ever produce a bet — the
-   * cups are prediction-only by construction, not by accident.
-   */
+  /** Whether a free account sees this competition's fixtures at all. */
+  free: boolean
+  /** Whether an odds market exists to quote this competition against. */
   priced: boolean
+  /**
+   * Whether the selection rule was measured to earn here. Strictly narrower
+   * than `priced`: the Eredivisie and Primeira Liga are served in full and can
+   * never produce a bet, the first on a negative closing-line result and the
+   * second on a sample too small to resolve. That is a finding, not a gap.
+   */
+  stakeable: boolean
 }
 
+/**
+ * The four sets, named. Until the Primeira Liga, Eredivisie and Süper Lig
+ * arrived these four rows would all have been the same one, which is why a
+ * single `priced` boolean used to answer every question asked of it.
+ */
+const FREE_LEAGUE = { free: true, priced: true, stakeable: true } as const
+const PAID_LEAGUE = { free: false, priced: true, stakeable: true } as const
+/** Served, predicted and priced in full — and outside the rule's measured scope. */
+const FORECAST_LEAGUE = { free: false, priced: true, stakeable: false } as const
+/** No odds market exists, so a prediction is all there can ever be. */
+const CUP = { free: false, priced: false, stakeable: false } as const
+
+/**
+ * The fallback table. `/competitions` is the source of truth and carries all
+ * three flags itself — this stands in only until that query lands, and keeps
+ * the app honest about a competition it has never heard of.
+ *
+ * The ids use Club Elo's ISO-3 country codes, so Portugal is `POR` and the
+ * Netherlands `NED`. Opaque strings; they are matched exactly.
+ */
 export const COMPETITIONS: Competition[] = [
-  { id: 'ENG.PL', name: 'Premier League', short: 'Premier League', priced: true },
-  { id: 'ESP.LALIGA', name: 'La Liga', short: 'La Liga', priced: true },
-  { id: 'GER.BUNDESLIGA', name: 'Bundesliga', short: 'Bundesliga', priced: true },
-  { id: 'ITA.SERIEA', name: 'Serie A', short: 'Serie A', priced: true },
-  { id: 'FRA.LIGUE1', name: 'Ligue 1', short: 'Ligue 1', priced: true },
-  { id: 'UEFA.UCL', name: 'Champions League', short: 'UCL', priced: false },
-  { id: 'UEFA.UEL', name: 'Europa League', short: 'UEL', priced: false },
-  { id: 'ENG.FA_CUP', name: 'FA Cup', short: 'FA Cup', priced: false },
-  { id: 'GER.DFB_POKAL', name: 'DFB-Pokal', short: 'DFB-Pokal', priced: false },
-  { id: 'ITA.COPPA_ITALIA', name: 'Coppa Italia', short: 'Coppa Italia', priced: false },
-  { id: 'ESP.COPA_DEL_REY', name: 'Copa del Rey', short: 'Copa del Rey', priced: false },
-  { id: 'FRA.COUPE_DE_FRANCE', name: 'Coupe de France', short: 'Coupe de France', priced: false },
+  { id: 'ENG.PL', name: 'Premier League', short: 'Premier League', ...FREE_LEAGUE },
+  { id: 'ESP.LALIGA', name: 'La Liga', short: 'La Liga', ...FREE_LEAGUE },
+  { id: 'GER.BUNDESLIGA', name: 'Bundesliga', short: 'Bundesliga', ...FREE_LEAGUE },
+  { id: 'ITA.SERIEA', name: 'Serie A', short: 'Serie A', ...FREE_LEAGUE },
+  { id: 'FRA.LIGUE1', name: 'Ligue 1', short: 'Ligue 1', ...FREE_LEAGUE },
+  { id: 'TUR.SUPERLIG', name: 'Süper Lig', short: 'Süper Lig', ...PAID_LEAGUE },
+  { id: 'POR.PRIMEIRA', name: 'Primeira Liga', short: 'Primeira Liga', ...FORECAST_LEAGUE },
+  { id: 'NED.EREDIVISIE', name: 'Eredivisie', short: 'Eredivisie', ...FORECAST_LEAGUE },
+  { id: 'UEFA.UCL', name: 'Champions League', short: 'UCL', ...CUP },
+  { id: 'UEFA.UEL', name: 'Europa League', short: 'UEL', ...CUP },
+  { id: 'ENG.FA_CUP', name: 'FA Cup', short: 'FA Cup', ...CUP },
+  { id: 'GER.DFB_POKAL', name: 'DFB-Pokal', short: 'DFB-Pokal', ...CUP },
+  { id: 'ITA.COPPA_ITALIA', name: 'Coppa Italia', short: 'Coppa Italia', ...CUP },
+  { id: 'ESP.COPA_DEL_REY', name: 'Copa del Rey', short: 'Copa del Rey', ...CUP },
+  { id: 'FRA.COUPE_DE_FRANCE', name: 'Coupe de France', short: 'Coupe de France', ...CUP },
 ]
 
 const BY_ID = new Map(COMPETITIONS.map((competition) => [competition.id, competition]))
@@ -42,8 +70,8 @@ export function competition(id: string): Competition | undefined {
  *
  * The payload carries all three, in every shape, so it is preferred over the
  * table above: a competition added upstream reads correctly here before anybody
- * remembers to add a row. The table remains the fallback, and is still the only
- * place that knows which competitions have an odds market at all.
+ * remembers to add a row. The table remains the fallback for the flags when the
+ * `/competitions` query has not landed.
  */
 export function fixtureCompetition(fixture: {
   competition_id: string

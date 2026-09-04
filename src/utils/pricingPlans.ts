@@ -26,7 +26,10 @@ export const pricingPlans: PricingPlan[] = [
     buttonLink: '/login',
     availableFeatures: [
       '3 predictions per day',
-      'The 5 priced leagues only',
+      // Five, and it stays five. The free tier used to be defined as "the
+      // leagues we can price", which held only while those were the same five —
+      // three more are priced now and none of them came here.
+      '5 of the 15 competitions',
       '1X2 win probabilities',
       'Match of the Day pick',
     ],
@@ -49,7 +52,7 @@ export const pricingPlans: PricingPlan[] = [
     buttonLink: '/login',
     availableFeatures: [
       'Unlimited predictions',
-      'All 12 competitions',
+      'All 15 competitions',
       '1X2 win probabilities',
       'Match of the Day pick',
       'Market breakdown (Book vs ML)',
@@ -70,7 +73,7 @@ export const pricingPlans: PricingPlan[] = [
     buttonLink: '/login',
     availableFeatures: [
       'Unlimited predictions',
-      'All 12 competitions',
+      'All 15 competitions',
       '1X2 win probabilities',
       'Match of the Day pick',
       'Market breakdown (Book vs ML)',

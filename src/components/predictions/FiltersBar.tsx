@@ -1,18 +1,30 @@
 import { FilterIcon } from '../../assets/icons/index'
 import { Link } from 'react-router'
-import { useCompetitions, useFixtures, useWindow } from '../../hooks/queries'
+import { useCompetitions, useCompetitionScope, useFixtures, useWindow } from '../../hooks/queries'
 import { useAccount } from '../../hooks/useAccount'
 import { CONFIDENCE_TIERS, DAYS, useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { countByDay } from '../../utils/filterFixtures'
-import { competition, COMPETITIONS } from '../../constants/competitions'
+import { COMPETITIONS } from '../../constants/competitions'
 import { BASES, BASIS_DETAIL } from '../../constants/bases'
 import { formatFraction } from '../../utils/format'
 import type { Basis, DayKey } from '../../types/api'
+import type { CompetitionScope } from '../../hooks/queries'
 
 const DAY_LABELS: Record<DayKey, string> = {
   yesterday: 'Yesterday',
   today: 'Today',
   tomorrow: 'Tomorrow',
+}
+
+/**
+ * What a Pro reader is told a competition cannot do. Nothing at all when it can
+ * do everything, and the two refusals are different facts: no market to quote
+ * against, or a market quoted in full that the rule was never measured on.
+ */
+function marker(id: string, scope: CompetitionScope): string {
+  if (!scope.isPriced(id)) return ' · no odds'
+  if (!scope.isStakeable(id)) return ' · predictions only'
+  return ''
 }
 
 const PILL = 'text-xs font-medium py-1 px-2 rounded-md border shrink-0 cursor-pointer'
@@ -53,18 +65,20 @@ function FiltersBar() {
   })
   const counts = countByDay(fixtures, window)
   const { competitions } = useCompetitions()
+  const scope = useCompetitionScope()
 
   /**
    * One marker per row, and which one depends on who is reading.
    *
    * Below Pro the useful fact is that a competition is not included at all —
    * selecting it would empty the list, and an empty list reads as "nothing on
-   * today" rather than "not yours". At Pro everything is included, and the fact
-   * that matters instead is that the cups carry no odds market, so they can
-   * never produce a selection however good the prediction is.
+   * today" rather than "not yours".
    *
-   * The API's list is preferred; the local table stands in until it arrives, and
-   * is still the only thing that knows which competitions are priced.
+   * At Pro everything is included and the marker names what the competition
+   * cannot do instead. Two answers, not one: the cups carry no odds market at
+   * all, while the Primeira Liga and Eredivisie are priced in full and simply
+   * sit outside the rule's measured scope. Labelling the second pair "no odds"
+   * is the thing this used to do, and it was wrong in both directions.
    */
   const options = (
     competitions.length > 0
@@ -73,10 +87,10 @@ function FiltersBar() {
           short: entry.short_name,
           free: entry.free_tier,
         }))
-      : COMPETITIONS.map((entry) => ({ id: entry.id, short: entry.short, free: entry.priced }))
+      : COMPETITIONS.map((entry) => ({ id: entry.id, short: entry.short, free: entry.free }))
   ).map((entry) => ({
     ...entry,
-    note: !isPro && !entry.free ? ' · Pro' : competition(entry.id)?.priced ? '' : ' · no odds',
+    note: !isPro && !entry.free ? ' · Pro' : marker(entry.id, scope),
   }))
 
   return (

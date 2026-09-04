@@ -37,6 +37,7 @@ const day = (over: Partial<BetsToday> = {}): BetsToday => ({
   qualified_by_rule: 0,
   total_exposure: 0,
   selection_rule: null,
+  selection_rule_competitions: null,
   selection_rule_status: 'experimental',
   config_status: 'experimental',
   by_basis: null,

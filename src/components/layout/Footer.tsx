@@ -2,7 +2,7 @@ import { useId, useState } from 'react'
 import { Link } from 'react-router'
 import { LogoIcon } from '../../assets/icons/index'
 import { BRAND, DISCLAIMER } from '../../constants/content'
-import { COMPETITIONS } from '../../constants/competitions'
+import { useCompetitionScope } from '../../hooks/queries'
 
 const LINKS = [
   { to: '/', label: 'Predictions' },
@@ -20,7 +20,7 @@ const LINKS = [
 function Footer() {
   const [isOpened, setIsOpened] = useState(false)
   const detailId = useId()
-  const priced = COMPETITIONS.filter((entry) => entry.priced).length
+  const { counts } = useCompetitionScope()
 
   return (
     <footer className={'bg-background text-ink mt-24 border-t border-line'}>
@@ -54,14 +54,18 @@ function Footer() {
           <div className={'flex flex-col gap-2'}>
             <p className={'eyebrow text-ink-subtle'}>Coverage</p>
             <p className={'text-xs text-ink-muted'}>
-              <span className={'numeric text-ink'}>{COMPETITIONS.length}</span> competitions, of
-              which <span className={'numeric text-ink'}>{priced}</span> are priced against a
-              bookmaker market.
+              <span className={'numeric text-ink'}>{counts.total}</span> competitions, of which{' '}
+              <span className={'numeric text-ink'}>{counts.priced}</span> are priced against a
+              bookmaker market and <span className={'numeric text-ink'}>{counts.stakeable}</span>{' '}
+              can produce a bet.
             </p>
-            {/* The cups are predicted and never bettable, which is worth saying
-                once somewhere permanent rather than only in a select's options. */}
+            {/* Three numbers rather than two, because the gap between the last
+                pair is the one nobody expects: two leagues are served, predicted
+                and priced in full, and still sit outside the rule's measured
+                scope. Worth saying once somewhere permanent. */}
             <p className={'text-xs text-ink-subtle'}>
-              A competition with no odds market can produce a prediction, never a selection.
+              A competition with no odds market can produce a prediction, never a selection — and a
+              priced one can still fall outside the scope the selection rule was measured on.
             </p>
           </div>
         </div>

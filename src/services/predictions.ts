@@ -13,9 +13,13 @@ import type {
 } from '../types/api'
 
 /**
- * All twelve, with the names and icons the filter strip renders — and
- * `free_tier` per row, so the cups can read as something to upgrade for rather
- * than as a selection that quietly returns nothing.
+ * All fifteen, with the names and icons the filter strip renders, and the three
+ * scope flags per row.
+ *
+ * `free_tier`, `priced` and `stakeable` named the same five leagues until the
+ * Primeira Liga, Eredivisie and Süper Lig arrived. They are strictly nested and
+ * no two are equal any more, so each is read on its own — see
+ * `useCompetitionScope`.
  */
 export const getCompetitions = (signal?: AbortSignal): Promise<CompetitionInfo[]> =>
   api.get<CompetitionInfo[]>('/competitions', { signal }).then((res) => res.data)
