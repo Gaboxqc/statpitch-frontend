@@ -1,10 +1,9 @@
 import { FilterIcon } from '../../assets/icons/index'
 import { Link } from 'react-router'
-import { useCompetitions, useCompetitionScope, useFixtures, useWindow } from '../../hooks/queries'
+import { useCompetitionScope, useFixtures, useWindow } from '../../hooks/queries'
 import { useAccount } from '../../hooks/useAccount'
 import { CONFIDENCE_TIERS, DAYS, useFixtureFilters } from '../../hooks/useFixtureFilters'
 import { countByDay } from '../../utils/filterFixtures'
-import { COMPETITIONS } from '../../constants/competitions'
 import { BASES, BASIS_DETAIL } from '../../constants/bases'
 import { formatFraction } from '../../utils/format'
 import type { Basis, DayKey } from '../../types/api'
@@ -64,7 +63,6 @@ function FiltersBar() {
     competition_id: filters.competitionId ?? undefined,
   })
   const counts = countByDay(fixtures, window)
-  const { competitions } = useCompetitions()
   const scope = useCompetitionScope()
 
   /**
@@ -80,15 +78,7 @@ function FiltersBar() {
    * sit outside the rule's measured scope. Labelling the second pair "no odds"
    * is the thing this used to do, and it was wrong in both directions.
    */
-  const options = (
-    competitions.length > 0
-      ? competitions.map((entry) => ({
-          id: entry.competition_id,
-          short: entry.short_name,
-          free: entry.free_tier,
-        }))
-      : COMPETITIONS.map((entry) => ({ id: entry.id, short: entry.short, free: entry.free }))
-  ).map((entry) => ({
+  const options = scope.list.map((entry) => ({
     ...entry,
     note: !isPro && !entry.free ? ' · Pro' : marker(entry.id, scope),
   }))

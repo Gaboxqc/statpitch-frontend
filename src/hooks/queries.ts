@@ -60,7 +60,17 @@ export function useCompetitions() {
   return { competitions: data ?? EMPTY_COMPETITIONS, loading: isLoading, error }
 }
 
+export interface ScopedCompetition {
+  id: string
+  short: string
+  free: boolean
+  priced: boolean
+  stakeable: boolean
+}
+
 export interface CompetitionScope {
+  /** Every competition, in the order the source gave them. */
+  list: ScopedCompetition[]
   /** How many competitions are served, priced and stakeable, in that order. */
   counts: { total: number; priced: number; stakeable: number }
   /** Whether a free account sees this competition at all. */
@@ -87,7 +97,7 @@ export function useCompetitionScope(): CompetitionScope {
   const { competitions } = useCompetitions()
 
   return useMemo(() => {
-    const rows =
+    const rows: ScopedCompetition[] =
       competitions.length > 0
         ? competitions.map((entry) => ({
             id: entry.competition_id,
@@ -106,6 +116,7 @@ export function useCompetitionScope(): CompetitionScope {
     const byId = new Map(rows.map((row) => [row.id, row]))
 
     return {
+      list: rows,
       counts: {
         total: rows.length,
         priced: rows.filter((row) => row.priced).length,
